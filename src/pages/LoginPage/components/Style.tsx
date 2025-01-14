@@ -40,3 +40,9 @@ export const LoginButton = styled.button`
     transform: scale(0.98);
   }
 `;
+
+export const ErrorText = styled.div`
+  font-size: ${({ theme }) => theme.fonts.sizes.cl};
+  color: ${({ theme }) => theme.colors.error};
+  font-weight: ${({ theme }) => theme.fonts.weights.bold};
+`;
