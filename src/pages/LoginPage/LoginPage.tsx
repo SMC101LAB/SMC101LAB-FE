@@ -80,4 +80,5 @@ const TabButton = styled.button<{ $isLogin?: boolean }>`
   color: ${({ $isLogin, theme }) => ($isLogin ? theme.colors.white : '#666')};
   font-weight: ${({ $isLogin, theme }) =>
     $isLogin ? theme.fonts.weights.bold : theme.fonts.weights.medium};
+  transition: 0.4s all ease-in-out;
 `;
