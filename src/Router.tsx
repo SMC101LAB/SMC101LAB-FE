@@ -1,6 +1,6 @@
 import { NavermapsProvider } from 'react-naver-maps';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
+import LoginPage from './pages/LoginPage/LoginPage';
 import MapPage from './pages/MapPage/MapPage';
 const Router = () => {
   return (
