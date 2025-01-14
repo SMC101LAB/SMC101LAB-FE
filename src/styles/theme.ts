@@ -13,6 +13,7 @@ export const theme = {
       600: '#666666',
       700: '#333333',
     },
+    error: '#CD1A1A',
   },
   fonts: {
     sizes: {
