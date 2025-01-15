@@ -62,7 +62,7 @@ const BottomSheet: React.FC<SelectItemProps> = ({ selectItem }) => {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
   };
-
+  console.log('selectItem', selectItem);
   return (
     <BaseContainer height={height} $isDragging={isDragging.current}>
       <IconWrapper
@@ -74,7 +74,7 @@ const BottomSheet: React.FC<SelectItemProps> = ({ selectItem }) => {
         <SlideContainer />
         <SlideIcon />
       </IconWrapper>
-      {selectItem !== undefined ? (
+      {selectItem !== null ? (
         <InfoTable selectItem={selectItem} />
       ) : height > 200 ? (
         <NoInfo />
