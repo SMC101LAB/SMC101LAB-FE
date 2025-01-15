@@ -159,8 +159,10 @@ const AllShowButton = styled.button<{ $isSelect: boolean }>`
   padding: 5px 10px;
   box-shadow: 0px 0px 5px #444;
   font-weight: 550;
-  background-color: ${({ $isSelect }) => ($isSelect ? '#0b5275' : '#fff')};
-  color: ${({ $isSelect }) => (!$isSelect ? '#0b5275' : '#fff')};
+  background-color: ${({ $isSelect, theme }) =>
+    $isSelect ? theme.colors.secondary : '#fff'};
+  color: ${({ $isSelect, theme }) =>
+    !$isSelect ? theme.colors.secondary : '#fff'};
   &:focus {
     outline: none;
   }
@@ -179,9 +181,10 @@ const ChooseContainer = styled.div`
 `;
 const ChooseWrapper = styled.div`
   display: flex;
+  gap: 5px;
 `;
 const ChooseArea = styled.input``;
 const Label = styled.label`
-  font-size: 14px;
-  font-weight: 550;
+  font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
 `;

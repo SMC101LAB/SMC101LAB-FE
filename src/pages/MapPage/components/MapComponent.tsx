@@ -9,6 +9,8 @@ import { useState, useEffect } from 'react';
 import AmarkerIcon from '../../../assets/a.png';
 import BmarkerIcon from '../../../assets/b.png';
 import CmarkerIcon from '../../../assets/c.png';
+import DmarkerIcon from '../../../assets/d.png';
+import FmarkerIcon from '../../../assets/f.png';
 import { MapComponentProps } from '../interface';
 
 const MapComponent: React.FC<MapComponentProps> = ({
@@ -59,7 +61,11 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 ? AmarkerIcon
                 : item.grade === 'B'
                 ? BmarkerIcon
-                : CmarkerIcon;
+                : item.grade === 'C'
+                ? CmarkerIcon
+                : item.grade === 'D'
+                ? DmarkerIcon
+                : FmarkerIcon;
             return (
               <Marker
                 key={index}
@@ -69,10 +75,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
               <div style="cursor: pointer; position:relative;">
               ${
                 selectedMarkerId === index || allTextShow
-                  ? `<div style="position:absolute; top:-20px; left:-46px; width:120px; display:flex; justify-content:center;z-index:1;">
+                  ? `<div style="position:absolute; top:-15px; left:-46px; width:120px; display:flex; justify-content:center;z-index:1;">
                     <div style="${
                       selectedMarkerId === index
-                        ? 'color:#0b5275;font-weight:550;'
+                        ? 'color:#0b5275;font-weight:500;'
                         : ''
                     } font-size:16px;">
                       ${item.steepSlopeName}
@@ -82,7 +88,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
               }
                 <img src="${markerIcon}"
                      alt="marker"
-                     style="width: 28px; height: 28px;"
+                     style="width: 22px; height: 22px;"
                 />
               </div>
             `,

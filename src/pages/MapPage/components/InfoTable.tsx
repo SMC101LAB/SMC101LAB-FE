@@ -23,10 +23,10 @@ const InfoTable: React.FC<SelectItemProps> = ({ selectItem }) => {
           <Label>소관부서명</Label>
           <Value>{selectItem.departmentName}</Value>
         </InfoRow>
-        <InfoRow>
+        {/* <InfoRow>
           <Label>관리주체</Label>
           <Value>{selectItem.managementTypeCode}</Value>
-        </InfoRow>
+        </InfoRow> */}
         <AddressWrapper>
           <Label>주소</Label>
           <AddressValue>
@@ -59,14 +59,14 @@ const TitleWrapper = styled.div`
   display: flex;
   align-items: flex-end;
   gap: 10px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #eee;
   padding-bottom: 15px;
+
+  border-bottom: 1px solid #eee;
 `;
 
 const Title = styled.div`
   font-size: 22px;
-  color: #0b5275;
+  color: ${({ theme }) => theme.colors.primary};
   font-weight: 600;
 `;
 
@@ -79,6 +79,8 @@ const ContentSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding: 25px 0px;
+  border-bottom: 1px solid #eee;
 `;
 
 const InfoRow = styled.div`
@@ -89,14 +91,15 @@ const InfoRow = styled.div`
 
 const Label = styled.div`
   min-width: 80px;
-  font-size: 14px;
-  color: #666;
-  font-weight: 500;
+  font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  color: ${({ theme }) => theme.colors.grey[600]};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
 `;
 
 const Value = styled.div`
-  font-size: 14px;
-  color: #333;
+  font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  color: ${({ theme }) => theme.colors.grey[700]};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
 `;
 
 const AddressWrapper = styled(InfoRow)`
