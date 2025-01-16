@@ -27,3 +27,6 @@ export interface MapComponentProps {
   escarpmentData: DataType[];
   allTextShow: boolean;
 }
+export interface SelectItemProps {
+  selectItem: DataType | null;
+}
