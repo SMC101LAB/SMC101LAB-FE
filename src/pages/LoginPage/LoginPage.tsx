@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-import logo from '../assets/logo.svg';
+import logo from '../../assets/logo.svg';
+
+import Login from './components/Login';
+import Join from './components/Join';
 
 const LoginPage = () => {
-  const nav = useNavigate();
   const [isLogin, setIsLogin] = useState<boolean>(true);
   return (
     <Background>
@@ -28,11 +29,8 @@ const LoginPage = () => {
             회원가입
           </TabButton>
         </TabContainer>
-        <InputWrapper>
-          <Input placeholder="아이디" />
-          <Input placeholder="비밀번호" type="password" />
-          <LoginButton onClick={() => nav('/map')}>로그인</LoginButton>
-        </InputWrapper>
+
+        {isLogin ? <Login /> : <Join />}
       </LoginContainer>
     </Background>
   );
@@ -82,45 +80,5 @@ const TabButton = styled.button<{ $isLogin?: boolean }>`
   color: ${({ $isLogin, theme }) => ($isLogin ? theme.colors.white : '#666')};
   font-weight: ${({ $isLogin, theme }) =>
     $isLogin ? theme.fonts.weights.bold : theme.fonts.weights.medium};
-`;
-
-const InputWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 18px 10px;
-  border: 0px;
-  color: ${({ theme }) => theme.colors.grey[700]};
-  background-color: ${({ theme }) => theme.colors.grey[200]};
-
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  font-size: ${({ theme }) => theme.fonts.sizes.ms};
-  font-weight: ${({ theme }) => theme.fonts.weights.medium};
-`;
-
-const LoginButton = styled.button`
-  width: 100%;
-  padding: 12px;
-  background-color: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.white};
-  border: none;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-
-  font-size: ${({ theme }) => theme.fonts.sizes.mm};
-  font-weight: ${({ theme }) => theme.fonts.weights.bold};
-
-  margin-top: 8px;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.primaryDark};
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
+  transition: 0.4s all ease-in-out;
 `;
