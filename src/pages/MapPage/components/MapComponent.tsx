@@ -11,6 +11,7 @@ import BmarkerIcon from '../../../assets/b.png';
 import CmarkerIcon from '../../../assets/c.png';
 import DmarkerIcon from '../../../assets/d.png';
 import FmarkerIcon from '../../../assets/f.png';
+import PositionIcon from '../../../assets/position.png';
 import { MapComponentProps } from '../interface';
 
 const MapComponent: React.FC<MapComponentProps> = ({
@@ -54,7 +55,22 @@ const MapComponent: React.FC<MapComponentProps> = ({
         }}
       >
         <NaverMap defaultCenter={userLocation} defaultZoom={15}>
-          <Marker position={userLocation} />
+          <Marker
+            position={userLocation}
+            icon={{
+              content: `
+              <div style="cursor: pointer; position:relative;">
+                <img src="${PositionIcon}"
+                     alt="marker"
+                     style="width: 24px; height: 24px;"
+                />
+              </div>
+            `,
+              anchor: new navermaps.Point(12, 12),
+            }}
+          />
+
+          {/* <Marker position={userLocation} /> */}
           {escarpmentData.map((item, index) => {
             const markerIcon =
               item.grade === 'A'
@@ -92,7 +108,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 />
               </div>
             `,
-                  anchor: new navermaps.Point(16, 16),
+                  anchor: new navermaps.Point(11, 22),
                 }}
                 onClick={() => {
                   setSelectedMarkerId(
