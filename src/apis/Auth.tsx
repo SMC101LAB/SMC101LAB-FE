@@ -6,6 +6,10 @@ export interface JoinFormType {
   organization: string;
   password: string;
 }
+export interface LoginFormType {
+  phone: string;
+  password: string;
+}
 
 export const api = axios.create({
   baseURL: 'http://localhost:3000',
@@ -15,8 +19,12 @@ export const api = axios.create({
 });
 
 export const authAPI = {
+  login: async (data: LoginFormType) => {
+    const response = await api.post('auth/login', data);
+    return response.data;
+  },
   join: async (data: JoinFormType) => {
-    const response = await api.post('auth/users/join', data);
+    const response = await api.post('auth/register', data);
     return response.data;
   },
 };
