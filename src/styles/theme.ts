@@ -41,6 +41,11 @@ export const theme = {
     md: '0 4px 8px rgba(0, 0, 0, 0.1)',
     lg: '0 8px 16px rgba(0, 0, 0, 0.1)',
   },
+  device: {
+    mobile: `screen and (min-width: 375px) and (max-width:767px)`,
+    tablet: `screen and (min-width:768px) and (max-width:1023px)`,
+    laptop: `screen and (min-width: 1024px)`,
+  },
 } as const;
 
 export type Theme = typeof theme;
