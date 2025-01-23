@@ -7,6 +7,7 @@ export type SelectPageState = [
   boolean,
   boolean
 ];
+
 export interface SideComponentsProps {
   selectPage: SelectPageState;
   ChooseIndex: (num: number) => void;
