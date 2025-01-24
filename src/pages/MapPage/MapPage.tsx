@@ -143,11 +143,12 @@ const MapPage = () => {
 export default MapPage;
 
 const BaseBackground = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   overscroll-behavior: none;
+  position: relative;
 `;
 
 const AllShowButton = styled.button<{ $isSelect: boolean }>`
@@ -177,7 +178,6 @@ const ChooseContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
-  /* box-shadow: 0px 0px 5px #444; */
 `;
 const ChooseWrapper = styled.div`
   display: flex;

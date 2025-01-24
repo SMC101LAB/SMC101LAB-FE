@@ -95,7 +95,7 @@ const BaseContainer = styled.div<{ $isDragging?: boolean; height: number }>`
   border-top-right-radius: 25px;
   background-color: #fff;
   box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.1);
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
 `;
