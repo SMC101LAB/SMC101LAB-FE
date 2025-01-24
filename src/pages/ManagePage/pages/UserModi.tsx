@@ -91,7 +91,7 @@ const UserModi = () => {
       id: 'actions',
       header: () => <span>수정/삭제</span>,
       cell: ({ row }) => (
-        <div>
+        <DecisionWrapper>
           <DecisionIcon
             onClick={() => {
               setSelectedUser(row.original);
@@ -110,7 +110,7 @@ const UserModi = () => {
             }}
             alt="거절"
           />
-        </div>
+        </DecisionWrapper>
       ),
     }),
   ];
@@ -334,7 +334,10 @@ const SearchIcon = styled.img`
   top: 50%;
   transform: translateY(-50%);
 `;
-
+const DecisionWrapper = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+`;
 const DecisionIcon = styled.img`
   width: 40px;
   padding: 6px;
@@ -357,12 +360,14 @@ const Table = styled.table`
     background: #f9fafb;
     text-align: left;
     border-bottom: 1px solid #e5e7eb;
+    text-align: center;
   }
 
   td {
     font-size: ${({ theme }) => theme.fonts.sizes.ms};
     padding: 16px 24px;
     border-bottom: 1px solid #e5e7eb;
+    text-align: center;
   }
 
   tr:hover {
