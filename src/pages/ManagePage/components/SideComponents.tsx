@@ -69,7 +69,7 @@ const SideComponents: FC<SideComponentsProps> = ({
               $isSelect={selectPage[5]}
               onClick={() => ChooseIndex(5)}
             >
-              <IndexText>회원 수정/삭제</IndexText>
+              <IndexText>회원수정 및 삭제</IndexText>
             </SubIndexContainer>
           </>
         )}
