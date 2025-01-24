@@ -22,15 +22,16 @@ export interface DebouncedInputProps {
   [key: string]: any;
 }
 
+//페이지 네이션 타입
 export interface PaginationProps {
-  currentPage: number; // 현재 페이지
-  pageCount: number; // 전체 페이지 수
-  pageSize: number; // 페이지당 아이템 수
-  canPreviousPage: boolean; // 이전 페이지 이동 가능 여부
-  canNextPage: boolean; // 다음 페이지 이동 가능 여부
-  onFirstPage: () => void; // 첫 페이지로 이동
-  onPreviousPage: () => void; // 이전 페이지로 이동
-  onNextPage: () => void; // 다음 페이지로 이동
-  onLastPage: () => void; // 마지막 페이지로 이동
-  onPageSizeChange: (size: number) => void; // 페이지 크기 변경
+  currentPage: number;
+  pageCount: number;
+  pageSize: number;
+  canPreviousPage: boolean;
+  canNextPage: boolean;
+  onFirstPage: () => void;
+  onPreviousPage: () => void;
+  onNextPage: () => void;
+  onLastPage: () => void;
+  onPageSizeChange: (size: number) => void;
 }
