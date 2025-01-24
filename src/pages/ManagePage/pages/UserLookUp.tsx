@@ -9,6 +9,7 @@ import {
   flexRender,
   createColumnHelper,
   getSortedRowModel,
+  getPaginationRowModel,
 } from '@tanstack/react-table';
 import search from '../../../assets/Icons/search.svg';
 import approve from '../../../assets/Icons/approve.svg';
@@ -17,6 +18,7 @@ import { FilterFn, getFilteredRowModel } from '@tanstack/react-table';
 import { rankItem } from '@tanstack/match-sorter-utils';
 import Title from '../components/Title';
 import { DebouncedInputProps } from '../interface';
+import Pagination from '../components/Pagination';
 
 const columnHelper = createColumnHelper<User>();
 
@@ -40,7 +42,7 @@ const UserLookUp = () => {
     columnHelper.accessor('isAdmin', {
       header: () => <span>권한</span>,
       cell: ({ getValue }) => (
-        <Badge variant={getValue() ? '관리자' : '일반회원'}>
+        <Badge $variant={getValue() ? '관리자' : '일반회원'}>
           {getValue() ? '관리자' : '일반회원'}
         </Badge>
       ),
@@ -48,7 +50,7 @@ const UserLookUp = () => {
     columnHelper.accessor('isApproved', {
       header: () => <span>상태</span>,
       cell: ({ getValue }) => (
-        <Badge variant={getValue() ? '승인' : '대기'}>
+        <Badge $variant={getValue() ? '승인' : '대기'}>
           {getValue() ? '승인' : '대기'}
         </Badge>
       ),
@@ -69,12 +71,12 @@ const UserLookUp = () => {
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 5,
   });
 
   // 표 데이터 및 쿼리
   const { data, isLoading } = useQuery({
-    queryKey: ['users', pagination],
+    queryKey: ['users'],
     queryFn: () => userAPI.fetchUser(),
   });
   const defaultData = useMemo(() => [], []);
@@ -113,22 +115,23 @@ const UserLookUp = () => {
     );
   }
 
-  //기본 테이블 설정
+  // 기본 테이블 설정
   const table = useReactTable({
+    //기본 설정
     data: data ?? defaultData,
     columns,
-    rowCount: data?.length ?? 0,
     state: {
       pagination,
       globalFilter,
     },
-
-    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
     debugTable: true,
 
-    //초기 정렬
+    //페이지 관련 설정
+    onPaginationChange: setPagination,
+    getPaginationRowModel: getPaginationRowModel(),
+    manualPagination: false,
+    //정렬 관련 설정
     initialState: {
       sorting: [
         {
@@ -204,55 +207,19 @@ const UserLookUp = () => {
               ))}
             </tbody>
           </Table>
-          <PaginationContainer>
-            <ButtonGroup>
-              <PaginationButton
-                onClick={() => table.firstPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                {'<<'}
-              </PaginationButton>
-              <PaginationButton
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                {'<'}
-              </PaginationButton>
-              <PageButton active>
-                {table.getState().pagination.pageIndex + 1}
-              </PageButton>
-              <PaginationButton
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                {'>'}
-              </PaginationButton>
-              <PaginationButton
-                onClick={() => table.lastPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                {'>>'}
-              </PaginationButton>
-            </ButtonGroup>
-
-            <PageInfo>
-              Page {table.getState().pagination.pageIndex + 1} of{' '}
-              {table.getPageCount()}
-            </PageInfo>
-
-            <PageSelect
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => table.setPageSize(Number(e.target.value))}
-            >
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
-              ))}
-            </PageSelect>
-
-            {isLoading && <LoadingText>Loading...</LoadingText>}
-          </PaginationContainer>
+          <Pagination
+            currentPage={table.getState().pagination.pageIndex}
+            pageCount={table.getPageCount()}
+            pageSize={table.getState().pagination.pageSize}
+            canPreviousPage={table.getCanPreviousPage()}
+            canNextPage={table.getCanNextPage()}
+            onFirstPage={() => table.firstPage()}
+            onPreviousPage={() => table.previousPage()}
+            onNextPage={() => table.nextPage()}
+            onLastPage={() => table.lastPage()}
+            onPageSizeChange={(size) => table.setPageSize(size)}
+          />
+          {isLoading && <LoadingText>Loading...</LoadingText>}
         </TableWrapper>
       </TableContainer>
     </BaseContainer>
@@ -344,14 +311,14 @@ const Table = styled.table`
 `;
 
 const Badge = styled.span<{
-  variant: '관리자' | '일반회원' | '대기' | '승인';
+  $variant: '관리자' | '일반회원' | '대기' | '승인';
 }>`
   padding: 4px 10px;
   border-radius: 9999px;
   font-size: ${({ theme }) => theme.fonts.sizes.ms};
 
-  ${(props) => {
-    switch (props.variant) {
+  ${({ $variant }) => {
+    switch ($variant) {
       case '관리자':
         return `
          background: #dbeafe;
@@ -375,69 +342,7 @@ const Badge = styled.span<{
     }
   }}
 `;
-
-//페이지 네이션
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 4px;
-`;
-
-const PageButton = styled.button<{ active?: boolean }>`
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: ${({ theme }) => theme.fonts.sizes.ms};
-
-  background: ${(props) => (props.active ? '#3b82f6' : 'transparent')};
-  color: ${(props) => (props.active ? 'white' : 'inherit')};
-  border: ${(props) => (props.active ? 'none' : '1px solid #e5e7eb')};
-
-  &:hover:not(:disabled) {
-    background: ${(props) => (props.active ? '#2563eb' : '#f9fafb')};
-  }
-`;
-
 const LoadingText = styled.span`
   color: #6b7280;
-  font-size: ${({ theme }) => theme.fonts.sizes.ms};
-`;
-const PaginationContainer = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 16px;
-  padding: 16px 24px;
-`;
-
-const PaginationButton = styled.button<{ disabled?: boolean }>`
-  padding: 6px 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  font-size: ${({ theme }) => theme.fonts.sizes.ms};
-
-  &:hover:not(:disabled) {
-    background-color: #f9fafb;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
-const PageInfo = styled.span`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: ${({ theme }) => theme.fonts.sizes.ms};
-  color: #4b5563;
-`;
-
-const PageSelect = styled.select`
-  padding: 6px;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
   font-size: ${({ theme }) => theme.fonts.sizes.ms};
 `;
