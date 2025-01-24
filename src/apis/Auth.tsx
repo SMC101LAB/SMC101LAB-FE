@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { api } from './api';
 
 export interface JoinFormType {
   name: string;
@@ -11,16 +11,10 @@ export interface LoginFormType {
   password: string;
 }
 
-export const api = axios.create({
-  baseURL: 'http://localhost:3000',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
 export const authAPI = {
   login: async (data: LoginFormType) => {
     const response = await api.post('auth/login', data);
+    localStorage.setItem('token', response.data.token);
     return response.data;
   },
   join: async (data: JoinFormType) => {
