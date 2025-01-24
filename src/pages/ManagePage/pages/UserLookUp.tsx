@@ -26,6 +26,7 @@ declare module '@tanstack/react-table' {
     fuzzy: FilterFn<unknown>;
   }
 }
+
 const UserLookUp = () => {
   const queryClient = useQueryClient();
   //승인API
@@ -99,7 +100,7 @@ const UserLookUp = () => {
               src={reject}
               onClick={() => {
                 console.log('click', row.original._id);
-                if (confirm('삭제제하시겠습니까?')) {
+                if (confirm('삭제하시겠습니까?')) {
                   DeleteMutation.mutate(row.original._id);
                 }
               }}
@@ -199,7 +200,7 @@ const UserLookUp = () => {
       <TableContainer>
         <Header>
           <div onClick={() => setGlobalFilter('')}>
-            <Title text={'회원관리'} />
+            <Title text={'회원조회 및 승인'} />
           </div>
           <SearchWrapper>
             <SearchInput>
