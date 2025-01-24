@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { api } from './api';
 
 export interface JoinFormType {
   name: string;
@@ -10,13 +10,6 @@ export interface LoginFormType {
   phone: string;
   password: string;
 }
-
-export const api = axios.create({
-  baseURL: 'http://localhost:3000',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
 
 export const authAPI = {
   login: async (data: LoginFormType) => {

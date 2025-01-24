@@ -9,7 +9,9 @@ const SideComponents: FC<SideComponentsProps> = ({
   const [toggle, setToggle] = useState<[boolean, boolean]>([false, false]);
   return (
     <SideContainer>
-      <Logo>SMC101LAB</Logo>
+      <LogoWrapper>
+        <Logo>SMC101LAB</Logo>
+      </LogoWrapper>
       <IndexWrapper>
         <IndexContainer
           $isSelect={selectPage[0]}
@@ -67,7 +69,7 @@ const SideComponents: FC<SideComponentsProps> = ({
               $isSelect={selectPage[5]}
               onClick={() => ChooseIndex(5)}
             >
-              <IndexText>회원 수정/삭제</IndexText>
+              <IndexText>회원수정 및 삭제</IndexText>
             </SubIndexContainer>
           </>
         )}
@@ -83,6 +85,10 @@ const SideComponents: FC<SideComponentsProps> = ({
 };
 export default SideComponents;
 const SideContainer = styled.div`
+  @media ${({ theme }) => theme.device.mobile} {
+    width: 0;
+    display: none;
+  }
   width: 15%;
   height: 100%;
   border-right: 1px solid ${({ theme }) => theme.colors.grey[300]};
@@ -93,11 +99,19 @@ const SideContainer = styled.div`
 `;
 
 const Logo = styled.div`
-  padding: 40px 20px;
-  width: 100%;
+  @media ${({ theme }) => theme.device.tablet} {
+    font-size: ${({ theme }) => theme.fonts.sizes.ml};
+  }
   color: ${({ theme }) => theme.colors.primaryDark};
   font-size: ${({ theme }) => theme.fonts.sizes.ts};
   font-weight: ${({ theme }) => theme.fonts.weights.bold};
+`;
+const LogoWrapper = styled.div`
+  width: 100%;
+  padding: 40px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 const IndexWrapper = styled.div`
   width: 100%;
@@ -110,6 +124,9 @@ const ToggleIndexContainer = styled.div`
   justify-content: space-between;
 `;
 const ToggleIndexText = styled.div<{ $isOpen: boolean }>`
+  @media ${({ theme }) => theme.device.tablet} {
+    font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  }
   color: ${({ theme }) => theme.colors.grey[700]};
   font-size: ${({ theme }) => theme.fonts.sizes.mm};
   font-weight: ${({ $isOpen, theme }) =>
@@ -138,6 +155,9 @@ const IndexContainer = styled.div<{ $isSelect: boolean }>`
     $isSelect ? theme.colors.grey[200] : '#fff'};
 `;
 const IndexText = styled.div`
+  @media ${({ theme }) => theme.device.tablet} {
+    font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  }
   color: ${({ theme }) => theme.colors.grey[700]};
   font-size: ${({ theme }) => theme.fonts.sizes.mm};
   font-weight: ${({ theme }) => theme.fonts.weights.medium};
