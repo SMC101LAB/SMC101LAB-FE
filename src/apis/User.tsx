@@ -26,4 +26,15 @@ export const userAPI = {
     const response = await api.delete(`auth/users/${id}`);
     return response.data;
   },
+
+  modifyUser: async (data: User) => {
+    const response = await api.put(`auth/users/${data._id}`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log('수정 결과', response.data);
+    return response.data;
+  },
 };
