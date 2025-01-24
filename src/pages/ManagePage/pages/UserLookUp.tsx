@@ -28,7 +28,7 @@ declare module '@tanstack/react-table' {
 }
 const UserLookUp = () => {
   const queryClient = useQueryClient();
-  //승인 api
+  //승인API
   const ApproveMutation = useMutation({
     mutationFn: (id: number) => userAPI.approveUser(id),
     onSuccess: () => {
@@ -40,7 +40,18 @@ const UserLookUp = () => {
       console.error('approve Error:', error);
     },
   });
-
+  //삭제API
+  const DeleteMutation = useMutation({
+    mutationFn: (id: number) => userAPI.deleteUser(id),
+    onSuccess: () => {
+      alert('삭제 성공');
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+    onError: (error) => {
+      alert('삭제에 실패했습니다. 다시 시도해주세요.');
+      console.error('approve Error:', error);
+    },
+  });
   //기본 테이블 설정을 위한 구조 선언
   const columns = [
     columnHelper.accessor('name', {
@@ -84,7 +95,16 @@ const UserLookUp = () => {
               src={approve}
               alt="승인"
             />
-            <DecisionIcon src={reject} alt="거절" />
+            <DecisionIcon
+              src={reject}
+              onClick={() => {
+                console.log('click', row.original._id);
+                if (confirm('삭제제하시겠습니까?')) {
+                  DeleteMutation.mutate(row.original._id);
+                }
+              }}
+              alt="거절"
+            />
           </div>
         ),
     }),

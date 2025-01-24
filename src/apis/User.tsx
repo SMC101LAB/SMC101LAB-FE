@@ -22,4 +22,8 @@ export const userAPI = {
     const response = await api.put(`auth/users/approve/${id}`);
     return response.data;
   },
+  deleteUser: async (id: number) => {
+    const response = await api.delete(`auth/users/${id}`);
+    return response.data;
+  },
 };
