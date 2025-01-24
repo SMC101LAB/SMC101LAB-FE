@@ -6,11 +6,11 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
     -webkit-user-select:none;
-    -moz-user-select:none;
+    -moz-user-select:none;      
     -ms-user-select:none;
-    user-select:none;
+    user-select:none; 
   }
- 
+
   button {
     cursor: pointer;
     border: none;
