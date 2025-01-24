@@ -14,7 +14,6 @@ export interface LoginFormType {
 export const authAPI = {
   login: async (data: LoginFormType) => {
     const response = await api.post('auth/login', data);
-    localStorage.setItem('token', response.data.token);
     return response.data;
   },
   join: async (data: JoinFormType) => {

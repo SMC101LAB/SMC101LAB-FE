@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { userAPI, User } from '../../../apis/User';
 import { styled } from 'styled-components';
 import {
@@ -19,7 +19,6 @@ import { rankItem } from '@tanstack/match-sorter-utils';
 import Title from '../components/Title';
 import { DebouncedInputProps } from '../interface';
 import Pagination from '../components/Pagination';
-
 const columnHelper = createColumnHelper<User>();
 
 declare module '@tanstack/react-table' {
@@ -28,6 +27,20 @@ declare module '@tanstack/react-table' {
   }
 }
 const UserLookUp = () => {
+  const queryClient = useQueryClient();
+  //승인 api
+  const ApproveMutation = useMutation({
+    mutationFn: (id: number) => userAPI.approveUser(id),
+    onSuccess: () => {
+      alert('승인 성공');
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+    onError: (error) => {
+      alert('승인에 실패했습니다. 다시 시도해주세요.');
+      console.error('approve Error:', error);
+    },
+  });
+
   //기본 테이블 설정을 위한 구조 선언
   const columns = [
     columnHelper.accessor('name', {
@@ -61,7 +74,16 @@ const UserLookUp = () => {
       cell: ({ row }) =>
         row.original.isApproved === false && (
           <div>
-            <DecisionIcon src={approve} alt="승인" />
+            <DecisionIcon
+              onClick={() => {
+                console.log('click', row.original._id);
+                if (confirm('승인하시겠습니까?')) {
+                  ApproveMutation.mutate(row.original._id);
+                }
+              }}
+              src={approve}
+              alt="승인"
+            />
             <DecisionIcon src={reject} alt="거절" />
           </div>
         ),
@@ -73,7 +95,6 @@ const UserLookUp = () => {
     pageIndex: 0,
     pageSize: 5,
   });
-
   // 표 데이터 및 쿼리
   const { data, isLoading } = useQuery({
     queryKey: ['users'],
@@ -87,6 +108,8 @@ const UserLookUp = () => {
     addMeta({ itemRank });
     return itemRank.passed;
   };
+
+  //검색함수
   function DebouncedInput({
     value: initialValue,
     onChange,
