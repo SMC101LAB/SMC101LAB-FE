@@ -32,7 +32,7 @@ const Login = () => {
     );
     if (isFormFilled) {
       joinMutation.mutate(loginForm);
-      nav('/map');
+      nav('/manage/home');
     } else {
       alert('빈칸 없이 입력해주세요.');
     }
