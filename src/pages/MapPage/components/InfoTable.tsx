@@ -3,11 +3,20 @@ import { SelectItemProps } from '../interface';
 
 const InfoTable: React.FC<SelectItemProps> = ({ selectItem }) => {
   if (!selectItem) return null;
+  const grade = selectItem.inspections[0]?.riskLevel.includes('A')
+    ? 'A'
+    : selectItem.inspections[0]?.riskLevel.includes('B')
+    ? 'B'
+    : selectItem.inspections[0]?.riskLevel.includes('C')
+    ? 'C'
+    : selectItem.inspections[0]?.riskLevel.includes('D')
+    ? 'D'
+    : 'F';
   return (
     <InnerContainer>
       <TitleWrapper>
-        <Title>{selectItem.steepSlopeName}</Title>
-        <Num>{selectItem.mainLotNumber}</Num>
+        <Title>{selectItem.name}</Title>
+        <Num>{selectItem.managementNo}</Num>
       </TitleWrapper>
 
       <ContentSection>
@@ -17,31 +26,30 @@ const InfoTable: React.FC<SelectItemProps> = ({ selectItem }) => {
         </InfoRow>
         <InfoRow>
           <Label>시행청명</Label>
-          <Value>{selectItem.implementationOffice}</Value>
+          <Value>{selectItem.management.organization}</Value>
         </InfoRow>
         <InfoRow>
           <Label>소관부서명</Label>
-          <Value>{selectItem.departmentName}</Value>
+          <Value>{selectItem.management.department}</Value>
         </InfoRow>
-        {/* <InfoRow>
-          <Label>관리주체</Label>
-          <Value>{selectItem.managementTypeCode}</Value>
-        </InfoRow> */}
+
         <AddressWrapper>
           <Label>주소</Label>
           <AddressValue>
-            {selectItem.province} {selectItem.city} {selectItem.district}
-            {selectItem.detailAddress}
+            {selectItem.location.province} {selectItem.location.city}{' '}
+            {selectItem.location.district}
+            {selectItem.location.address}
           </AddressValue>
         </AddressWrapper>
         <InfoRow>
           <Label>등급</Label>
-          <GradeValue grade={selectItem.grade}>{selectItem.grade}</GradeValue>
+          <GradeValue grade={grade}>{grade}</GradeValue>
         </InfoRow>
         <InfoRow>
           <Label>좌표</Label>
           <Value>
-            {selectItem.lat}, {selectItem.lng}
+            {selectItem.location.coordinates.start.coordinates[1]},{' '}
+            {selectItem.location.coordinates.start.coordinates[0]}
           </Value>
         </InfoRow>
       </ContentSection>
