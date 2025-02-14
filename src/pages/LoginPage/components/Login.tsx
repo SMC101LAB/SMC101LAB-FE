@@ -21,7 +21,7 @@ const Login = () => {
       });
     },
     onError: (error) => {
-      alert('로그인인에 실패했습니다. 다시 시도해주세요.');
+      alert('로그인에 실패했습니다. 다시 시도해주세요.');
       console.error('join Error:', error);
     },
   });
@@ -32,7 +32,7 @@ const Login = () => {
     );
     if (isFormFilled) {
       joinMutation.mutate(loginForm);
-      nav('/manage/home');
+      nav('/manage/map');
     } else {
       alert('빈칸 없이 입력해주세요.');
     }
