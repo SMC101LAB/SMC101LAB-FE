@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import styled from 'styled-components';
 
 import BottomSheet from './components/BottomSheet';
 import MapComponent from './components/MapComponent';
-import { Slope, slopeAPI } from '../../apis/Map/LookUp';
-import search from '../../assets/Icons/searchWhite.svg';
+import SearchComponent from './components/Search';
+
+import { Slope, slopeAPI } from '../../apis/Map/slope';
 
 const MapPage = () => {
   // console.log(escarpmentData);
@@ -17,8 +18,10 @@ const MapPage = () => {
   );
   const [slopeData, setSlopeData] = useState<Slope[]>([]);
 
+  // const [searchInput, setSearchInput] = useState<string>('');
   useEffect(() => {
     const fetchSlopes = async () => {
+      //위치정보가 없는 경우 호출 안함
       if (!userLocation?.lat() || !userLocation?.lng()) return;
 
       try {
@@ -36,6 +39,46 @@ const MapPage = () => {
     fetchSlopes();
   }, [userLocation]);
 
+  const handleSearch = useCallback((searchValue: string) => {
+    // console.log('Searching for:', searchValue);
+
+    const searchSlope = async () => {
+      //위치정보가 없는 경우 호출 안함
+      if (!userLocation?.lat() || !userLocation?.lng()) return;
+
+      try {
+        const data = await slopeAPI.searchSlopes(
+          searchValue,
+          userLocation.lat(),
+          userLocation.lng()
+        );
+        setSlopeData(data || []);
+      } catch (error) {
+        console.error('Error search slopes:', error);
+        setSlopeData([]);
+      }
+    };
+    searchSlope();
+  }, []);
+
+  const [mapInstance, setMapInstance] = useState<naver.maps.Map | null>(null);
+
+  const chooseSelectItem = useCallback(
+    (item: Slope, index: number) => {
+      if (mapInstance && item) {
+        // 지도 이동
+        const coordinates = item.location.coordinates.start.coordinates;
+        mapInstance.panTo(
+          new naver.maps.LatLng(coordinates[1], coordinates[0])
+        );
+
+        // 마커 선택 상태 변경
+        setSelectedMarkerId((prevId) => (prevId === index ? null : index));
+      }
+    },
+    [mapInstance]
+  );
+
   return (
     <BaseBackground>
       <MapComponent
@@ -45,19 +88,33 @@ const MapPage = () => {
         allTextShow={allTextShow}
         userLocation={userLocation}
         setUserLocation={setUserLocation}
+        // 추가
+        mapInstance={mapInstance}
+        setMapInstance={setMapInstance}
+        onMarkerClick={chooseSelectItem}
       />
       <BottomSheet
+        slopeData={slopeData}
         selectItem={
           selectedMarkerId !== null ? slopeData[selectedMarkerId] : null
         }
+        // 추가
+        onItemClick={chooseSelectItem}
       />
-      <SearchContainer>
-        <SearchInput placeholder="검색..."></SearchInput>
+      {/* <SearchContainer>
+        <SearchInput
+          placeholder="검색..."
+          value={searchInput}
+          onChange={(e) => {
+            setSearchInput(e.target.value);
+    }}
+        ></SearchInput>
 
         <SearchIconWrapper>
           <SearchIcon src={search} alt="검색" />
         </SearchIconWrapper>
-      </SearchContainer>
+      </SearchContainer> */}
+      <SearchComponent onSearch={handleSearch} />
       <AllShowButton
         $isSelect={allTextShow}
         onClick={() => {
@@ -101,35 +158,35 @@ const AllShowButton = styled.button<{ $isSelect: boolean }>`
   }
 `;
 
-const SearchContainer = styled.div`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  display: flex;
-  gap: 10px;
-  padding: 5px 10px;
-`;
+// const SearchContainer = styled.div`
+//   position: absolute;
+//   top: 10px;
+//   left: 10px;
+//   display: flex;
+//   gap: 10px;
+//   padding: 5px 10px;
+// `;
 
-const SearchInput = styled.input`
-  padding: 5px 15px;
-  border-radius: 20px;
-  /* border: 2px solid;
-  border-color: ${({ theme }) => theme.colors.primaryDark};
- */
-  background-color: #fff;
-  box-shadow: ${({ theme }) => theme.shadows.lg};
-`;
-const SearchIcon = styled.img`
-  width: 23px;
-  z-index: 1;
-`;
-const SearchIconWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 35px;
-  height: 30px;
-  border-radius: 15px;
-  background-color: ${({ theme }) => theme.colors.primaryDark};
-  box-shadow: ${({ theme }) => theme.shadows.md};
-`;
+// const SearchInput = styled.input`
+//   padding: 5px 15px;
+//   border-radius: 20px;
+//   /* border: 2px solid;
+//   border-color: ${({ theme }) => theme.colors.primaryDark};
+//  */
+//   background-color: #fff;
+//   box-shadow: ${({ theme }) => theme.shadows.lg};
+// `;
+// const SearchIcon = styled.img`
+//   width: 23px;
+//   z-index: 1;
+// `;
+// const SearchIconWrapper = styled.div`
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   width: 35px;
+//   height: 30px;
+//   border-radius: 15px;
+//   background-color: ${({ theme }) => theme.colors.primaryDark};
+//   box-shadow: ${({ theme }) => theme.shadows.md};
+// `;

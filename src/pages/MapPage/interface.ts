@@ -1,4 +1,4 @@
-import { Slope } from '../../apis/Map/LookUp';
+import { Slope } from '../../apis/Map/slope';
 
 export interface MapComponentProps {
   selectedMarkerId: number | null;
@@ -7,7 +7,23 @@ export interface MapComponentProps {
   allTextShow: boolean;
   userLocation: naver.maps.LatLng | null;
   setUserLocation: (location: naver.maps.LatLng | null) => void;
+  mapInstance: naver.maps.Map | null;
+  setMapInstance: (map: naver.maps.Map | null) => void;
+  onMarkerClick: (item: Slope, index: number) => void;
 }
-export interface SelectItemProps {
+export interface BottomSheetProps {
+  slopeData: Slope[];
   selectItem: Slope | null;
+  onItemClick: (item: Slope, index: number) => void;
+}
+export interface InfotableProps {
+  selectItem: Slope | null;
+}
+export interface ListProps {
+  item: Slope | null;
+  onClick?: () => void;
+}
+
+export interface SearchComponentProps {
+  onSearch: (value: string) => void;
 }

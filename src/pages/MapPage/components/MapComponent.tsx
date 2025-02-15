@@ -21,11 +21,15 @@ const MapComponent: React.FC<MapComponentProps> = ({
   allTextShow,
   userLocation,
   setUserLocation,
+  //추가
+  mapInstance,
+  setMapInstance,
+  onMarkerClick,
 }) => {
   const navermaps = useNavermaps();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  console.log(errorMessage);
-  console.log(escarpmentData);
+  // console.log(errorMessage);
+  // console.log(escarpmentData);
 
   useEffect(() => {
     if (!navermaps) return;
@@ -77,7 +81,15 @@ const MapComponent: React.FC<MapComponentProps> = ({
           height: '100%',
         }}
       >
-        <NaverMap defaultCenter={userLocation} defaultZoom={15}>
+        <NaverMap
+          defaultCenter={userLocation}
+          defaultZoom={15}
+          ref={(ref) => {
+            if (ref && !mapInstance) {
+              setMapInstance(ref);
+            }
+          }}
+        >
           <Marker
             position={userLocation}
             icon={{
@@ -105,7 +117,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
           />
           {escarpmentData.length > 0
             ? escarpmentData.map((item, index) => {
-                console.log(item);
+                // console.log(item);
                 const grade = item.inspections[0]?.riskLevel.includes('A')
                   ? 'A'
                   : item.inspections[0]?.riskLevel.includes('B')
@@ -162,9 +174,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
                       anchor: new navermaps.Point(16, 16),
                     }}
                     onClick={() => {
-                      setSelectedMarkerId(
-                        selectedMarkerId === index ? null : index
-                      );
+                      onMarkerClick(item, index);
                     }}
                   />
                 );

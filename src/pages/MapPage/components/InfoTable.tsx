@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { SelectItemProps } from '../interface';
+import { InfotableProps } from '../interface';
 
-const InfoTable: React.FC<SelectItemProps> = ({ selectItem }) => {
+const InfoTable: React.FC<InfotableProps> = ({ selectItem }) => {
   if (!selectItem) return null;
   const grade = selectItem.inspections[0]?.riskLevel.includes('A')
     ? 'A'
