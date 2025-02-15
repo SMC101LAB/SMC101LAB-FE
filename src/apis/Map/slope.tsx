@@ -66,4 +66,19 @@ export const slopeAPI = {
     console.log('근처 급 경사지 조회', response.data);
     return response.data.data;
   },
+
+  searchSlopes: async (
+    keyWord: string,
+    latitude: number,
+    longitude: number
+  ) => {
+    console.log(keyWord, latitude, longitude);
+    const response = await api.post(`slopes/search`, {
+      keyWord,
+      latitude,
+      longitude,
+    });
+    console.log('급경사지 검색', response.data);
+    return response.data.data;
+  },
 };
