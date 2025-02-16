@@ -56,7 +56,7 @@ export interface Slope {
   createdAt: Date;
 }
 
-export const slopeAPI = {
+export const slopeMapAPI = {
   fetchNearbySlopes: async (latitude: number, longitude: number) => {
     console.log(latitude, longitude);
     const response = await api.post(`slopes/nearby`, {
