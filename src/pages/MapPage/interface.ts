@@ -2,7 +2,6 @@ import { Slope } from '../../apis/Map/slope';
 
 export interface MapComponentProps {
   selectedMarkerId: number | null;
-  setSelectedMarkerId: (id: number | null) => void;
   escarpmentData: Slope[];
   allTextShow: boolean;
   userLocation: naver.maps.LatLng | null;

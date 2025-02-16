@@ -16,7 +16,6 @@ import { MapComponentProps } from '../interface';
 
 const MapComponent: React.FC<MapComponentProps> = ({
   selectedMarkerId,
-  setSelectedMarkerId,
   escarpmentData,
   allTextShow,
   userLocation,

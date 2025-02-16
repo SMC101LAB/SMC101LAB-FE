@@ -18,7 +18,6 @@ const MapPage = () => {
   );
   const [slopeData, setSlopeData] = useState<Slope[]>([]);
 
-  // const [searchInput, setSearchInput] = useState<string>('');
   useEffect(() => {
     const fetchSlopes = async () => {
       //위치정보가 없는 경우 호출 안함
@@ -83,7 +82,6 @@ const MapPage = () => {
     <BaseBackground>
       <MapComponent
         selectedMarkerId={selectedMarkerId}
-        setSelectedMarkerId={setSelectedMarkerId}
         escarpmentData={slopeData}
         allTextShow={allTextShow}
         userLocation={userLocation}
@@ -101,19 +99,7 @@ const MapPage = () => {
         // 추가
         onItemClick={chooseSelectItem}
       />
-      {/* <SearchContainer>
-        <SearchInput
-          placeholder="검색..."
-          value={searchInput}
-          onChange={(e) => {
-            setSearchInput(e.target.value);
-    }}
-        ></SearchInput>
 
-        <SearchIconWrapper>
-          <SearchIcon src={search} alt="검색" />
-        </SearchIconWrapper>
-      </SearchContainer> */}
       <SearchComponent onSearch={handleSearch} />
       <AllShowButton
         $isSelect={allTextShow}
@@ -157,36 +143,3 @@ const AllShowButton = styled.button<{ $isSelect: boolean }>`
     outline: none;
   }
 `;
-
-// const SearchContainer = styled.div`
-//   position: absolute;
-//   top: 10px;
-//   left: 10px;
-//   display: flex;
-//   gap: 10px;
-//   padding: 5px 10px;
-// `;
-
-// const SearchInput = styled.input`
-//   padding: 5px 15px;
-//   border-radius: 20px;
-//   /* border: 2px solid;
-//   border-color: ${({ theme }) => theme.colors.primaryDark};
-//  */
-//   background-color: #fff;
-//   box-shadow: ${({ theme }) => theme.shadows.lg};
-// `;
-// const SearchIcon = styled.img`
-//   width: 23px;
-//   z-index: 1;
-// `;
-// const SearchIconWrapper = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   width: 35px;
-//   height: 30px;
-//   border-radius: 15px;
-//   background-color: ${({ theme }) => theme.colors.primaryDark};
-//   box-shadow: ${({ theme }) => theme.shadows.md};
-// `;
