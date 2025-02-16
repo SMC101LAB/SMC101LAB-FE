@@ -11,37 +11,64 @@ import BmarkerIcon from '../../../assets/b.png';
 import CmarkerIcon from '../../../assets/c.png';
 import DmarkerIcon from '../../../assets/d.png';
 import FmarkerIcon from '../../../assets/f.png';
+import UserPosIcon from '../../../assets/current_position.png';
 import { MapComponentProps } from '../interface';
 
 const MapComponent: React.FC<MapComponentProps> = ({
   selectedMarkerId,
-  setSelectedMarkerId,
   escarpmentData,
   allTextShow,
+  userLocation,
+  setUserLocation,
+  //추가
+  mapInstance,
+  setMapInstance,
+  onMarkerClick,
 }) => {
   const navermaps = useNavermaps();
-  const [userLocation, setUserLocation] = useState(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  console.log(errorMessage);
+  // console.log(errorMessage);
+  // console.log(escarpmentData);
+
   useEffect(() => {
+    if (!navermaps) return;
+
+    let watchId: number;
+
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
+      watchId = navigator.geolocation.watchPosition(
         (position) => {
-          const { latitude, longitude } = position.coords;
-          setUserLocation(new navermaps.LatLng(latitude, longitude));
+          try {
+            const { latitude, longitude } = position.coords;
+            if (latitude && longitude) {
+              setUserLocation(new navermaps.LatLng(latitude, longitude));
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            setErrorMessage('위치 정보를 가져올 수 없습니다.');
+            setUserLocation(new navermaps.LatLng(37.5665, 126.978));
+          }
         },
         (error) => {
-          console.error('Error fetching location:', error);
-          setErrorMessage('위치 정보를 가져올 수 없습니다.');
+          console.error('Error:', error);
+          setErrorMessage('브라우저가 위치 정보를 지원하지 않습니다.');
           setUserLocation(new navermaps.LatLng(37.5665, 126.978));
+        },
+        {
+          enableHighAccuracy: true, // 높은 정확도
+          maximumAge: 0, // 캐시된 위치정보를 사용하지 않음
+          timeout: 5000,
         }
       );
-    } else {
-      console.error('Geolocation is not supported by this browser.');
-      setErrorMessage('브라우저가 위치 정보를 지원하지 않습니다.');
-      setUserLocation(new navermaps.LatLng(37.5665, 126.978));
     }
-  }, [navermaps]);
+
+    // cleanup
+    return () => {
+      if (watchId) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
+  }, [navermaps, setUserLocation]);
   if (!userLocation) {
     return <div>지도를 로드 중입니다...</div>;
   }
@@ -53,55 +80,105 @@ const MapComponent: React.FC<MapComponentProps> = ({
           height: '100%',
         }}
       >
-        <NaverMap defaultCenter={userLocation} defaultZoom={15}>
-          <Marker position={userLocation} />
-          {escarpmentData.map((item, index) => {
-            const markerIcon =
-              item.grade === 'A'
-                ? AmarkerIcon
-                : item.grade === 'B'
-                ? BmarkerIcon
-                : item.grade === 'C'
-                ? CmarkerIcon
-                : item.grade === 'D'
-                ? DmarkerIcon
-                : FmarkerIcon;
-            return (
-              <Marker
-                key={index}
-                position={new navermaps.LatLng(item.lat, item.lng)}
-                icon={{
-                  content: `
-              <div style="cursor: pointer; position:relative;">
-              ${
-                selectedMarkerId === index || allTextShow
-                  ? `<div style="position:absolute; top:-15px; left:-46px; width:120px; display:flex; justify-content:center;z-index:1;">
-                    <div style="${
-                      selectedMarkerId === index
-                        ? 'color:#0b5275;font-weight:500;'
-                        : ''
-                    } font-size:16px;">
-                      ${item.steepSlopeName}
-                    </div>
-                  </div>`
-                  : ''
-              }
-                <img src="${markerIcon}"
-                     alt="marker"
-                     style="width: 22px; height: 22px;"
-                />
+        <NaverMap
+          defaultCenter={userLocation}
+          defaultZoom={15}
+          ref={(ref) => {
+            if (ref && !mapInstance) {
+              setMapInstance(ref);
+            }
+          }}
+        >
+          <Marker
+            position={userLocation}
+            icon={{
+              content: `     
+              <div style="cursor: pointer; position: relative; display: flex; justify-content: center; align-items: center;">    
+                <div style="
+                  position: absolute;
+                  width: 40px;
+                  height: 40px;
+                  background-color: rgba(0, 123, 255, 0.2);
+                  border-radius: 50%;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                ">
+                </div>
+                  <img 
+                    src="${UserPosIcon}"
+                    alt="marker"
+                    style="width: 30px; height: 30px;"
+                  />
               </div>
-            `,
-                  anchor: new navermaps.Point(16, 16),
-                }}
-                onClick={() => {
-                  setSelectedMarkerId(
-                    selectedMarkerId === index ? null : index
-                  );
-                }}
-              />
-            );
-          })}
+                `,
+            }}
+          />
+          {escarpmentData.length > 0
+            ? escarpmentData.map((item, index) => {
+                // console.log(item);
+                const grade = item.inspections[0]?.riskLevel.includes('A')
+                  ? 'A'
+                  : item.inspections[0]?.riskLevel.includes('B')
+                  ? 'B'
+                  : item.inspections[0]?.riskLevel.includes('C')
+                  ? 'C'
+                  : item.inspections[0]?.riskLevel.includes('D')
+                  ? 'D'
+                  : 'F';
+
+                // 적합한 마커 아이콘 선택
+                const markerIcon =
+                  grade === 'A'
+                    ? AmarkerIcon
+                    : grade === 'B'
+                    ? BmarkerIcon
+                    : grade === 'C'
+                    ? CmarkerIcon
+                    : grade === 'D'
+                    ? DmarkerIcon
+                    : FmarkerIcon;
+
+                return (
+                  <Marker
+                    key={index}
+                    position={
+                      new navermaps.LatLng(
+                        item.location.coordinates.start.coordinates[1],
+                        item.location.coordinates.start.coordinates[0]
+                      )
+                    }
+                    icon={{
+                      content: `
+          <div style="cursor: pointer; position:relative;">
+          ${
+            selectedMarkerId === index || allTextShow
+              ? `<div style="position:absolute; top:-15px; left:-46px; width:120px; display:flex; justify-content:center;z-index:1;">
+                  <div style="${
+                    selectedMarkerId === index
+                      ? 'color:#0b5275;font-weight:500;'
+                      : ''
+                  } font-size:16px;">
+                    ${item.name}
+                  </div>
+                </div>`
+              : ''
+          }
+                    <img src="${markerIcon}"
+                        alt="marker"
+                        style="width: 22px; height: 22px;"
+                    />
+                  </div>
+                `,
+                      anchor: new navermaps.Point(16, 16),
+                    }}
+                    onClick={() => {
+                      onMarkerClick(item, index);
+                    }}
+                  />
+                );
+              })
+            : null}
         </NaverMap>
       </MapDiv>
     </MapContainer>

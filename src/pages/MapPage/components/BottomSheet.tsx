@@ -2,17 +2,29 @@ import { useState, useRef, useEffect, TouchEvent } from 'react';
 import styled from 'styled-components';
 import NoInfo from './NoInfo';
 import InfoTable from './InfoTable';
-import { SelectItemProps } from '../interface';
+import { BottomSheetProps } from '../interface';
+import ListContainer from './ListContainer';
 
-const BottomSheet: React.FC<SelectItemProps> = ({ selectItem }) => {
-  const [height, setHeight] = useState<number>(100);
+const BottomSheet: React.FC<BottomSheetProps> = ({
+  slopeData,
+  selectItem,
+  onItemClick,
+}) => {
+  // console.log(selectItem);
+  // console.log(selectItem);
+
+  // bottome Sheet의 움직임 관련 state
+  const [height, setHeight] = useState<number>(200);
   const startY = useRef<number>(0);
-  const currentHeight = useRef<number>(100);
+  const currentHeight = useRef<number>(200);
   const isDragging = useRef<boolean>(false);
-  //   if (!selectItem) return null;
-  console.log(selectItem);
-  console.log(selectItem);
 
+  // bottome Sheet의 높이 관련 useEffect
+  useEffect(() => {
+    setHeight(selectItem === null ? 200 : 300);
+  }, [selectItem]);
+
+  // bottome Sheet의 움직임 관련 함수
   const handleMouseMove = useRef((e: globalThis.MouseEvent) => {
     if (!isDragging.current) return;
 
@@ -28,12 +40,6 @@ const BottomSheet: React.FC<SelectItemProps> = ({ selectItem }) => {
     window.removeEventListener('mousemove', handleMouseMove);
     window.removeEventListener('mouseup', handleMouseUp);
   }).current;
-
-  useEffect(() => {
-    if (selectItem !== undefined) {
-      setHeight(100);
-    }
-  }, [selectItem]);
 
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     startY.current = e.touches[0].clientY;
@@ -62,7 +68,6 @@ const BottomSheet: React.FC<SelectItemProps> = ({ selectItem }) => {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
   };
-  console.log('selectItem', selectItem);
   return (
     <BaseContainer height={height} $isDragging={isDragging.current}>
       <IconWrapper
@@ -74,21 +79,33 @@ const BottomSheet: React.FC<SelectItemProps> = ({ selectItem }) => {
         <SlideContainer />
         <SlideIcon />
       </IconWrapper>
+
       {selectItem !== null ? (
         <InfoTable selectItem={selectItem} />
-      ) : height > 200 ? (
-        <NoInfo />
       ) : (
-        <></>
+        <ListWrapper>
+          {slopeData.map((item, index) => (
+            <ListContainer
+              key={index}
+              item={item}
+              onClick={() => {
+                console.log('클릭');
+                onItemClick(item, index);
+              }}
+            ></ListContainer>
+          ))}
+        </ListWrapper>
       )}
     </BaseContainer>
   );
 };
-
+export default BottomSheet;
 const BaseContainer = styled.div<{ $isDragging?: boolean; height: number }>`
   width: 100%;
   height: ${({ height }) => height}px;
   min-height: 100px;
+  max-height: 800px;
+  overflow: hidden;
   transition: ${({ $isDragging }) =>
     $isDragging ? 'none' : 'height 0.3s ease'};
   border-top-left-radius: 35px;
@@ -121,4 +138,12 @@ const SlideIcon = styled.div`
   background-color: #acacac;
 `;
 
-export default BottomSheet;
+const ListWrapper = styled.div`
+  margin-top: 20px;
+  padding: 0 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: auto;
+  height: calc(100% - 60px);
+`;

@@ -1,131 +1,116 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import styled from 'styled-components';
-import rawData from '../../assets/data.json';
 
 import BottomSheet from './components/BottomSheet';
 import MapComponent from './components/MapComponent';
-import { CheckboxState, DataType } from './interface';
+import SearchComponent from './components/Search';
+
+import { Slope, slopeAPI } from '../../apis/Map/slope';
 
 const MapPage = () => {
   // console.log(escarpmentData);
   // console.log(escarpmentData);
-  const data = rawData as DataType[];
   const [selectedMarkerId, setSelectedMarkerId] = useState<number | null>(null);
   const [allTextShow, setAllTextShow] = useState<boolean>(false);
-  const [checkboxes, setCheckboxes] = useState<CheckboxState>({
-    all: true,
-    상당구: true,
-    서원구: true,
-    청원구: true,
-    흥덕구: true,
-  });
-  const filteredData = useMemo<DataType[]>(() => {
-    if (checkboxes.all) return data;
+  const [userLocation, setUserLocation] = useState<naver.maps.LatLng | null>(
+    null
+  );
+  const [slopeData, setSlopeData] = useState<Slope[]>([]);
 
-    return data.filter((item) => {
-      const checkedAreas = Object.entries(checkboxes)
-        .filter(([key, value]) => key !== 'all' && value)
-        .map(([key]) => key);
+  const [searchMod, setSearchMod] = useState<boolean>(false);
 
-      return checkedAreas.some((area) => item.city.includes(area));
-    });
-  }, [checkboxes]);
+  const fetchSlopes = async () => {
+    //위치정보가 없는 경우 호출 안함
+    if (!userLocation?.lat() || !userLocation?.lng()) return;
 
-  const handleAllCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { checked } = e.target;
-    setCheckboxes({
-      all: checked,
-      상당구: checked,
-      서원구: checked,
-      청원구: checked,
-      흥덕구: checked,
-    });
+    try {
+      const data = await slopeAPI.fetchNearbySlopes(
+        userLocation.lat(),
+        userLocation.lng()
+      );
+      setSlopeData(data || []);
+    } catch (error) {
+      console.error('Error fetching slopes:', error);
+      setSlopeData([]);
+    }
   };
 
-  const handleSingleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
+  useEffect(() => {
+    if (!searchMod) fetchSlopes();
+  }, [userLocation]);
 
-    const newCheckboxes = {
-      ...checkboxes,
-      [name]: checked,
+  const handleSearch = useCallback((searchValue: string) => {
+    console.log('Searching for:', searchValue);
+    if (searchValue === '') {
+      setSearchMod(false);
+      fetchSlopes();
+      return;
+    }
+
+    setSearchMod(true);
+
+    const searchSlope = async () => {
+      //위치정보가 없는 경우 호출 안함
+      if (!userLocation?.lat() || !userLocation?.lng()) return;
+
+      try {
+        const data = await slopeAPI.searchSlopes(
+          searchValue,
+          userLocation.lat(),
+          userLocation.lng()
+        );
+        setSlopeData(data || []);
+      } catch (error) {
+        console.error('Error search slopes:', error);
+        setSlopeData([]);
+      }
     };
+    searchSlope();
+  }, []);
 
-    const allChecked = ['상당구', '서원구', '청원구', '흥덕구'].every(
-      (area) => newCheckboxes[area as keyof Omit<CheckboxState, 'all'>]
-    );
+  const [mapInstance, setMapInstance] = useState<naver.maps.Map | null>(null);
 
-    setCheckboxes({
-      ...newCheckboxes,
-      all: allChecked,
-    });
-  };
+  const chooseSelectItem = useCallback(
+    (item: Slope, index: number) => {
+      setSearchMod(false);
+      if (mapInstance && item) {
+        // 지도 이동
+        const coordinates = item.location.coordinates.start.coordinates;
+        mapInstance.panTo(
+          new naver.maps.LatLng(coordinates[1], coordinates[0])
+        );
+
+        // 마커 선택 상태 변경
+        setSelectedMarkerId((prevId) => (prevId === index ? null : index));
+      }
+    },
+    [mapInstance]
+  );
 
   return (
     <BaseBackground>
       <MapComponent
         selectedMarkerId={selectedMarkerId}
-        setSelectedMarkerId={setSelectedMarkerId}
-        escarpmentData={filteredData}
+        escarpmentData={slopeData}
         allTextShow={allTextShow}
+        userLocation={userLocation}
+        setUserLocation={setUserLocation}
+        // 추가
+        mapInstance={mapInstance}
+        setMapInstance={setMapInstance}
+        onMarkerClick={chooseSelectItem}
       />
       <BottomSheet
+        slopeData={slopeData}
         selectItem={
-          selectedMarkerId !== null ? filteredData[selectedMarkerId] : null
+          selectedMarkerId !== null ? slopeData[selectedMarkerId] : null
         }
+        // 추가
+        onItemClick={chooseSelectItem}
       />
-      <ChooseContainer>
-        <ChooseWrapper>
-          <ChooseArea
-            type="checkbox"
-            checked={checkboxes.all}
-            onChange={handleAllCheck}
-            id="all"
-          />
-          <Label htmlFor="all">모두 선택</Label>
-        </ChooseWrapper>
-        <ChooseWrapper>
-          <ChooseArea
-            type="checkbox"
-            name="상당구"
-            checked={checkboxes.상당구}
-            onChange={handleSingleCheck}
-            id="상당구"
-          />
-          <Label htmlFor="상당구">상당구</Label>
-        </ChooseWrapper>
-        <ChooseWrapper>
-          <ChooseArea
-            type="checkbox"
-            name="서원구"
-            checked={checkboxes.서원구}
-            onChange={handleSingleCheck}
-            id="서원구"
-          />
-          <Label htmlFor="서원구">서원구</Label>
-        </ChooseWrapper>
-        <ChooseWrapper>
-          <ChooseArea
-            type="checkbox"
-            name="청원구"
-            checked={checkboxes.청원구}
-            onChange={handleSingleCheck}
-            id="청원구"
-          />
-          <Label htmlFor="청원구">청원구</Label>
-        </ChooseWrapper>
-        <ChooseWrapper>
-          <ChooseArea
-            type="checkbox"
-            name="흥덕구"
-            checked={checkboxes.흥덕구}
-            onChange={handleSingleCheck}
-            id="흥덕구"
-          />
-          <Label htmlFor="흥덕구">흥덕구</Label>
-        </ChooseWrapper>
-      </ChooseContainer>
 
+      <SearchComponent onSearch={handleSearch} />
       <AllShowButton
         $isSelect={allTextShow}
         onClick={() => {
@@ -153,38 +138,18 @@ const BaseBackground = styled.div`
 
 const AllShowButton = styled.button<{ $isSelect: boolean }>`
   position: absolute;
-  top: 10px;
+  top: 15px;
   right: 10px;
   border: none;
   border-radius: 8px;
   padding: 5px 10px;
-  box-shadow: 0px 0px 5px #444;
+  box-shadow: ${({ theme }) => theme.shadows.sm};
   font-weight: 550;
   background-color: ${({ $isSelect, theme }) =>
-    $isSelect ? theme.colors.secondary : '#fff'};
+    $isSelect ? theme.colors.primaryDark : '#fff'};
   color: ${({ $isSelect, theme }) =>
-    !$isSelect ? theme.colors.secondary : '#fff'};
+    !$isSelect ? theme.colors.primaryDark : '#fff'};
   &:focus {
     outline: none;
   }
-`;
-
-const ChooseContainer = styled.div`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  border-radius: 8px;
-  padding: 5px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`;
-const ChooseWrapper = styled.div`
-  display: flex;
-  gap: 5px;
-`;
-const ChooseArea = styled.input``;
-const Label = styled.label`
-  font-size: ${({ theme }) => theme.fonts.sizes.ms};
-  font-weight: ${({ theme }) => theme.fonts.weights.medium};
 `;
