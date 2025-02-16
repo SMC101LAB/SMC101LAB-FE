@@ -9,7 +9,6 @@ const SearchComponent = ({ onSearch }: SearchComponentProps) => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchInput(value);
-    console.log('검색 값', value);
   };
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {

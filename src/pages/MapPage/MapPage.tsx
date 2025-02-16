@@ -18,6 +18,8 @@ const MapPage = () => {
   );
   const [slopeData, setSlopeData] = useState<Slope[]>([]);
 
+  const [searchMod, setSearchMod] = useState<boolean>(false);
+
   const fetchSlopes = async () => {
     //위치정보가 없는 경우 호출 안함
     if (!userLocation?.lat() || !userLocation?.lng()) return;
@@ -35,15 +37,18 @@ const MapPage = () => {
   };
 
   useEffect(() => {
-    fetchSlopes();
+    if (!searchMod) fetchSlopes();
   }, [userLocation]);
 
   const handleSearch = useCallback((searchValue: string) => {
     console.log('Searching for:', searchValue);
     if (searchValue === '') {
+      setSearchMod(false);
       fetchSlopes();
       return;
     }
+
+    setSearchMod(true);
 
     const searchSlope = async () => {
       //위치정보가 없는 경우 호출 안함
@@ -68,6 +73,7 @@ const MapPage = () => {
 
   const chooseSelectItem = useCallback(
     (item: Slope, index: number) => {
+      setSearchMod(false);
       if (mapInstance && item) {
         // 지도 이동
         const coordinates = item.location.coordinates.start.coordinates;
