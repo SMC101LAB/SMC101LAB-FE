@@ -6,7 +6,7 @@ import BottomSheet from './components/BottomSheet';
 import MapComponent from './components/MapComponent';
 import SearchComponent from './components/Search';
 
-import { Slope, slopeAPI } from '../../apis/Map/slope';
+import { Slope, slopeMapAPI } from '../../apis/Map/slopeMap';
 
 const MapPage = () => {
   // console.log(escarpmentData);
@@ -25,7 +25,7 @@ const MapPage = () => {
     if (!userLocation?.lat() || !userLocation?.lng()) return;
 
     try {
-      const data = await slopeAPI.fetchNearbySlopes(
+      const data = await slopeMapAPI.fetchNearbySlopes(
         userLocation.lat(),
         userLocation.lng()
       );
@@ -55,7 +55,7 @@ const MapPage = () => {
       if (!userLocation?.lat() || !userLocation?.lng()) return;
 
       try {
-        const data = await slopeAPI.searchSlopes(
+        const data = await slopeMapAPI.searchSlopes(
           searchValue,
           userLocation.lat(),
           userLocation.lng()
