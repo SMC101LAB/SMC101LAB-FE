@@ -18,28 +18,32 @@ const MapPage = () => {
   );
   const [slopeData, setSlopeData] = useState<Slope[]>([]);
 
+  const fetchSlopes = async () => {
+    //위치정보가 없는 경우 호출 안함
+    if (!userLocation?.lat() || !userLocation?.lng()) return;
+
+    try {
+      const data = await slopeAPI.fetchNearbySlopes(
+        userLocation.lat(),
+        userLocation.lng()
+      );
+      setSlopeData(data || []);
+    } catch (error) {
+      console.error('Error fetching slopes:', error);
+      setSlopeData([]);
+    }
+  };
+
   useEffect(() => {
-    const fetchSlopes = async () => {
-      //위치정보가 없는 경우 호출 안함
-      if (!userLocation?.lat() || !userLocation?.lng()) return;
-
-      try {
-        const data = await slopeAPI.fetchNearbySlopes(
-          userLocation.lat(),
-          userLocation.lng()
-        );
-        setSlopeData(data || []);
-      } catch (error) {
-        console.error('Error fetching slopes:', error);
-        setSlopeData([]);
-      }
-    };
-
     fetchSlopes();
   }, [userLocation]);
 
   const handleSearch = useCallback((searchValue: string) => {
-    // console.log('Searching for:', searchValue);
+    console.log('Searching for:', searchValue);
+    if (searchValue === '') {
+      fetchSlopes();
+      return;
+    }
 
     const searchSlope = async () => {
       //위치정보가 없는 경우 호출 안함
