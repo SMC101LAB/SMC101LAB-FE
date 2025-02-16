@@ -140,9 +140,10 @@ const SlideIcon = styled.div`
 
 const ListWrapper = styled.div`
   margin-top: 20px;
-  padding: 0 15px;
+  padding: 0 25px;
   display: flex;
   flex-direction: column;
+  gap: 10px;
   overflow: auto;
   height: calc(100% - 60px);
 `;
