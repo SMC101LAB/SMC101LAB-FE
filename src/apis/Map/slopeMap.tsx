@@ -9,6 +9,9 @@ export interface Slope {
     district: string;
     address?: string;
     roadAddress?: string;
+    mountainAddress: string;
+    mainLotNumber: string;
+    subLotNumber: string;
     coordinates: {
       start: {
         type: string;
@@ -42,6 +45,8 @@ export interface Slope {
     result: string;
     riskLevel: string;
     riskType: string;
+    riskScore: string;
+    serialNumber: string;
   }>;
   collapseRisk: {
     districtNo: string;
@@ -52,6 +57,10 @@ export interface Slope {
   maintenanceProject: {
     year: string;
     type: string;
+  };
+  slopeInspectionHistory: {
+    historyNumber: string;
+    inspectionDate: string;
   };
   createdAt: Date;
 }
