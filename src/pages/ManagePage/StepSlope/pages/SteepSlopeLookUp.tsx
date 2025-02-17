@@ -1,4 +1,10 @@
-import React, { useState, useMemo, useRef, useCallback } from 'react';
+import React, {
+  useState,
+  useMemo,
+  useRef,
+  useCallback,
+  useEffect,
+} from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -17,6 +23,9 @@ import { Slope } from '../../../../apis/Map/slopeMap';
 import styled from 'styled-components';
 import FilterModal from '../components/ColumnFilterModal';
 import filterIcon from '../../../../assets/Icons/column.svg';
+import search from '../../../../assets/Icons/search.svg';
+import Title from '../../components/Title';
+import LoadingMessage from '../../components/LoadingMessage';
 
 const FETCH_SIZE = 50;
 
@@ -35,7 +44,7 @@ const fetchSlopeData = async (pageParam = 0) => {
     return {
       data: slicedData,
       meta: {
-        totalCount: allData.length,
+        totalCount: allData.length, // 전체 데이터 개수
         hasMore: start + FETCH_SIZE < allData.length,
       },
     };
@@ -44,7 +53,6 @@ const fetchSlopeData = async (pageParam = 0) => {
     throw error;
   }
 };
-
 const SteepSlopeLookUp = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     startLatDegree: false,
@@ -63,6 +71,7 @@ const SteepSlopeLookUp = () => {
   const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({});
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const columnHelper = createColumnHelper<Slope>();
+  const [totalCount, setTotalCount] = useState<number>(0);
 
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
     useInfiniteQuery({
@@ -73,8 +82,26 @@ const SteepSlopeLookUp = () => {
       initialPageParam: 0,
     });
 
+  //데이터 전체
+  useEffect(() => {
+    if (data?.pages[0]?.meta.totalCount) {
+      setTotalCount(data.pages[0].meta.totalCount);
+    }
+  }, [data]);
+
   const columns = useMemo(
     () => [
+      columnHelper.accessor(
+        (row, index) => {
+          const pageIndex = Math.floor(index / FETCH_SIZE);
+          return pageIndex * FETCH_SIZE + index + 1;
+        },
+        {
+          id: 'index',
+          header: '번호',
+          size: 60,
+        }
+      ),
       columnHelper.accessor('managementNo', {
         header: '관리번호',
         size: 120,
@@ -417,14 +444,29 @@ const SteepSlopeLookUp = () => {
   };
   return (
     <Container>
-      <FilterButton
-        onClick={() => {
-          setIsModalOpen(true);
-        }}
-      >
-        <FilterIcon src={filterIcon} alt="search" />
-        <p>표시할 열 항목 설정</p>
-      </FilterButton>
+      <HeaderContainer>
+        <Title text={'급경사지 조회'}></Title>
+        <HeaderWrapper>
+          <FilterButton
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
+            <FilterIcon src={filterIcon} alt="search" />
+            <p>표시할 열 항목 설정</p>
+          </FilterButton>
+          <FilterButton>지역선택</FilterButton>
+          <SearchWrapper>
+            <SearchInput>
+              <SearchIcon src={search} alt="search" />
+              <input placeholder="검색..." />
+            </SearchInput>
+          </SearchWrapper>
+        </HeaderWrapper>
+      </HeaderContainer>
+      <TableSubInfo>
+        <TotalCount>총 {totalCount}개</TotalCount>
+      </TableSubInfo>
       <FilterModal isOpen={isModalOpen} onClose={onCloseModal} table={table} />
 
       <TableContainer ref={tableContainerRef} onScroll={handleScroll}>
@@ -468,23 +510,37 @@ const SteepSlopeLookUp = () => {
           </tbody>
         </Table>
       </TableContainer>
-      {isFetchingNextPage && (
-        <LoadingMessage>데이터를 불러오는 중...</LoadingMessage>
-      )}
+      {isFetchingNextPage && <LoadingMessage text="데이터를 불러오는 중" />}
     </Container>
   );
 };
 
 export default SteepSlopeLookUp;
-
+const HeaderContainer = styled.div`
+  width: 100%;
+  height: 8%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+`;
+const HeaderWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+const TotalCount = styled.div`
+  font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  color: #374151;
+  margin-bottom: 8px;
+`;
 const FilterButton = styled.button`
-  width: 180px;
-  height: 40px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
-  padding: 0 16px;
+  padding: 0 8px;
   background-color: white;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
@@ -508,6 +564,13 @@ const FilterIcon = styled.img`
   height: 20px;
   opacity: 0.7;
 `;
+
+const TableSubInfo = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 30px;
+`;
 const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -516,7 +579,7 @@ const Container = styled.div`
 `;
 
 const TableContainer = styled.div`
-  height: calc(100vh - 100px);
+  height: 85%;
   overflow: auto;
   position: relative;
 `;
@@ -572,7 +635,45 @@ const TableCell = styled.td<{ width?: number }>`
   width: ${(props) => props.width}px;
 `;
 
-const LoadingMessage = styled.div`
-  text-align: center;
-  padding: 0.5rem 0;
+// const LoadingMessage = styled.div`
+//   text-align: center;
+//   padding: 0.5rem 0;
+// `;
+
+const SearchWrapper = styled.div`
+  display: flex;
+  gap: 12px;
+`;
+
+const SearchInput = styled.div`
+  position: relative;
+
+  input {
+    width: 288px;
+    padding: 8px 16px 8px 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+  }
+`;
+const SearchIcon = styled.img`
+  position: absolute;
+  width: 30px;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+`;
+const DecisionWrapper = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+`;
+const DecisionIcon = styled.img`
+  width: 40px;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
 `;
