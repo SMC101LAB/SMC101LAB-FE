@@ -15,7 +15,10 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { slopeManageAPI } from '../../../../apis/Map/slopeManage';
 import { Slope } from '../../../../apis/Map/slopeMap';
 import styled from 'styled-components';
-const FETCH_SIZE = 50; // 한 번에 가져올 데이터 수
+import FilterModal from '../components/ColumnFilterModal';
+import filterIcon from '../../../../assets/Icons/column.svg';
+
+const FETCH_SIZE = 50;
 
 declare module '@tanstack/react-table' {
   interface FilterFns {
@@ -407,20 +410,22 @@ const SteepSlopeLookUp = () => {
     rowVirtualizer.getTotalSize() -
     (paddingTop + rowVirtualizer.getVirtualItems().length * 40);
 
+  //필터 모달 관련 state함수
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const onCloseModal = () => {
+    setIsModalOpen(false);
+  };
   return (
     <Container>
-      <ColumnControls>
-        {table.getAllColumns().map((column) => (
-          <ColumnLabel key={column.id}>
-            <ColumnCheckbox
-              type="checkbox"
-              checked={column.getIsVisible()}
-              onChange={column.getToggleVisibilityHandler()}
-            />
-            <span>{column.columnDef.header as string}</span>
-          </ColumnLabel>
-        ))}
-      </ColumnControls>
+      <FilterButton
+        onClick={() => {
+          setIsModalOpen(true);
+        }}
+      >
+        <FilterIcon src={filterIcon} alt="search" />
+        <p>표시할 열 항목 설정</p>
+      </FilterButton>
+      <FilterModal isOpen={isModalOpen} onClose={onCloseModal} table={table} />
 
       <TableContainer ref={tableContainerRef} onScroll={handleScroll}>
         <Table>
@@ -472,30 +477,42 @@ const SteepSlopeLookUp = () => {
 
 export default SteepSlopeLookUp;
 
+const FilterButton = styled.button`
+  width: 180px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0 16px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  &:active {
+    background-color: #f3f4f6;
+    transform: scale(1.06);
+  }
+`;
+
+const FilterIcon = styled.img`
+  width: 20px;
+  height: 20px;
+  opacity: 0.7;
+`;
 const Container = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-`;
-
-const ColumnControls = styled.div`
-  padding: 0.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  background-color: #f3f4f6;
-`;
-
-const ColumnLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const ColumnCheckbox = styled.input`
-  width: 1rem;
-  height: 1rem;
 `;
 
 const TableContainer = styled.div`
