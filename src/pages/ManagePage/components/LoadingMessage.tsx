@@ -8,14 +8,12 @@ interface LoadingMessageProps {
 const LoadingMessage = ({ text }: LoadingMessageProps) => {
   return (
     <LoadingContainer>
-      <LoadingBox>
-        <LoadingText>{text}</LoadingText>
-        <LoadingDots>
-          <Dot />
-          <Dot />
-          <Dot />
-        </LoadingDots>
-      </LoadingBox>
+      <LoadingText>{text}</LoadingText>
+      <LoadingDots>
+        <Dot />
+        <Dot />
+        <Dot />
+      </LoadingDots>
     </LoadingContainer>
   );
 };
@@ -29,28 +27,25 @@ const blink = keyframes`
 `;
 
 const LoadingContainer = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  gap: 12px;
+  padding: 18px 32px;
   background-color: #f9fafb;
   border-top: 1px solid #e5e7eb;
-`;
-
-const LoadingBox = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 16px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  box-shadow: ${({ theme }) => theme.shadows.lg};
 `;
 
 const LoadingText = styled.span`
-  color: #6b7280;
-  font-size: 14px;
-  font-weight: 500;
+  color: ${({ theme }) => theme.colors.grey[700]};
+  font-size: ${({ theme }) => theme.fonts.sizes.mm};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
 `;
 
 const LoadingDots = styled.div`

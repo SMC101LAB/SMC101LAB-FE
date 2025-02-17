@@ -563,7 +563,7 @@ const SteepSlopeLookUp = () => {
       endLongSecond: false,
     });
   };
-
+  const [selectedRow, setSelectedRow] = useState<Slope | null>(null);
   return (
     <Container>
       {/* 모달 */}
@@ -583,7 +583,7 @@ const SteepSlopeLookUp = () => {
               setIsModalOpen(true);
             }}
           >
-            <FilterIcon src={filterIcon} alt="search" />
+            <FilterIcon src={filterIcon} alt="filter" />
             <p>표시할 열 항목 설정</p>
           </FilterButton>
           <FilterButton onClick={() => setIsRegionModalOpen(true)}>
@@ -594,7 +594,7 @@ const SteepSlopeLookUp = () => {
               : '지역선택'}
           </FilterButton>
           <FilterButton onClick={handleReset}>
-            <FilterIcon src={refresh} alt="search" />
+            <FilterIcon src={refresh} alt="refresh" />
             <p>초기화</p>
           </FilterButton>
           <SearchWrapper>
@@ -638,7 +638,16 @@ const SteepSlopeLookUp = () => {
             {rowVirtualizer.getVirtualItems().map((virtualRow) => {
               const row = rows[virtualRow.index];
               return (
-                <TableRow key={virtualRow.index}>
+                <TableRow
+                  key={virtualRow.index}
+                  onClick={() => {
+                    if (selectedRow === row.original) setSelectedRow(null);
+                    else setSelectedRow(row.original);
+                  }}
+                  $selected={
+                    selectedRow?.managementNo === row.original.managementNo
+                  }
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} width={cell.column.getSize()}>
                       {cell.getValue() as string}
@@ -656,11 +665,36 @@ const SteepSlopeLookUp = () => {
         </Table>
       </TableContainer>
       {isFetchingNextPage && <LoadingMessage text="데이터를 불러오는 중" />}
+      {/* 하단 버튼 컨테이너 */}
+      {selectedRow && (
+        <BottomButtonContainer>
+          <ActionButton onClick={() => console.log('수정:', selectedRow)}>
+            수정
+          </ActionButton>
+          <ActionButton
+            onClick={() => {
+              console.log('삭제:', selectedRow);
+              setSelectedRow(null);
+            }}
+            className="delete"
+          >
+            삭제
+          </ActionButton>
+        </BottomButtonContainer>
+      )}
     </Container>
   );
 };
 
 export default SteepSlopeLookUp;
+//전체 컨테이너너
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+//헤더
 const HeaderContainer = styled.div`
   width: 100%;
   height: 8%;
@@ -716,11 +750,29 @@ const TableSubInfo = styled.div`
   justify-content: flex-end;
   padding: 0 30px;
 `;
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
+
+//검색바
+const SearchWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  gap: 12px;
+`;
+
+const SearchInput = styled.div`
+  position: relative;
+
+  input {
+    width: 288px;
+    padding: 8px 16px 8px 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+  }
+`;
+const SearchIcon = styled.img`
+  position: absolute;
+  width: 30px;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
 `;
 
 const TableContainer = styled.div`
@@ -765,9 +817,12 @@ const ResizeHandle = styled.div`
   }
 `;
 
-const TableRow = styled.tr`
+const TableRow = styled.tr<{ $selected?: boolean }>`
+  cursor: pointer;
+  background-color: ${(props) => (props.$selected ? '#f0f7ff' : 'transparent')};
+
   &:hover {
-    background-color: #f9fafb;
+    background-color: ${(props) => (props.$selected ? '#f0f7ff' : '#f9fafb')};
   }
 `;
 
@@ -780,25 +835,36 @@ const TableCell = styled.td<{ width?: number }>`
   width: ${(props) => props.width}px;
 `;
 
-const SearchWrapper = styled.div`
+//추가 수정 삭제 관련 css
+const BottomButtonContainer = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background-color: white;
+  border-top: 1px solid #e5e7eb;
   display: flex;
-  gap: 12px;
+  justify-content: flex-end;
+  gap: 8px;
+  z-index: 10;
 `;
 
-const SearchInput = styled.div`
-  position: relative;
+const ActionButton = styled.button`
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #24478f;
+  color: white;
+  border: none;
 
-  input {
-    width: 288px;
-    padding: 8px 16px 8px 40px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+  &:hover {
+    opacity: 0.9;
   }
-`;
-const SearchIcon = styled.img`
-  position: absolute;
-  width: 30px;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
+
+  &.delete {
+    background-color: #dc2626;
+  }
 `;
