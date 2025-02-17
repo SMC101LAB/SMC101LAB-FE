@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { userAPI, User } from '../../../apis/User';
+import { userAPI, User } from '../../../../apis/User';
 import { styled } from 'styled-components';
 import {
   PaginationState,
@@ -11,15 +11,15 @@ import {
   getSortedRowModel,
   getPaginationRowModel,
 } from '@tanstack/react-table';
-import search from '../../../assets/Icons/search.svg';
-import modiIcon from '../../../assets/Icons/modi.svg';
-import deleteIcon from '../../../assets/Icons/delete.svg';
+import search from '../../../../assets/Icons/search.svg';
+import modiIcon from '../../../../assets/Icons/modi.svg';
+import deleteIcon from '../../../../assets/Icons/delete.svg';
 import { FilterFn, getFilteredRowModel } from '@tanstack/react-table';
 import { rankItem } from '@tanstack/match-sorter-utils';
-import Title from '../components/Title';
-import { DebouncedInputProps } from '../interface';
-import Pagination from '../components/Pagination';
-import EditModal from '../components/EditModal';
+import Title from '../../components/Title';
+import { DebouncedInputProps } from '../../interface';
+import Pagination from '../../components/Pagination';
+import EditModal from '../components/UserEditModal';
 const columnHelper = createColumnHelper<User>();
 
 declare module '@tanstack/react-table' {
