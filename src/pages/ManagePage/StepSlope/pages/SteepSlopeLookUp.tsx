@@ -18,14 +18,19 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { FilterFn } from '@tanstack/react-table';
 import { rankItem } from '@tanstack/match-sorter-utils';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { slopeManageAPI } from '../../../../apis/Map/slopeManage';
 import { Slope } from '../../../../apis/Map/slopeMap';
 import styled from 'styled-components';
+import _ from 'lodash';
+
+import { slopeManageAPI } from '../../../../apis/Map/slopeManage';
 import FilterModal from '../components/ColumnFilterModal';
-import filterIcon from '../../../../assets/Icons/column.svg';
-import search from '../../../../assets/Icons/search.svg';
 import Title from '../../components/Title';
 import LoadingMessage from '../../components/LoadingMessage';
+import RegionFilterModal from '../components/RegionFilterModal';
+
+import filterIcon from '../../../../assets/Icons/column.svg';
+import search from '../../../../assets/Icons/search.svg';
+import refresh from '../../../../assets/Icons/refresh.svg';
 
 const FETCH_SIZE = 50;
 
@@ -35,6 +40,7 @@ declare module '@tanstack/react-table' {
   }
 }
 
+//useInfinity를 위한 데이터 조회
 const fetchSlopeData = async (pageParam = 0) => {
   try {
     const allData = await slopeManageAPI.batchSlope();
@@ -53,6 +59,8 @@ const fetchSlopeData = async (pageParam = 0) => {
     throw error;
   }
 };
+
+//기본 표시할 열 항목 필터 설정
 const SteepSlopeLookUp = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     startLatDegree: false,
@@ -68,27 +76,110 @@ const SteepSlopeLookUp = () => {
     endLongMinute: false,
     endLongSecond: false,
   });
-  const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({});
-  const tableContainerRef = useRef<HTMLDivElement>(null);
-  const columnHelper = createColumnHelper<Slope>();
-  const [totalCount, setTotalCount] = useState<number>(0);
+  const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({}); // 표 열 변수
+  const tableContainerRef = useRef<HTMLDivElement>(null); //표 변수
+  const columnHelper = createColumnHelper<Slope>(); //열 선언 변수
+  const [totalCount, setTotalCount] = useState<number>(0); //전체 데이터
+  const [searchQuery, setSearchQuery] = useState(''); //검색어
+  const [selectedRegion, setSelectedRegion] = useState<{
+    city: string;
+    county: string;
+  } | null>(null); //지역 검색
 
+  // 필터링 함수
+  const filterData = (
+    data: Slope[],
+    query: string,
+    region: { city: string; county: string } | null
+  ) => {
+    let filteredData = data;
+
+    // 지역 필터 적용
+    if (region) {
+      filteredData = filteredData.filter((slope) => {
+        if (region.county === '모두') {
+          return slope.location.province === region.city;
+        }
+        return (
+          slope.location.province === region.city &&
+          slope.location.city.indexOf(region.county) >= 0
+        );
+      });
+    }
+
+    // 검색어 필터 적용
+    if (query) {
+      const searchLower = query.toLowerCase();
+      filteredData = filteredData.filter((slope) => {
+        const searchableFields = [
+          slope.managementNo, // 관리번호
+          slope.name, // 급경사지명
+          slope.management?.organization, // 시행청명
+          slope.management?.authority, // 관리주체구분코드
+          slope.management?.department, // 소관부서명
+          slope.location?.province, // 시도
+          slope.location?.city, // 시군구
+          slope.location?.district, // 읍면동
+          slope.location?.address, // 상세주소
+          slope.location?.roadAddress, // 도로명상세주소
+          slope.inspections?.[slope.inspections.length - 1]?.riskType, // 재해위험도평가종류코드
+          slope.inspections?.[slope.inspections.length - 1]?.riskLevel, // 재해위험도평가등급코드
+        ];
+
+        return searchableFields.some(
+          (field) => field && String(field).toLowerCase().includes(searchLower)
+        );
+      });
+    }
+
+    return filteredData;
+  };
+
+  //데이터 조회 api
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: ['slopes'],
       queryFn: ({ pageParam = 0 }) => fetchSlopeData(pageParam),
-      getNextPageParam: (lastPage, allPages) =>
-        lastPage.meta.hasMore ? allPages.length : undefined,
+      getNextPageParam: (lastPage, allPages) => {
+        const filteredData = filterData(
+          lastPage.data,
+          searchQuery,
+          selectedRegion
+        );
+        return lastPage.meta.hasMore && filteredData.length >= FETCH_SIZE
+          ? allPages.length
+          : undefined;
+      },
       initialPageParam: 0,
     });
 
-  //데이터 전체
+  //flatData를 통해 페이지 다시 계산산
+  const flatData = useMemo(() => {
+    const allData = data?.pages.flatMap((page) => page.data) ?? [];
+    return filterData(allData, searchQuery, selectedRegion);
+  }, [data, searchQuery, selectedRegion]);
+
+  // debounce를 위한 hook 추가
+  const debouncedSearch = useCallback(
+    _.debounce((value: string) => {
+      setSearchQuery(value);
+    }, 300),
+    []
+  );
+
+  // 검색 핸들러
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSearch(e.target.value);
+  };
+
+  //데이터 전체 수
   useEffect(() => {
     if (data?.pages[0]?.meta.totalCount) {
       setTotalCount(data.pages[0].meta.totalCount);
     }
   }, [data]);
 
+  //데이터 열 선언
   const columns = useMemo(
     () => [
       columnHelper.accessor(
@@ -380,10 +471,6 @@ const SteepSlopeLookUp = () => {
     ],
     []
   );
-  const flatData = useMemo(
-    () => data?.pages.flatMap((page) => page.data) ?? [],
-    [data]
-  );
 
   // 스크롤 이벤트 핸들러
   const handleScroll = useCallback(() => {
@@ -442,8 +529,52 @@ const SteepSlopeLookUp = () => {
   const onCloseModal = () => {
     setIsModalOpen(false);
   };
+
+  //지역 선택 모달 함수
+  const [isRegionModalOpen, setIsRegionModalOpen] = useState<boolean>(false);
+  const onCloseRegionModal = () => {
+    setIsRegionModalOpen(false);
+  };
+  const handleRegionSelect = (city: string, county: string) => {
+    if (county === '모두') {
+      console.log(`${city}`);
+    } else {
+      console.log(`${city} ${county} `);
+    }
+    setSelectedRegion({ city, county });
+  };
+
+  // 필터 초기화 함수
+  const handleReset = () => {
+    setSearchQuery('');
+    setSelectedRegion(null);
+    setColumnVisibility({
+      startLatDegree: false,
+      startLatMinute: false,
+      startLatSecond: false,
+      startLongDegree: false,
+      startLongMinute: false,
+      startLongSecond: false,
+      endLatDegree: false,
+      endLatMinute: false,
+      endLatSecond: false,
+      endLongDegree: false,
+      endLongMinute: false,
+      endLongSecond: false,
+    });
+  };
+
   return (
     <Container>
+      {/* 모달 */}
+      <FilterModal isOpen={isModalOpen} onClose={onCloseModal} table={table} />
+      <RegionFilterModal
+        isOpen={isRegionModalOpen}
+        onClose={onCloseRegionModal}
+        onRegionSelect={handleRegionSelect}
+      />
+
+      {/* 헤더 */}
       <HeaderContainer>
         <Title text={'급경사지 조회'}></Title>
         <HeaderWrapper>
@@ -455,11 +586,25 @@ const SteepSlopeLookUp = () => {
             <FilterIcon src={filterIcon} alt="search" />
             <p>표시할 열 항목 설정</p>
           </FilterButton>
-          <FilterButton>지역선택</FilterButton>
+          <FilterButton onClick={() => setIsRegionModalOpen(true)}>
+            {selectedRegion
+              ? `${selectedRegion.city} ${
+                  selectedRegion.county === '모두' ? '' : selectedRegion.county
+                }`
+              : '지역선택'}
+          </FilterButton>
+          <FilterButton onClick={handleReset}>
+            <FilterIcon src={refresh} alt="search" />
+            <p>초기화</p>
+          </FilterButton>
           <SearchWrapper>
             <SearchInput>
               <SearchIcon src={search} alt="search" />
-              <input placeholder="검색..." />
+              <input
+                placeholder="검색..."
+                value={searchQuery}
+                onChange={handleSearch}
+              />
             </SearchInput>
           </SearchWrapper>
         </HeaderWrapper>
@@ -467,8 +612,8 @@ const SteepSlopeLookUp = () => {
       <TableSubInfo>
         <TotalCount>총 {totalCount}개</TotalCount>
       </TableSubInfo>
-      <FilterModal isOpen={isModalOpen} onClose={onCloseModal} table={table} />
 
+      {/* 테이블 */}
       <TableContainer ref={tableContainerRef} onScroll={handleScroll}>
         <Table>
           <TableHeader>
@@ -635,11 +780,6 @@ const TableCell = styled.td<{ width?: number }>`
   width: ${(props) => props.width}px;
 `;
 
-// const LoadingMessage = styled.div`
-//   text-align: center;
-//   padding: 0.5rem 0;
-// `;
-
 const SearchWrapper = styled.div`
   display: flex;
   gap: 12px;
@@ -661,19 +801,4 @@ const SearchIcon = styled.img`
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
-`;
-const DecisionWrapper = styled.div`
-  display: flex;
-  justify-content: space-evenly;
-`;
-const DecisionIcon = styled.img`
-  width: 40px;
-  padding: 6px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: box-shadow 0.2s ease-in-out;
-
-  &:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  }
 `;
