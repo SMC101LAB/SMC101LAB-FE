@@ -56,7 +56,6 @@ const UserModi = () => {
     },
   });
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User>({
     _id: 0,
     name: '',
@@ -65,6 +64,9 @@ const UserModi = () => {
     isAdmin: false,
     isApproved: false,
   });
+
+  //모달 관련 state, 함수
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const onCloseModal = () => {
     setIsModalOpen(false);
   };
