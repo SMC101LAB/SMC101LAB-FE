@@ -17,12 +17,12 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { FilterFn } from '@tanstack/react-table';
 import { rankItem } from '@tanstack/match-sorter-utils';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { Slope } from '../../../../apis/Map/slopeMap';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { Slope, slopeMapAPI } from '../../../../apis/slopeMap';
 import styled from 'styled-components';
 import _ from 'lodash';
 
-import { slopeManageAPI } from '../../../../apis/Map/slopeManage';
+import { slopeManageAPI } from '../../../../apis/slopeManage';
 import FilterModal from '../components/ColumnFilterModal';
 import Title from '../../components/Title';
 import LoadingMessage from '../../components/LoadingMessage';
@@ -31,9 +31,10 @@ import RegionFilterModal from '../components/RegionFilterModal';
 import filterIcon from '../../../../assets/Icons/column.svg';
 import search from '../../../../assets/Icons/search.svg';
 import refresh from '../../../../assets/Icons/refresh.svg';
+import DeleteConfirmModal from '../components/DeleteModal';
+import EditModal from '../components/EditModal';
 
 const FETCH_SIZE = 50;
-
 declare module '@tanstack/react-table' {
   interface FilterFns {
     fuzzy: FilterFn<unknown>;
@@ -62,6 +63,8 @@ const fetchSlopeData = async (pageParam = 0) => {
 
 //기본 표시할 열 항목 필터 설정
 const SteepSlopeLookUp = () => {
+  const queryClient = useQueryClient();
+
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     startLatDegree: false,
     startLatMinute: false,
@@ -153,7 +156,7 @@ const SteepSlopeLookUp = () => {
       initialPageParam: 0,
     });
 
-  //flatData를 통해 페이지 다시 계산산
+  //flatData를 통해 페이지 다시 계산
   const flatData = useMemo(() => {
     const allData = data?.pages.flatMap((page) => page.data) ?? [];
     return filterData(allData, searchQuery, selectedRegion);
@@ -563,7 +566,35 @@ const SteepSlopeLookUp = () => {
       endLongSecond: false,
     });
   };
+
   const [selectedRow, setSelectedRow] = useState<Slope | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const handleDelete = async () => {
+    try {
+      if (selectedRow) {
+        await slopeManageAPI.deleteSlope([selectedRow.managementNo]);
+        // 삭제 성공 후 데이터 갱신
+        await queryClient.invalidateQueries({ queryKey: ['slopes'] });
+        setSelectedRow(null);
+        setIsDeleteModalOpen(false);
+      }
+    } catch (error) {
+      console.error('삭제 실패:', error);
+    }
+  };
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleEdit = async (updatedSlope: Slope) => {
+    try {
+      // await slopeManageAPI.updateSlope(updatedSlope);
+      await queryClient.invalidateQueries({ queryKey: ['slopes'] });
+      setSelectedRow(null);
+    } catch (error) {
+      console.error('수정 실패:', error);
+    }
+  };
   return (
     <Container>
       {/* 모달 */}
@@ -572,6 +603,18 @@ const SteepSlopeLookUp = () => {
         isOpen={isRegionModalOpen}
         onClose={onCloseRegionModal}
         onRegionSelect={handleRegionSelect}
+      />
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        selectedRow={selectedRow}
+      />
+      <EditModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSubmit={handleEdit}
+        selectedRow={selectedRow}
       />
 
       {/* 헤더 */}
@@ -664,17 +707,22 @@ const SteepSlopeLookUp = () => {
           </tbody>
         </Table>
       </TableContainer>
-      {isFetchingNextPage && <LoadingMessage text="데이터를 불러오는 중" />}
+      {(isFetchingNextPage || !data) && (
+        <LoadingMessage text="데이터를 불러오는 중" />
+      )}
       {/* 하단 버튼 컨테이너 */}
       {selectedRow && (
         <BottomButtonContainer>
-          <ActionButton onClick={() => console.log('수정:', selectedRow)}>
+          <ActionButton
+            onClick={() => {
+              setIsEditModalOpen(true);
+            }}
+          >
             수정
           </ActionButton>
           <ActionButton
             onClick={() => {
-              console.log('삭제:', selectedRow);
-              setSelectedRow(null);
+              setIsDeleteModalOpen(true);
             }}
             className="delete"
           >
@@ -708,11 +756,7 @@ const HeaderWrapper = styled.div`
   align-items: center;
   gap: 10px;
 `;
-const TotalCount = styled.div`
-  font-size: ${({ theme }) => theme.fonts.sizes.ms};
-  color: #374151;
-  margin-bottom: 8px;
-`;
+
 const FilterButton = styled.button`
   height: 34px;
   display: flex;
@@ -744,13 +788,6 @@ const FilterIcon = styled.img`
   opacity: 0.7;
 `;
 
-const TableSubInfo = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  padding: 0 30px;
-`;
-
 //검색바
 const SearchWrapper = styled.div`
   display: flex;
@@ -775,6 +812,19 @@ const SearchIcon = styled.img`
   transform: translateY(-50%);
 `;
 
+const TableSubInfo = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 30px;
+`;
+const TotalCount = styled.div`
+  font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  color: #374151;
+  margin-bottom: 8px;
+`;
+
+//테이블블
 const TableContainer = styled.div`
   height: 85%;
   overflow: auto;
@@ -790,11 +840,13 @@ const Table = styled.table`
 const TableHeader = styled.thead`
   position: sticky;
   top: 0;
-  background-color: #f9fafb;
+  /* background-color: #f9fafb; */
+  background-color: ${({ theme }) => theme.colors.grey[100]};
 `;
 
 const HeaderCell = styled.th<{ width?: number }>`
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.grey[300]};
+  border-right: 2px solid ${({ theme }) => theme.colors.grey[300]};
   padding: 0.5rem;
   text-align: left;
   position: relative;
@@ -806,7 +858,7 @@ const ResizeHandle = styled.div`
   right: 0;
   top: 0;
   height: 100%;
-  width: 4px;
+  width: 5px;
   cursor: col-resize;
   background-color: #d1d5db;
   opacity: 0;

@@ -1,4 +1,4 @@
-import { api } from '../api';
+import { api } from './api';
 
 export interface Slope {
   managementNo: string;
@@ -63,6 +63,7 @@ export interface Slope {
     inspectionDate: string;
   };
   createdAt: Date;
+  _id: string;
 }
 
 export const slopeMapAPI = {

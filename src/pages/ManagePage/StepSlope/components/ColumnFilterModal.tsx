@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Table } from '@tanstack/react-table';
-import { Slope } from '../../../../apis/Map/slopeMap';
+import { Slope } from '../../../../apis/slopeMap';
 
 interface FilterModalProps {
   isOpen: boolean;

@@ -1,4 +1,4 @@
-import { Slope } from '../../apis/Map/slopeMap';
+import { Slope } from '../../apis/slopeMap';
 
 export interface MapComponentProps {
   selectedMarkerId: number | null;

@@ -6,7 +6,7 @@ import BottomSheet from './components/BottomSheet';
 import MapComponent from './components/MapComponent';
 import SearchComponent from './components/Search';
 
-import { Slope, slopeMapAPI } from '../../apis/Map/slopeMap';
+import { Slope, slopeMapAPI } from '../../apis/slopeMap';
 
 const MapPage = () => {
   // console.log(escarpmentData);
