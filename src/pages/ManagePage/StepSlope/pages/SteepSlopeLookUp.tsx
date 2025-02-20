@@ -125,8 +125,8 @@ const SteepSlopeLookUp = () => {
           slope.location?.district, // 읍면동
           slope.location?.address, // 상세주소
           slope.location?.roadAddress, // 도로명상세주소
-          slope.inspections?.[slope.inspections.length - 1]?.riskType, // 재해위험도평가종류코드
-          slope.inspections?.[slope.inspections.length - 1]?.riskLevel, // 재해위험도평가등급코드
+          slope.disaster?.riskType, // 재해위험도평가종류코드
+          slope.disaster?.riskLevel, // 재해위험도평가등급코드
         ];
 
         return searchableFields.some(
@@ -387,50 +387,41 @@ const SteepSlopeLookUp = () => {
         }
       ),
 
-      columnHelper.accessor(
-        (row) => {
-          const latestInspection = row.inspections[row.inspections.length - 1];
-          return latestInspection ? latestInspection.date : '';
-        },
-        {
-          id: 'inspectionDate',
-          header: '안전점검일자',
-          size: 120,
-        }
-      ),
-      columnHelper.accessor(
-        (row) => {
-          const latestInspection = row.inspections[row.inspections.length - 1];
-          return latestInspection ? latestInspection.result : '';
-        },
-        {
-          id: 'inspectionResult',
-          header: '안전점검결과코드',
-          size: 130,
-        }
-      ),
-      columnHelper.accessor(
-        (row) => {
-          const latestInspection = row.inspections[row.inspections.length - 1];
-          return latestInspection ? latestInspection.riskLevel : '';
-        },
-        {
-          id: 'riskLevel',
-          header: '재해위험도평가등급코드',
-          size: 170,
-        }
-      ),
-      columnHelper.accessor(
-        (row) => {
-          const latestInspection = row.inspections[row.inspections.length - 1];
-          return latestInspection ? latestInspection.riskType : '';
-        },
-        {
-          id: 'riskType',
-          header: '재해위험도평가종류코드',
-          size: 170,
-        }
-      ),
+      columnHelper.accessor((row) => row.inspections?.date ?? '', {
+        id: 'inspectionDate',
+        header: '안전점검일자',
+        size: 120,
+      }),
+      columnHelper.accessor((row) => row.inspections?.result ?? '', {
+        id: 'inspectionResult',
+        header: '안전점검결과코드',
+        size: 130,
+      }),
+      columnHelper.accessor((row) => row.disaster?.serialNumber ?? '', {
+        id: 'serialNumber',
+        header: '재해위험도평가일련번호',
+        size: 170,
+      }),
+      columnHelper.accessor((row) => row.disaster?.riskDate ?? '', {
+        id: 'riskDate',
+        header: '재해위험도평가일자',
+        size: 170,
+      }),
+      columnHelper.accessor((row) => row.disaster?.riskLevel ?? '', {
+        id: 'riskLevel',
+        header: '재해위험도평가등급코드',
+        size: 170,
+      }),
+      columnHelper.accessor((row) => row.disaster?.riskScore ?? '', {
+        id: 'riskScore',
+        header: '재해위험도평가등급코드',
+        size: 170,
+      }),
+      columnHelper.accessor((row) => row.disaster?.riskType ?? '', {
+        id: 'riskType',
+        header: '재해위험도평가종류코드',
+        size: 170,
+      }),
       columnHelper.accessor((row) => row.collapseRisk?.districtNo || '', {
         id: 'districtNo',
         header: '붕괴위험지구번호',

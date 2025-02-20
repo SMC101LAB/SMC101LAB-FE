@@ -40,14 +40,17 @@ export interface Slope {
     department?: string;
     authority?: string;
   };
-  inspections: Array<{
+  inspections: {
     date: Date;
     result: string;
-    riskLevel: string;
-    riskType: string;
-    riskScore: string;
-    serialNumber: string;
-  }>;
+  };
+  disaster: {
+    serialNumber: String;
+    riskDate: Date;
+    riskLevel: String;
+    riskScore: String;
+    riskType: String;
+  };
   collapseRisk: {
     districtNo: string;
     districtName: string;
