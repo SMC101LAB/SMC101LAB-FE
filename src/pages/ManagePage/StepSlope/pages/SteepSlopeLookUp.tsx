@@ -18,9 +18,8 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { FilterFn } from '@tanstack/react-table';
 import { rankItem } from '@tanstack/match-sorter-utils';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { Slope, slopeMapAPI } from '../../../../apis/slopeMap';
+import { Slope } from '../../../../apis/slopeMap';
 import styled from 'styled-components';
-import _ from 'lodash';
 
 import { slopeManageAPI } from '../../../../apis/slopeManage';
 import FilterModal from '../components/ColumnFilterModal';
@@ -40,26 +39,6 @@ declare module '@tanstack/react-table' {
     fuzzy: FilterFn<unknown>;
   }
 }
-
-//useInfinity를 위한 데이터 조회
-const fetchSlopeData = async (pageParam = 0) => {
-  try {
-    const allData = await slopeManageAPI.batchSlope();
-    const start = pageParam * FETCH_SIZE;
-    const slicedData = allData.slice(start, start + FETCH_SIZE);
-
-    return {
-      data: slicedData,
-      meta: {
-        totalCount: allData.length, // 전체 데이터 개수
-        hasMore: start + FETCH_SIZE < allData.length,
-      },
-    };
-  } catch (error) {
-    console.error('급경사지 데이터 조회 오류:', error);
-    throw error;
-  }
-};
 
 //기본 표시할 열 항목 필터 설정
 const SteepSlopeLookUp = () => {
@@ -82,98 +61,48 @@ const SteepSlopeLookUp = () => {
   const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({}); // 표 열 변수
   const tableContainerRef = useRef<HTMLDivElement>(null); //표 변수
   const columnHelper = createColumnHelper<Slope>(); //열 선언 변수
-  const [totalCount, setTotalCount] = useState<number>(0); //전체 데이터
-  const [searchQuery, setSearchQuery] = useState(''); //검색어
+  const [totalCount, setTotalCount] = useState(0); //전체 데이터
+  const [searchQuery, setSearchQuery] = useState(''); //검색어쿼리
+  const [inputValue, setInputValue] = useState(''); //검색어
   const [selectedRegion, setSelectedRegion] = useState<{
     city: string;
     county: string;
   } | null>(null); //지역 검색
 
-  // 필터링 함수
-  const filterData = (
-    data: Slope[],
-    query: string,
-    region: { city: string; county: string } | null
-  ) => {
-    let filteredData = data;
-
-    // 지역 필터 적용
-    if (region) {
-      filteredData = filteredData.filter((slope) => {
-        if (region.county === '모두') {
-          return slope.location.province === region.city;
-        }
-        return (
-          slope.location.province === region.city &&
-          slope.location.city.indexOf(region.county) >= 0
-        );
+  //데이터 조회 쿼리
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ['slopes', searchQuery, selectedRegion],
+    queryFn: async ({ pageParam = 0 }) => {
+      const response = await slopeManageAPI.batchSlope({
+        page: pageParam,
+        pageSize: FETCH_SIZE,
+        searchQuery: searchQuery || undefined,
+        city: selectedRegion?.city,
+        county: selectedRegion?.county,
       });
-    }
+      return response;
+    },
+    getNextPageParam: (lastPage) =>
+      lastPage.meta.hasMore ? lastPage.meta.currentPage + 1 : undefined,
+    initialPageParam: 0,
+  });
 
-    // 검색어 필터 적용
-    if (query) {
-      const searchLower = query.toLowerCase();
-      filteredData = filteredData.filter((slope) => {
-        const searchableFields = [
-          slope.managementNo, // 관리번호
-          slope.name, // 급경사지명
-          slope.management?.organization, // 시행청명
-          slope.management?.authority, // 관리주체구분코드
-          slope.management?.department, // 소관부서명
-          slope.location?.province, // 시도
-          slope.location?.city, // 시군구
-          slope.location?.district, // 읍면동
-          slope.location?.address, // 상세주소
-          slope.location?.roadAddress, // 도로명상세주소
-          slope.disaster?.riskType, // 재해위험도평가종류코드
-          slope.disaster?.riskLevel, // 재해위험도평가등급코드
-        ];
-
-        return searchableFields.some(
-          (field) => field && String(field).toLowerCase().includes(searchLower)
-        );
-      });
-    }
-
-    return filteredData;
-  };
-
-  //데이터 조회 api
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ['slopes'],
-      queryFn: ({ pageParam = 0 }) => fetchSlopeData(pageParam),
-      getNextPageParam: (lastPage, allPages) => {
-        const filteredData = filterData(
-          lastPage.data,
-          searchQuery,
-          selectedRegion
-        );
-        return lastPage.meta.hasMore && filteredData.length >= FETCH_SIZE
-          ? allPages.length
-          : undefined;
-      },
-      initialPageParam: 0,
-    });
-
-  //flatData를 통해 페이지 다시 계산
+  // //flatData를 통해 페이지  계산
   const flatData = useMemo(() => {
-    const allData = data?.pages.flatMap((page) => page.data) ?? [];
-    return filterData(allData, searchQuery, selectedRegion);
-  }, [data, searchQuery, selectedRegion]);
+    return data?.pages.flatMap((page) => page.data) ?? [];
+  }, [data]);
 
-  // debounce를 위한 hook 추가
-  const debouncedSearch = useCallback(
-    _.debounce((value: string) => {
-      setSearchQuery(value);
-    }, 300),
-    []
-  );
-
-  // 검색 핸들러
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    debouncedSearch(e.target.value);
-  };
+  // 검색어나 지역 필터 변경시 데이터 리페치
+  useEffect(() => {
+    refetch();
+  }, [searchQuery, selectedRegion, refetch]);
 
   //데이터 전체 수
   useEffect(() => {
@@ -466,22 +395,14 @@ const SteepSlopeLookUp = () => {
     []
   );
 
-  // 스크롤 이벤트 핸들러
-  const handleScroll = useCallback(() => {
-    const element = tableContainerRef.current;
-    if (!element || !hasNextPage || isFetching) return;
-
-    const { scrollTop, scrollHeight, clientHeight } = element;
-    if (scrollHeight - scrollTop - clientHeight < 300) {
-      fetchNextPage();
-    }
-  }, [fetchNextPage, hasNextPage, isFetching]);
+  //필터 선언
   const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     const itemRank = rankItem(row.getValue(columnId), value);
     addMeta({ itemRank });
     return itemRank.passed;
   };
 
+  //테이블 선언
   const table = useReactTable({
     data: flatData,
     columns,
@@ -504,8 +425,18 @@ const SteepSlopeLookUp = () => {
     globalFilterFn: 'fuzzy',
   });
 
+  // 스크롤 이벤트 핸들러(무한스크롤 기능)
+  const handleScroll = useCallback(() => {
+    if (!tableContainerRef.current || !hasNextPage || isFetching) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = tableContainerRef.current;
+    if (scrollHeight - scrollTop - clientHeight < 300) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetching]);
   const { rows } = table.getRowModel();
 
+  //보이는 행만 보일 수 있도록 가상화
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
@@ -538,29 +469,19 @@ const SteepSlopeLookUp = () => {
     setSelectedRegion({ city, county });
   };
 
-  // 필터 초기화 함수
+  // 필터 초기화
   const handleReset = () => {
+    setInputValue('');
     setSearchQuery('');
     setSelectedRegion(null);
-    setColumnVisibility({
-      startLatDegree: false,
-      startLatMinute: false,
-      startLatSecond: false,
-      startLongDegree: false,
-      startLongMinute: false,
-      startLongSecond: false,
-      endLatDegree: false,
-      endLatMinute: false,
-      endLatSecond: false,
-      endLongDegree: false,
-      endLongMinute: false,
-      endLongSecond: false,
-    });
+    refetch();
   };
 
+  //삭제 수정을 위한 행 선택 state
   const [selectedRow, setSelectedRow] = useState<Slope | null>(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  //삭제 모달 및 삭제 api
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const handleDelete = async () => {
     try {
       if (selectedRow) {
@@ -575,6 +496,7 @@ const SteepSlopeLookUp = () => {
     }
   };
 
+  //수정 모달 및 수정 api
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleEdit = async (updatedSlope: Slope) => {
@@ -635,11 +557,22 @@ const SteepSlopeLookUp = () => {
           </FilterButton>
           <SearchWrapper>
             <SearchInput>
-              <SearchIcon src={search} alt="search" />
+              <SearchIcon
+                src={search}
+                alt="search"
+                onClick={() => setSearchQuery(inputValue)}
+              />
               <input
                 placeholder="검색..."
-                value={searchQuery}
-                onChange={handleSearch}
+                value={inputValue}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setInputValue(e.target.value);
+                }}
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (e.key === 'Enter') {
+                    setSearchQuery(inputValue);
+                  }
+                }}
               />
             </SearchInput>
           </SearchWrapper>
@@ -803,6 +736,7 @@ const SearchIcon = styled.img`
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
+  cursor: pointer;
 `;
 
 const TableSubInfo = styled.div`
