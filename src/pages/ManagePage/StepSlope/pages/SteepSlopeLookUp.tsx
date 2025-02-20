@@ -30,6 +30,7 @@ import RegionFilterModal from '../components/RegionFilterModal';
 import filterIcon from '../../../../assets/Icons/column.svg';
 import search from '../../../../assets/Icons/search.svg';
 import refresh from '../../../../assets/Icons/refresh.svg';
+import download from '../../../../assets/Icons/download.svg';
 import DeleteConfirmModal from '../components/DeleteModal';
 import EditModal from '../components/EditModal';
 
@@ -315,7 +316,11 @@ const SteepSlopeLookUp = () => {
           size: 60,
         }
       ),
-
+      columnHelper.accessor((row) => row.inspections?.serialNumber ?? '', {
+        id: 'inspections_serialNumber',
+        header: '안전점검일련번호',
+        size: 130,
+      }),
       columnHelper.accessor((row) => row.inspections?.date ?? '', {
         id: 'inspectionDate',
         header: '안전점검일자',
@@ -510,6 +515,18 @@ const SteepSlopeLookUp = () => {
       console.error('수정 실패:', error);
     }
   };
+
+  const handleDownload = async () => {
+    try {
+      await slopeManageAPI.downloadExcel({
+        searchQuery: searchQuery || undefined,
+        city: selectedRegion?.city,
+        county: selectedRegion?.county,
+      });
+    } catch (error) {
+      console.error('다운로드 실패:', error);
+    }
+  };
   return (
     <Container>
       {/* 모달 */}
@@ -554,6 +571,14 @@ const SteepSlopeLookUp = () => {
           <FilterButton onClick={handleReset}>
             <FilterIcon src={refresh} alt="refresh" />
             <p>초기화</p>
+          </FilterButton>
+          <FilterButton onClick={handleDownload}>
+            <FilterIcon
+              src={download}
+              alt="download"
+              style={{ width: '16px' }}
+            />
+            <p>다운로드</p>
           </FilterButton>
           <SearchWrapper>
             <SearchInput>
