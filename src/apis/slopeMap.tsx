@@ -45,11 +45,11 @@ export interface Slope {
     result: string;
   };
   disaster: {
-    serialNumber: String;
+    serialNumber: string;
     riskDate: Date;
-    riskLevel: String;
-    riskScore: String;
-    riskType: String;
+    riskLevel: string;
+    riskScore: string;
+    riskType: string;
   };
   collapseRisk: {
     districtNo: string;

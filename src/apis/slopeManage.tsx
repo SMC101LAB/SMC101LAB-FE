@@ -13,7 +13,10 @@ export const slopeManageAPI = {
     return;
   },
   updateSlope: async (slope: Slope) => {
-    const response = await api.put(`slopes/update`, { data: slope });
+    const response = await api.put(`slopes/update`, {
+      slopeId: slope._id,
+      updateData: slope,
+    });
     console.log(' 경사지 전체 조회', response.data);
     return;
   },
