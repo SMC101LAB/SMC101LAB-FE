@@ -41,6 +41,7 @@ export interface Slope {
     authority?: string;
   };
   inspections: {
+    serialNumber: string;
     date: Date;
     result: string;
   };

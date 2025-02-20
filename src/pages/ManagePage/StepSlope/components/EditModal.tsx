@@ -540,6 +540,22 @@ const EditModal = ({
             <Section>
               <SectionTitle>안전</SectionTitle>
               <FormGroup>
+                <Label>안전점검일련번호</Label>
+                <Input
+                  type="text"
+                  value={editedData.inspections.serialNumber}
+                  onChange={(e) =>
+                    setEditedData({
+                      ...editedData,
+                      inspections: {
+                        ...editedData.inspections,
+                        serialNumber: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </FormGroup>
+              <FormGroup>
                 <Label>안전점검일자</Label>
                 <Input
                   type="date"
