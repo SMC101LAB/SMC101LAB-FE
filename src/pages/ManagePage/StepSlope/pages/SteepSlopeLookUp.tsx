@@ -579,9 +579,11 @@ const SteepSlopeLookUp = () => {
 
   const handleEdit = async (updatedSlope: Slope) => {
     try {
-      // await slopeManageAPI.updateSlope(updatedSlope);
+      await slopeManageAPI.updateSlope(updatedSlope);
+      // 수정 성공 후 데이터 갱신
       await queryClient.invalidateQueries({ queryKey: ['slopes'] });
       setSelectedRow(null);
+      setIsEditModalOpen(false);
     } catch (error) {
       console.error('수정 실패:', error);
     }
