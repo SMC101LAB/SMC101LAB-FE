@@ -334,7 +334,7 @@ const SteepSlopeLookUp = () => {
       columnHelper.accessor((row) => row.disaster?.serialNumber ?? '', {
         id: 'serialNumber',
         header: '재해위험도평가일련번호',
-        size: 170,
+        size: 180,
       }),
       columnHelper.accessor((row) => row.disaster?.riskDate ?? '', {
         id: 'riskDate',
@@ -344,17 +344,17 @@ const SteepSlopeLookUp = () => {
       columnHelper.accessor((row) => row.disaster?.riskLevel ?? '', {
         id: 'riskLevel',
         header: '재해위험도평가등급코드',
-        size: 170,
+        size: 180,
       }),
       columnHelper.accessor((row) => row.disaster?.riskScore ?? '', {
         id: 'riskScore',
         header: '재해위험도평가등급코드',
-        size: 170,
+        size: 180,
       }),
       columnHelper.accessor((row) => row.disaster?.riskType ?? '', {
         id: 'riskType',
         header: '재해위험도평가종류코드',
-        size: 170,
+        size: 180,
       }),
       columnHelper.accessor((row) => row.collapseRisk?.districtNo || '', {
         id: 'districtNo',
@@ -480,6 +480,20 @@ const SteepSlopeLookUp = () => {
     setSearchQuery('');
     setSelectedRegion(null);
     refetch();
+    setColumnVisibility({
+      startLatDegree: false,
+      startLatMinute: false,
+      startLatSecond: false,
+      startLongDegree: false,
+      startLongMinute: false,
+      startLongSecond: false,
+      endLatDegree: false,
+      endLatMinute: false,
+      endLatSecond: false,
+      endLongDegree: false,
+      endLongMinute: false,
+      endLongSecond: false,
+    });
   };
 
   //삭제 수정을 위한 행 선택 state
