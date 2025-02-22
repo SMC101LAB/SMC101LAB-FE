@@ -27,7 +27,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
 }) => {
   const navermaps = useNavermaps();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  // console.log(errorMessage);
+  console.log(errorMessage);
   // console.log(escarpmentData);
 
   useEffect(() => {
@@ -117,13 +117,13 @@ const MapComponent: React.FC<MapComponentProps> = ({
           {escarpmentData.length > 0
             ? escarpmentData.map((item, index) => {
                 // console.log(item);
-                const grade = item.inspections[0]?.riskLevel.includes('A')
+                const grade = item.disaster?.riskLevel.includes('A')
                   ? 'A'
-                  : item.inspections[0]?.riskLevel.includes('B')
+                  : item.disaster?.riskLevel.includes('B')
                   ? 'B'
-                  : item.inspections[0]?.riskLevel.includes('C')
+                  : item.disaster?.riskLevel.includes('C')
                   ? 'C'
-                  : item.inspections[0]?.riskLevel.includes('D')
+                  : item.disaster?.riskLevel.includes('D')
                   ? 'D'
                   : 'F';
 

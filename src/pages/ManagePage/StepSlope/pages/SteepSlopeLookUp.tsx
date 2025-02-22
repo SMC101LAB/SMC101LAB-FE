@@ -8,7 +8,6 @@ import React, {
 import {
   useReactTable,
   getCoreRowModel,
-  ColumnDef,
   VisibilityState,
   createColumnHelper,
   ColumnResizeMode,
@@ -116,7 +115,7 @@ const SteepSlopeLookUp = () => {
   const columns = useMemo(
     () => [
       columnHelper.accessor(
-        (row, index) => {
+        (_row, index) => {
           const pageIndex = Math.floor(index / FETCH_SIZE);
           return pageIndex * FETCH_SIZE + index + 1;
         },
