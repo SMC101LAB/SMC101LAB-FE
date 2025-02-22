@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { User } from '../../../apis/User';
+import { User } from '../../../../apis/User';
 
 interface EditModalProps {
   isOpen: boolean;

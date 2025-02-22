@@ -3,13 +3,13 @@ import { InfotableProps } from '../interface';
 
 const InfoTable: React.FC<InfotableProps> = ({ selectItem }) => {
   if (!selectItem) return null;
-  const grade = selectItem.inspections[0]?.riskLevel.includes('A')
+  const grade = selectItem.disaster?.riskLevel.includes('A')
     ? 'A'
-    : selectItem.inspections[0]?.riskLevel.includes('B')
+    : selectItem.disaster?.riskLevel.includes('B')
     ? 'B'
-    : selectItem.inspections[0]?.riskLevel.includes('C')
+    : selectItem.disaster?.riskLevel.includes('C')
     ? 'C'
-    : selectItem.inspections[0]?.riskLevel.includes('D')
+    : selectItem.disaster?.riskLevel.includes('D')
     ? 'D'
     : 'F';
   return (

@@ -19,8 +19,8 @@ const ManagePage = () => {
   const Page = [
     './home',
     './slope/list',
-    './slope/edit',
     './slope/add',
+    './slope/outlier',
     './member/list',
     './member/edit',
     './map',

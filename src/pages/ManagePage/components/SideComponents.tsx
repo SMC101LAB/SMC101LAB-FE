@@ -13,12 +13,12 @@ const SideComponents: FC<SideComponentsProps> = ({
         <Logo>SMC101LAB</Logo>
       </LogoWrapper>
       <IndexWrapper>
-        <IndexContainer
+        {/* <IndexContainer
           $isSelect={selectPage[0]}
           onClick={() => ChooseIndex(0)}
         >
           <IndexText>홈</IndexText>
-        </IndexContainer>
+        </IndexContainer> */}
         <ToggleIndexContainer
           onClick={() => {
             setToggle([!toggle[0], toggle[1]]);
@@ -33,7 +33,7 @@ const SideComponents: FC<SideComponentsProps> = ({
               $isSelect={selectPage[1]}
               onClick={() => ChooseIndex(1)}
             >
-              <IndexText>급경사지 조회</IndexText>
+              <IndexText>급경사지 조회/수정/삭제</IndexText>
             </SubIndexContainer>
             <SubIndexContainer
               $isSelect={selectPage[2]}
@@ -45,7 +45,7 @@ const SideComponents: FC<SideComponentsProps> = ({
               $isSelect={selectPage[3]}
               onClick={() => ChooseIndex(3)}
             >
-              <IndexText>급경사지 수정/삭제</IndexText>
+              <IndexText>급경사지 이상값 찾기</IndexText>
             </SubIndexContainer>
           </>
         )}
@@ -80,6 +80,9 @@ const SideComponents: FC<SideComponentsProps> = ({
           <IndexText>지도</IndexText>
         </IndexContainer>
       </IndexWrapper>
+      <CopyrightWrapper>
+        <CopyrightText>© 2025. SMC101LAB</CopyrightText>
+      </CopyrightWrapper>
     </SideContainer>
   );
 };
@@ -96,6 +99,7 @@ const SideContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   padding-top: 10px;
+  position: relative;
 `;
 
 const Logo = styled.div`
@@ -169,4 +173,22 @@ const SubIndexContainer = styled.div<{ $isSelect: boolean }>`
   padding-left: 30px;
   background-color: ${({ $isSelect, theme }) =>
     $isSelect ? theme.colors.grey[200] : '#fff'};
+`;
+const CopyrightWrapper = styled.div`
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+`;
+
+const CopyrightText = styled.div`
+  @media ${({ theme }) => theme.device.tablet} {
+    font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  }
+  color: ${({ theme }) => theme.colors.grey[500]};
+  font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  text-align: center;
 `;

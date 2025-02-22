@@ -1,4 +1,4 @@
-import { api } from '../api';
+import { api } from './api';
 
 export interface Slope {
   managementNo: string;
@@ -9,6 +9,9 @@ export interface Slope {
     district: string;
     address?: string;
     roadAddress?: string;
+    mountainAddress: string;
+    mainLotNumber: string;
+    subLotNumber: string;
     coordinates: {
       start: {
         type: string;
@@ -37,12 +40,18 @@ export interface Slope {
     department?: string;
     authority?: string;
   };
-  inspections: Array<{
+  inspections: {
+    serialNumber: string;
     date: Date;
     result: string;
+  };
+  disaster: {
+    serialNumber: string;
+    riskDate: Date;
     riskLevel: string;
+    riskScore: string;
     riskType: string;
-  }>;
+  };
   collapseRisk: {
     districtNo: string;
     districtName: string;
@@ -53,10 +62,15 @@ export interface Slope {
     year: string;
     type: string;
   };
+  slopeInspectionHistory: {
+    historyNumber: string;
+    inspectionDate: string;
+  };
   createdAt: Date;
+  _id: string;
 }
 
-export const slopeAPI = {
+export const slopeMapAPI = {
   fetchNearbySlopes: async (latitude: number, longitude: number) => {
     console.log(latitude, longitude);
     const response = await api.post(`slopes/nearby`, {

@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, TouchEvent } from 'react';
 import styled from 'styled-components';
-import NoInfo from './NoInfo';
 import InfoTable from './InfoTable';
 import { BottomSheetProps } from '../interface';
 import ListContainer from './ListContainer';
