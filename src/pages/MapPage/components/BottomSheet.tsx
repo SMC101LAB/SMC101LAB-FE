@@ -128,7 +128,7 @@ const IconWrapper = styled.div`
 const SlideContainer = styled.div`
   position: absolute;
   width: 100%;
-  height: 200px;
+  height: 120px;
 `;
 const SlideIcon = styled.div`
   border-radius: 30px;
@@ -138,7 +138,7 @@ const SlideIcon = styled.div`
 `;
 
 const ListWrapper = styled.div`
-  margin-top: 20px;
+  margin-top: 30px;
   padding: 0 25px;
   display: flex;
   flex-direction: column;
