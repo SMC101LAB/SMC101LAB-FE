@@ -14,7 +14,21 @@ export const slopeManageAPI = {
     console.log(' 경사지 전체 조회', response.data);
     return response.data;
   },
-
+  uploadExcelSlope: async (formData: FormData) => {
+    const response = await api.post('/slopes/batch', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    console.log('엑셀 업로드', response);
+    alert(`${response.data.message}\n${response.data.count}건 추가되었습니다.`);
+    return response.data;
+  },
+  createSlope: async (newSlope: Slope) => {
+    const response = await api.post(`slopes/create`, newSlope);
+    console.log(' 경사지 추가', response.data);
+    return;
+  },
   deleteSlope: async (slopeIds: string[]) => {
     const response = await api.delete(`slopes/delete`, { data: { slopeIds } });
     console.log(' 경사지 삭제', response.data);

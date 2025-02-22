@@ -503,7 +503,7 @@ const SteepSlopeLookUp = () => {
   const handleDelete = async () => {
     try {
       if (selectedRow) {
-        await slopeManageAPI.deleteSlope([selectedRow.managementNo]);
+        await slopeManageAPI.deleteSlope([selectedRow._id]);
         // 삭제 성공 후 데이터 갱신
         await queryClient.invalidateQueries({ queryKey: ['slopes'] });
         setSelectedRow(null);
