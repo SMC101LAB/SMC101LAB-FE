@@ -20,7 +20,7 @@ const ManagePage = () => {
     './home',
     './slope/list',
     './slope/add',
-    './slope/edit',
+    './slope/outlier',
     './member/list',
     './member/edit',
     './map',

@@ -69,4 +69,9 @@ export const slopeManageAPI = {
       throw error;
     }
   },
+  findOutlier: async () => {
+    const response = await api.get('/slopes/outlier');
+    console.log(' 경사지 이상값 조회', response.data.data);
+    return response.data.data;
+  },
 };

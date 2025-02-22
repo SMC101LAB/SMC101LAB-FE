@@ -4,7 +4,7 @@ import LoginPage from './pages/LoginPage/LoginPage';
 import MapPage from './pages/MapPage/MapPage';
 import ManagePage from './pages/ManagePage/ManagePage';
 import SteepSlopeLookUp from './pages/ManagePage/StepSlope/pages/SteepSlopeLookUp';
-import SteepSlopeFindError from './pages/ManagePage/StepSlope/pages/SteepSlopeFindError';
+import SteepSlopeOutlier from './pages/ManagePage/StepSlope/pages/SteepSlopeOutlier';
 import SteepSlopeAdd from './pages/ManagePage/StepSlope/pages/SteepSlopeAdd';
 import UserLookUp from './pages/ManagePage/User/pages/UserLookUp';
 import UserModi from './pages/ManagePage/User/pages/UserModi';
@@ -21,7 +21,7 @@ const Router = () => {
             <Route path="home" element={<Home />} />
             <Route path="slope">
               <Route path="list" element={<SteepSlopeLookUp />} />
-              <Route path="edit" element={<SteepSlopeFindError />} />
+              <Route path="outlier" element={<SteepSlopeOutlier />} />
               <Route path="add" element={<SteepSlopeAdd />} />
             </Route>
             <Route path="member">
