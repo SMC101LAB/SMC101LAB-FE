@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import Title from '../../components/Title';
 import SteepSlopeEmpty from '../components/OutlierEmpty';
 import StepSlopeDup from '../components/OutlierDup';
 const SteepSlopeOutlier = () => {

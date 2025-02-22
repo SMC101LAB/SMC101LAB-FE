@@ -19,6 +19,7 @@ const Login = () => {
         phone: '',
         password: '',
       });
+      nav('/manage/map');
     },
     onError: (error) => {
       alert('로그인에 실패했습니다. 다시 시도해주세요.');
@@ -32,7 +33,6 @@ const Login = () => {
     );
     if (isFormFilled) {
       joinMutation.mutate(loginForm);
-      nav('/manage/map');
     } else {
       alert('빈칸 없이 입력해주세요.');
     }
@@ -50,7 +50,6 @@ const Login = () => {
         [name]: value,
       }));
     }
-    console.log(loginForm);
   };
   return (
     <InputWrapper>
