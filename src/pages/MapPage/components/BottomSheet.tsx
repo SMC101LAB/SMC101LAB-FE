@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import InfoTable from './InfoTable';
 import { BottomSheetProps } from '../interface';
 import ListContainer from './ListContainer';
+import CommentList from './CommentList';
 
 const BottomSheet: React.FC<BottomSheetProps> = ({
   slopeData,
@@ -29,7 +30,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
     const diff = startY.current - e.clientY;
     let newHeight = currentHeight.current + diff;
-    newHeight = Math.max(100, Math.min(500, newHeight));
+    newHeight = Math.max(100, Math.min(window.innerHeight * 0.8, newHeight));
     setHeight(newHeight);
   }).current;
 
@@ -51,7 +52,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
     const diff = startY.current - e.touches[0].clientY;
     let newHeight = currentHeight.current + diff;
-    newHeight = Math.max(100, Math.min(500, newHeight));
+    newHeight = Math.max(100, Math.min(window.innerHeight * 0.8, newHeight));
     setHeight(newHeight);
   };
 
@@ -80,7 +81,10 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       </IconWrapper>
 
       {selectItem !== null ? (
-        <InfoTable selectItem={selectItem} />
+        <div>
+          <InfoTable selectItem={selectItem} />
+          <CommentList />
+        </div>
       ) : (
         <ListWrapper>
           {slopeData.map((item, index) => (
@@ -103,7 +107,7 @@ const BaseContainer = styled.div<{ $isDragging?: boolean; height: number }>`
   width: 100%;
   height: ${({ height }) => height}px;
   min-height: 100px;
-  max-height: 800px;
+  max-height: 80vh;
   overflow: hidden;
   transition: ${({ $isDragging }) =>
     $isDragging ? 'none' : 'height 0.3s ease'};
