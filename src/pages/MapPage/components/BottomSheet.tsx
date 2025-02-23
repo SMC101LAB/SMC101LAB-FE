@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, TouchEvent } from 'react';
+import { useRef, useEffect, TouchEvent } from 'react';
 import styled from 'styled-components';
 import InfoTable from './InfoTable';
 import { BottomSheetProps } from '../interface';
@@ -9,20 +9,21 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   slopeData,
   selectItem,
   onItemClick,
+  height,
+  setHeight,
 }) => {
   // console.log(selectItem);
   // console.log(selectItem);
 
   // bottome Sheet의 움직임 관련 state
-  const [height, setHeight] = useState<number>(200);
   const startY = useRef<number>(0);
   const currentHeight = useRef<number>(200);
   const isDragging = useRef<boolean>(false);
 
   // bottome Sheet의 높이 관련 useEffect
-  useEffect(() => {
-    setHeight(selectItem === null ? 200 : 300);
-  }, [selectItem]);
+  // useEffect(() => {
+  //   setHeight(selectItem === null ? 200 : 300);
+  // }, [selectItem]);
 
   // bottome Sheet의 움직임 관련 함수
   const handleMouseMove = useRef((e: globalThis.MouseEvent) => {

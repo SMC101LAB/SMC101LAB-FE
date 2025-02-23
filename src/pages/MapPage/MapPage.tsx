@@ -19,6 +19,7 @@ const MapPage = () => {
   const [slopeData, setSlopeData] = useState<Slope[]>([]);
 
   const [searchMod, setSearchMod] = useState<boolean>(false);
+  const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(200); //bottomsheet 높이 조절 state
 
   const fetchSlopes = async () => {
     //위치정보가 없는 경우 호출 안함
@@ -46,6 +47,7 @@ const MapPage = () => {
       if (searchValue === '') {
         setSearchMod(false);
         fetchSlopes();
+        setSelectedMarkerId(null);
         return;
       }
 
@@ -99,6 +101,7 @@ const MapPage = () => {
     mapInstance.setZoom(15); // 필요하다면 줌 레벨 조정
     fetchSlopes();
   }, [mapInstance, userLocation]);
+
   return (
     <BaseBackground>
       <MapComponent
@@ -107,7 +110,6 @@ const MapPage = () => {
         allTextShow={allTextShow}
         userLocation={userLocation}
         setUserLocation={setUserLocation}
-        // 추가
         mapInstance={mapInstance}
         setMapInstance={setMapInstance}
         onMarkerClick={chooseSelectItem}
@@ -117,8 +119,9 @@ const MapPage = () => {
         selectItem={
           selectedMarkerId !== null ? slopeData[selectedMarkerId] : null
         }
-        // 추가
         onItemClick={chooseSelectItem}
+        height={bottomSheetHeight}
+        setHeight={setBottomSheetHeight}
       />
 
       <SearchComponent onSearch={handleSearch} />

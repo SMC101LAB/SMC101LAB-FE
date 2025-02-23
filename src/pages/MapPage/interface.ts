@@ -14,6 +14,8 @@ export interface BottomSheetProps {
   slopeData: Slope[];
   selectItem: Slope | null;
   onItemClick: (item: Slope, index: number) => void;
+  height: number;
+  setHeight: (height: number) => void;
 }
 export interface InfotableProps {
   selectItem: Slope | null;
