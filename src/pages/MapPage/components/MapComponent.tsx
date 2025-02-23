@@ -26,8 +26,8 @@ const MapComponent: React.FC<MapComponentProps> = ({
   onMarkerClick,
 }) => {
   const navermaps = useNavermaps();
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  console.log(errorMessage);
+  const [_errorMessage, setErrorMessage] = useState<string | null>(null);
+  // console.log(errorMessage);
   // console.log(escarpmentData);
 
   useEffect(() => {
