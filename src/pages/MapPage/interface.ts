@@ -28,3 +28,23 @@ export interface ListProps {
 export interface SearchComponentProps {
   onSearch: (value: string) => void;
 }
+
+interface UserInfo {
+  _id: string;
+  name: string;
+  organization: string;
+  isAdmin: boolean;
+}
+export interface CommentData {
+  _id: string;
+  slopeId: string;
+  userId: UserInfo;
+  content: string;
+  imageUrls: string[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+export interface CommentContainerProps {
+  comment: CommentData;
+}

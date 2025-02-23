@@ -96,3 +96,14 @@ export const slopeMapAPI = {
     return response.data.data;
   },
 };
+
+export const slopeCommentAPI = {
+  getComment: async (slopeId: string) => {
+    const response = await api.get(`slopes/${slopeId}/comments`);
+    console.log('급경사지 코멘트 조회', response.data);
+    return response.data.data;
+  },
+  createComment: async () => {},
+  putComment: async () => {},
+  deleteComment: async () => {},
+};
