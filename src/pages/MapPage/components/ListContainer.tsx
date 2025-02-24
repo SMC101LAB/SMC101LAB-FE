@@ -43,7 +43,7 @@ const Container = styled.div`
   width: 100%;
   padding: 15px 20px;
   border: 1px solid ${({ theme }) => theme.colors.grey[300]};
-  border-radius: 10px;
+  border-radius: 15px;
 `;
 const Wrapper = styled.div`
   display: flex;
