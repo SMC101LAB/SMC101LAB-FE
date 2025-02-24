@@ -37,18 +37,21 @@ export default React.memo(SearchComponent);
 
 const SearchContainer = styled.div`
   position: absolute;
-  top: 10px;
+  top: 45px;
   left: 10px;
   display: flex;
-  gap: 10px;
+  gap: 8px;
   padding: 5px 10px;
 `;
 
 const SearchInput = styled.input`
   padding: 5px 15px;
-  border-radius: 20px;
+  border-radius: 15px;
   background-color: #fff;
+  font-size: ${({ theme }) => theme.fonts.sizes.mm};
   box-shadow: ${({ theme }) => theme.shadows.lg};
+  width: 55vw;
+  color: ${({ theme }) => theme.colors.grey[700]};
 `;
 
 const SearchIcon = styled.img`
@@ -61,7 +64,7 @@ const SearchIconWrapper = styled.div`
   justify-content: center;
   align-items: center;
   width: 35px;
-  height: 30px;
+  height: 40px;
   border-radius: 15px;
   background-color: ${({ theme }) => theme.colors.primaryDark};
   box-shadow: ${({ theme }) => theme.shadows.md};
