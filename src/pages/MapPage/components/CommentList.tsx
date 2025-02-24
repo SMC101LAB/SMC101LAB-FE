@@ -22,7 +22,7 @@ const CommentList = ({ slopeId }: CommentListProps) => {
       }
     };
     fetchComment();
-  }, []);
+  }, [slopeId]);
   const [isRegist, setIsRegist] = useState(false);
   return (
     <BaseContainer>
