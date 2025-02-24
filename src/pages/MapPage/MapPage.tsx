@@ -97,10 +97,17 @@ const MapPage = () => {
   //내 위치로 이동
   const moveToMyLocation = useCallback(() => {
     if (!mapInstance || !userLocation) return;
-    mapInstance.panTo(userLocation); // 지도를 현재 위치로 중심 이동
-    mapInstance.setZoom(15); // 필요하다면 줌 레벨 조정
+
+    // 줌 레벨 먼저 변경
+    mapInstance.setZoom(15);
+
+    // 약간 지연 후 위치 이동
+    setTimeout(() => {
+      mapInstance.panTo(userLocation);
+    }, 100);
+
     fetchSlopes();
-  }, [mapInstance, userLocation]);
+  }, [mapInstance, userLocation, fetchSlopes]);
 
   return (
     <BaseBackground>
