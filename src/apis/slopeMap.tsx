@@ -100,10 +100,32 @@ export const slopeMapAPI = {
 export const slopeCommentAPI = {
   getComment: async (slopeId: string) => {
     const response = await api.get(`slopes/${slopeId}/comments`);
-    console.log('급경사지 코멘트 조회', response.data);
+    console.log('급경사지 코멘트 조회 완료', response.data);
     return response.data.data;
   },
-  createComment: async () => {},
-  putComment: async () => {},
-  deleteComment: async () => {},
+  createComment: async (formData: FormData) => {
+    const slopeId = formData.get('slopeId');
+    const response = await api.post(`slopes/${slopeId}/comments`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    console.log('급경사지 코멘트 생성 완료', response.data);
+    return response.data;
+  },
+  updateComment: async (formData: FormData) => {
+    const commentId = formData.get('commentId');
+    const response = await api.put(`slopes/comments/${commentId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    console.log('급경사지 코멘트 수정 완료', response.data);
+    return response.data;
+  },
+  deleteComment: async (commentId: string) => {
+    const response = await api.delete(`slopes/comments/${commentId}`);
+    console.log('급경사지 코멘트 삭제 완료', response.data);
+    return response.data;
+  },
 };

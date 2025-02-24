@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import search from '../../../assets/Icons/searchWhite.svg';
-import { SearchComponentProps } from '../interface';
+import search from '../../../../assets/Icons/searchWhite.svg';
+import { SearchComponentProps } from '../../interface';
 
 const SearchComponent = ({ onSearch }: SearchComponentProps) => {
   const [searchInput, setSearchInput] = useState<string>('');

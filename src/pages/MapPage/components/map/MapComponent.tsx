@@ -6,13 +6,13 @@ import {
   Marker,
 } from 'react-naver-maps';
 import { useState, useEffect } from 'react';
-import AmarkerIcon from '../../../assets/a.png';
-import BmarkerIcon from '../../../assets/b.png';
-import CmarkerIcon from '../../../assets/c.png';
-import DmarkerIcon from '../../../assets/d.png';
-import FmarkerIcon from '../../../assets/f.png';
-import UserPosIcon from '../../../assets/current_position.png';
-import { MapComponentProps } from '../interface';
+import AmarkerIcon from '../../../../assets/a.png';
+import BmarkerIcon from '../../../../assets/b.png';
+import CmarkerIcon from '../../../../assets/c.png';
+import DmarkerIcon from '../../../../assets/d.png';
+import FmarkerIcon from '../../../../assets/f.png';
+import UserPosIcon from '../../../../assets/current_position.png';
+import { MapComponentProps } from '../../interface';
 
 const MapComponent: React.FC<MapComponentProps> = ({
   selectedMarkerId,

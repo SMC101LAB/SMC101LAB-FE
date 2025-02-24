@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 
 import styled from 'styled-components';
 
-import BottomSheet from './components/BottomSheet';
-import MapComponent from './components/MapComponent';
-import SearchComponent from './components/Search';
+import BottomSheet from './BottomSheet';
+import MapComponent from './components/map/MapComponent';
+import SearchComponent from './components/map/Search';
 
 import { Slope, slopeMapAPI } from '../../apis/slopeMap';
 import myposition from '../../assets/Icons/myposition.svg';
@@ -56,8 +56,8 @@ const MapPage = () => {
       const searchSlope = async () => {
         //위치정보가 없는 경우 호출 안함
         if (!userLocation?.lat() || !userLocation?.lng()) return;
-        console.log('Searching for:', searchValue);
-        console.log('Searching Mod:', searchMod);
+        // console.log('Searching for:', searchValue);
+        // console.log('Searching Mod:', searchMod);
         try {
           const data = await slopeMapAPI.searchSlopes(
             searchValue,
@@ -128,8 +128,8 @@ const MapPage = () => {
       <AllShowButton
         $isSelect={allTextShow}
         onClick={() => {
-          console.log(allTextShow);
-          console.log(allTextShow);
+          // console.log(allTextShow);
+          // console.log(allTextShow);
           setAllTextShow(!allTextShow);
         }}
       >

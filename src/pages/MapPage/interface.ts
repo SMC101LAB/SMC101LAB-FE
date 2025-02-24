@@ -47,4 +47,5 @@ export interface CommentData {
 }
 export interface CommentContainerProps {
   comment: CommentData;
+  fetchComment: () => Promise<void>;
 }
