@@ -39,33 +39,38 @@ const MapComponent: React.FC<MapComponentProps> = ({
 
   //앱에서 위치 수신
   useEffect(() => {
-    const handleMessage = (event: any) => {
-      try {
-        const data = JSON.parse(event.data);
+    const isReactNativeWebView =
+      typeof window != 'undefined' && window.ReactNativeWebView != null;
 
-        if (data.latitude && data.longitude) {
-          console.log('앱에서 받은 위치:', data.latitude, data.longitude);
-          // navermaps가 있을 때만 setUserLocation 호출
-          if (navermaps) {
-            setUserLocation(
-              new navermaps.LatLng(data.latitude, data.longitude)
-            );
+    if (isReactNativeWebView) {
+      const handleMessage = (event: any) => {
+        try {
+          const data = JSON.parse(event.data);
+
+          if (data.latitude && data.longitude) {
+            console.log('앱에서 받은 위치:', data.latitude, data.longitude);
+            // navermaps가 있을 때만 setUserLocation 호출
+            if (navermaps) {
+              setUserLocation(
+                new navermaps.LatLng(data.latitude, data.longitude)
+              );
+            }
           }
+        } catch (error) {
+          console.error('메시지 파싱 오류:', error);
         }
-      } catch (error) {
-        console.error('메시지 파싱 오류:', error);
-      }
-    };
+      };
 
-    // IOS
-    window.addEventListener('message', handleMessage);
-    // Android
-    document.addEventListener('message', handleMessage);
+      // IOS
+      window.addEventListener('message', handleMessage);
+      // Android
+      document.addEventListener('message', handleMessage);
 
-    return () => {
-      window.removeEventListener('message', handleMessage);
-      document.removeEventListener('message', handleMessage);
-    };
+      return () => {
+        window.removeEventListener('message', handleMessage);
+        document.removeEventListener('message', handleMessage);
+      };
+    }
   }, [navermaps, setUserLocation]);
 
   useEffect(() => {
