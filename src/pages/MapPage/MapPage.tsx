@@ -108,7 +108,6 @@ const MapPage = () => {
 
     fetchSlopes();
   }, [mapInstance, userLocation, fetchSlopes]);
-
   return (
     <BaseBackground>
       <MapComponent
@@ -129,6 +128,10 @@ const MapPage = () => {
         onItemClick={chooseSelectItem}
         height={bottomSheetHeight}
         setHeight={setBottomSheetHeight}
+        onCloseInfo={() => {
+          setSelectedMarkerId(null);
+        }}
+        searchMod={searchMod}
       />
 
       <SearchComponent onSearch={handleSearch} />

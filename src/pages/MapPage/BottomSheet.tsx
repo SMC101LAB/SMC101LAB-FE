@@ -4,6 +4,7 @@ import InfoTable from './components/InfoTable';
 import { BottomSheetProps } from './interface';
 import ListContainer from './components/ListContainer';
 import CommentList from './components/comment/CommentList';
+import NoInfo from './components/NoInfo';
 
 const BottomSheet: React.FC<BottomSheetProps> = ({
   slopeData,
@@ -11,6 +12,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   onItemClick,
   height,
   setHeight,
+  onCloseInfo,
+  searchMod,
 }) => {
   const startY = useRef<number>(0);
   const currentHeight = useRef<number>(200); //현재 높이
@@ -72,7 +75,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       scrollWrapperRef.current.style.overflow = 'auto';
     }
   };
-
   return (
     <BaseContainer height={height} $isDragging={isDragging.current}>
       <ScrollWrapper ref={scrollWrapperRef}>
@@ -86,24 +88,36 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           <SlideIcon />
         </IconWrapper>
 
-        {selectItem !== null ? (
-          <div>
-            <InfoTable selectItem={selectItem} />
-            <CommentList slopeId={selectItem._id} />
-          </div>
-        ) : (
-          <ListWrapper>
-            {slopeData.map((item, index) => (
-              <ListContainer
-                key={index}
-                item={item}
-                onClick={() => {
-                  onItemClick(item, index);
-                }}
-              ></ListContainer>
-            ))}
-          </ListWrapper>
-        )}
+        {(() => {
+          if (selectItem !== null) {
+            return (
+              <div>
+                <InfoTable selectItem={selectItem} onCloseInfo={onCloseInfo} />
+                <CommentList slopeId={selectItem._id} />
+              </div>
+            );
+          } else if (slopeData.length === 0) {
+            if (searchMod) {
+              return <NoInfo text="검색결과가 없습니다." />;
+            } else {
+              return <NoInfo text="5km 반경 내 급경사지 데이터가 없습니다." />;
+            }
+          } else {
+            return (
+              <ListWrapper>
+                {slopeData.map((item, index) => (
+                  <ListContainer
+                    key={index}
+                    item={item}
+                    onClick={() => {
+                      onItemClick(item, index);
+                    }}
+                  ></ListContainer>
+                ))}
+              </ListWrapper>
+            );
+          }
+        })()}
       </ScrollWrapper>
     </BaseContainer>
   );

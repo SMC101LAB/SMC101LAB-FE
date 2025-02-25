@@ -16,9 +16,12 @@ export interface BottomSheetProps {
   onItemClick: (item: Slope, index: number) => void;
   height: number;
   setHeight: (height: number) => void;
+  onCloseInfo: () => void;
+  searchMod: boolean;
 }
 export interface InfotableProps {
   selectItem: Slope | null;
+  onCloseInfo: () => void;
 }
 export interface ListProps {
   item: Slope | null;
