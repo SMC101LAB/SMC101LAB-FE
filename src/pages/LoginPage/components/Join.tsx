@@ -62,6 +62,11 @@ const Join = () => {
       alert('정보를 정확히 입력해주세요.');
     }
   };
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      onSubmit();
+    }
+  };
   return (
     <InputWrapper>
       <Input
@@ -86,7 +91,6 @@ const Join = () => {
           if (e.key === '-' || e.key === '+' || e.key === 'e') {
             e.preventDefault();
             setIsPhoneValid(false);
-            // 잠시 후 메시지 숨기기 (선택 사항)
             setTimeout(() => setIsPhoneValid(true), 2000);
           }
         }}
@@ -107,6 +111,7 @@ const Join = () => {
         onChange={handlePwCheckChange}
         placeholder="비밀번호 확인"
         type="password"
+        onKeyDown={handleKeyDown}
       />
       {!pwVerfiy && <ErrorText>비밀번호가 일치하지 않습니다.</ErrorText>}
       <LoginButton onClick={onSubmit}>회원가입</LoginButton>
