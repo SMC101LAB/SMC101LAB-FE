@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Input, InputWrapper, LoginButton } from './Style';
+import { ErrorText, Input, InputWrapper, LoginButton } from './Style';
 import { useMutation } from '@tanstack/react-query';
 import { authAPI, LoginFormType } from '../../../apis/Auth';
 
@@ -10,6 +10,7 @@ const Login = () => {
     phone: '',
     password: '',
   });
+  const [isPhoneValid, setIsPhoneValid] = useState<boolean>(true);
 
   const joinMutation = useMutation({
     mutationFn: (data: LoginFormType) => authAPI.login(data),
@@ -57,8 +58,19 @@ const Login = () => {
         name="phone"
         value={loginForm.phone}
         placeholder="전화번호"
+        type="number"
         onChange={handleChange}
+        onKeyDown={(e) => {
+          if (e.key === '-' || e.key === '+' || e.key === 'e') {
+            e.preventDefault();
+            setIsPhoneValid(false);
+            setTimeout(() => setIsPhoneValid(true), 2000);
+          }
+        }}
       />
+      {!isPhoneValid && (
+        <ErrorText>"-"를 제외한 숫자만 입력해 주세요</ErrorText>
+      )}
       <Input
         name="password"
         value={loginForm.password}
