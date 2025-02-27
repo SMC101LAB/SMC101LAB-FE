@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { userAPI, User } from '../../../apis/User';
+import { userAPI, User } from '../../../../apis/User';
 import { styled } from 'styled-components';
 import {
   PaginationState,
@@ -11,14 +11,14 @@ import {
   getSortedRowModel,
   getPaginationRowModel,
 } from '@tanstack/react-table';
-import search from '../../../assets/Icons/search.svg';
-import approve from '../../../assets/Icons/approve.svg';
-import reject from '../../../assets/Icons/reject.svg';
+import search from '../../../../assets/Icons/search.svg';
+import approve from '../../../../assets/Icons/approve.svg';
+import reject from '../../../../assets/Icons/reject.svg';
 import { FilterFn, getFilteredRowModel } from '@tanstack/react-table';
 import { rankItem } from '@tanstack/match-sorter-utils';
-import Title from '../components/Title';
-import { DebouncedInputProps } from '../interface';
-import Pagination from '../components/Pagination';
+import Title from '../../components/Title';
+import { DebouncedInputProps } from '../../interface';
+import Pagination from '../../components/Pagination';
 const columnHelper = createColumnHelper<User>();
 
 declare module '@tanstack/react-table' {

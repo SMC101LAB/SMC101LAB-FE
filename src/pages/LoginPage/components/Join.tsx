@@ -12,7 +12,7 @@ const Join = () => {
   });
   const [pwCheck, setPwCheck] = useState<string>('');
   const [pwVerfiy, setPwVerify] = useState<boolean>(true);
-
+  const [isPhoneValid, setIsPhoneValid] = useState<boolean>(true);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -82,7 +82,18 @@ const Join = () => {
         value={joinForm.phone}
         onChange={handleChange}
         placeholder="전화번호"
+        onKeyDown={(e) => {
+          if (e.key === '-' || e.key === '+' || e.key === 'e') {
+            e.preventDefault();
+            setIsPhoneValid(false);
+            // 잠시 후 메시지 숨기기 (선택 사항)
+            setTimeout(() => setIsPhoneValid(true), 2000);
+          }
+        }}
       />
+      {!isPhoneValid && (
+        <ErrorText>"-"를 제외한 숫자만 입력해 주세요</ErrorText>
+      )}
       <Input
         name="password"
         value={joinForm.password}

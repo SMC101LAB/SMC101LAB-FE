@@ -1,24 +1,27 @@
 import styled from 'styled-components';
 import { InfotableProps } from '../interface';
 
-const InfoTable: React.FC<InfotableProps> = ({ selectItem }) => {
+const InfoTable: React.FC<InfotableProps> = ({ selectItem, onCloseInfo }) => {
   if (!selectItem) return null;
-  const grade = selectItem.inspections[0]?.riskLevel.includes('A')
+  const grade = selectItem.disaster?.riskLevel.includes('A')
     ? 'A'
-    : selectItem.inspections[0]?.riskLevel.includes('B')
+    : selectItem.disaster?.riskLevel.includes('B')
     ? 'B'
-    : selectItem.inspections[0]?.riskLevel.includes('C')
+    : selectItem.disaster?.riskLevel.includes('C')
     ? 'C'
-    : selectItem.inspections[0]?.riskLevel.includes('D')
+    : selectItem.disaster?.riskLevel.includes('D')
     ? 'D'
     : 'F';
   return (
     <InnerContainer>
-      <TitleWrapper>
-        <Title>{selectItem.name}</Title>
-        <Num>{selectItem.managementNo}</Num>
-      </TitleWrapper>
+      <HeaderWrapper>
+        <TitleWrapper>
+          <Title>{selectItem.name}</Title>
+          <Num>{selectItem.managementNo}</Num>
+        </TitleWrapper>
 
+        <CloseButton onClick={onCloseInfo}>&times;</CloseButton>
+      </HeaderWrapper>
       <ContentSection>
         <InfoRow>
           <Label>관리번호</Label>
@@ -62,14 +65,18 @@ export default InfoTable;
 const InnerContainer = styled.div`
   padding: 20px;
 `;
+const HeaderWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+`;
 
 const TitleWrapper = styled.div`
   display: flex;
   align-items: flex-end;
   gap: 10px;
   padding-bottom: 15px;
-
-  border-bottom: 1px solid #eee;
+  flex-grow: 1;
 `;
 
 const Title = styled.div`
@@ -134,4 +141,16 @@ const GradeValue = styled(Value)<{ grade: string }>`
     }
   }};
   font-weight: 600;
+`;
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 36px;
+  cursor: pointer;
+  color: #666;
+  &:hover {
+    color: #333;
+  }
+  padding: 8px 15px;
 `;

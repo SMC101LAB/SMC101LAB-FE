@@ -4,13 +4,13 @@ import { ListProps } from '../interface';
 
 const ListContainer: React.FC<ListProps> = ({ item, onClick }) => {
   if (!item) return null;
-  const grade = item.inspections[0]?.riskLevel.includes('A')
+  const grade = item.disaster?.riskLevel.includes('A')
     ? 'A'
-    : item.inspections[0]?.riskLevel.includes('B')
+    : item.disaster?.riskLevel.includes('B')
     ? 'B'
-    : item.inspections[0]?.riskLevel.includes('C')
+    : item.disaster?.riskLevel.includes('C')
     ? 'C'
-    : item.inspections[0]?.riskLevel.includes('D')
+    : item.disaster?.riskLevel.includes('D')
     ? 'D'
     : 'F';
   return (
@@ -33,23 +33,6 @@ const ListContainer: React.FC<ListProps> = ({ item, onClick }) => {
           </div>
         </MainInnerContainer>
       </Wrapper>
-
-      {/* <TopWrapper>
-
-        <GradeBackground grade={grade}>
-          <GradeText grade={grade}>{grade}</GradeText>
-        </GradeBackground>
-      </TopWrapper>
-      <AddressWrapper>
-        <Label>주소</Label>
-        <AddressValue>
-          {item.location.province} {item.location.city} {item.location.district}
-        </AddressValue>
-      </AddressWrapper>
-      <AddressWrapper>
-        <Label></Label>
-        <AddressValue>{item.location.address}</AddressValue>
-      </AddressWrapper> */}
     </Container>
   );
 };
@@ -60,7 +43,7 @@ const Container = styled.div`
   width: 100%;
   padding: 15px 20px;
   border: 1px solid ${({ theme }) => theme.colors.grey[300]};
-  border-radius: 10px;
+  border-radius: 15px;
 `;
 const Wrapper = styled.div`
   display: flex;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Input, InputWrapper, LoginButton } from './Style';
+import { ErrorText, Input, InputWrapper, LoginButton } from './Style';
 import { useMutation } from '@tanstack/react-query';
 import { authAPI, LoginFormType } from '../../../apis/Auth';
 
@@ -10,6 +10,7 @@ const Login = () => {
     phone: '',
     password: '',
   });
+  const [isPhoneValid, setIsPhoneValid] = useState<boolean>(true);
 
   const joinMutation = useMutation({
     mutationFn: (data: LoginFormType) => authAPI.login(data),
@@ -19,6 +20,7 @@ const Login = () => {
         phone: '',
         password: '',
       });
+      nav('/manage/map');
     },
     onError: (error) => {
       alert('로그인에 실패했습니다. 다시 시도해주세요.');
@@ -32,7 +34,6 @@ const Login = () => {
     );
     if (isFormFilled) {
       joinMutation.mutate(loginForm);
-      nav('/manage/map');
     } else {
       alert('빈칸 없이 입력해주세요.');
     }
@@ -50,7 +51,11 @@ const Login = () => {
         [name]: value,
       }));
     }
-    console.log(loginForm);
+  };
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      onSubmit();
+    }
   };
   return (
     <InputWrapper>
@@ -58,14 +63,26 @@ const Login = () => {
         name="phone"
         value={loginForm.phone}
         placeholder="전화번호"
+        type="number"
         onChange={handleChange}
+        onKeyDown={(e) => {
+          if (e.key === '-' || e.key === '+' || e.key === 'e') {
+            e.preventDefault();
+            setIsPhoneValid(false);
+            setTimeout(() => setIsPhoneValid(true), 2000);
+          }
+        }}
       />
+      {!isPhoneValid && (
+        <ErrorText>"-"를 제외한 숫자만 입력해 주세요</ErrorText>
+      )}
       <Input
         name="password"
         value={loginForm.password}
         placeholder="비밀번호"
         type="password"
         onChange={handleChange}
+        onKeyDown={handleKeyDown}
       />
       <LoginButton onClick={onSubmit}>로그인</LoginButton>
     </InputWrapper>

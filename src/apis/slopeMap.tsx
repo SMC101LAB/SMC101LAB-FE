@@ -1,4 +1,4 @@
-import { api } from '../api';
+import { api } from './api';
 
 export interface Slope {
   managementNo: string;
@@ -9,6 +9,9 @@ export interface Slope {
     district: string;
     address?: string;
     roadAddress?: string;
+    mountainAddress: string;
+    mainLotNumber: string;
+    subLotNumber: string;
     coordinates: {
       start: {
         type: string;
@@ -37,12 +40,18 @@ export interface Slope {
     department?: string;
     authority?: string;
   };
-  inspections: Array<{
+  inspections: {
+    serialNumber: string;
     date: Date;
     result: string;
+  };
+  disaster: {
+    serialNumber: string;
+    riskDate: Date;
     riskLevel: string;
+    riskScore: string;
     riskType: string;
-  }>;
+  };
   collapseRisk: {
     districtNo: string;
     districtName: string;
@@ -53,10 +62,15 @@ export interface Slope {
     year: string;
     type: string;
   };
+  slopeInspectionHistory: {
+    historyNumber: string;
+    inspectionDate: string;
+  };
   createdAt: Date;
+  _id: string;
 }
 
-export const slopeAPI = {
+export const slopeMapAPI = {
   fetchNearbySlopes: async (latitude: number, longitude: number) => {
     console.log(latitude, longitude);
     const response = await api.post(`slopes/nearby`, {
@@ -80,5 +94,38 @@ export const slopeAPI = {
     });
     console.log('급경사지 검색', response.data);
     return response.data.data;
+  },
+};
+
+export const slopeCommentAPI = {
+  getComment: async (slopeId: string) => {
+    const response = await api.get(`slopes/${slopeId}/comments`);
+    console.log('급경사지 코멘트 조회 완료', response.data);
+    return response.data.data;
+  },
+  createComment: async (formData: FormData) => {
+    const slopeId = formData.get('slopeId');
+    const response = await api.post(`slopes/${slopeId}/comments`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    console.log('급경사지 코멘트 생성 완료', response.data);
+    return response.data;
+  },
+  updateComment: async (formData: FormData) => {
+    const commentId = formData.get('commentId');
+    const response = await api.put(`slopes/comments/${commentId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    console.log('급경사지 코멘트 수정 완료', response.data);
+    return response.data;
+  },
+  deleteComment: async (commentId: string) => {
+    const response = await api.delete(`slopes/comments/${commentId}`);
+    console.log('급경사지 코멘트 삭제 완료', response.data);
+    return response.data;
   },
 };

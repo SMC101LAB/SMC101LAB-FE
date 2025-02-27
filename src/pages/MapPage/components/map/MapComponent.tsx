@@ -6,13 +6,20 @@ import {
   Marker,
 } from 'react-naver-maps';
 import { useState, useEffect } from 'react';
-import AmarkerIcon from '../../../assets/a.png';
-import BmarkerIcon from '../../../assets/b.png';
-import CmarkerIcon from '../../../assets/c.png';
-import DmarkerIcon from '../../../assets/d.png';
-import FmarkerIcon from '../../../assets/f.png';
-import UserPosIcon from '../../../assets/current_position.png';
-import { MapComponentProps } from '../interface';
+import AmarkerIcon from '../../../../assets/a.png';
+import BmarkerIcon from '../../../../assets/b.png';
+import CmarkerIcon from '../../../../assets/c.png';
+import DmarkerIcon from '../../../../assets/d.png';
+import FmarkerIcon from '../../../../assets/f.png';
+import UserPosIcon from '../../../../assets/current_position.png';
+import { MapComponentProps } from '../../interface';
+declare global {
+  interface Window {
+    ReactNativeWebView?: {
+      postMessage: (message: string) => void;
+    };
+  }
+}
 
 const MapComponent: React.FC<MapComponentProps> = ({
   selectedMarkerId,
@@ -26,40 +33,85 @@ const MapComponent: React.FC<MapComponentProps> = ({
   onMarkerClick,
 }) => {
   const navermaps = useNavermaps();
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [_errorMessage, setErrorMessage] = useState<string | null>(null);
   // console.log(errorMessage);
   // console.log(escarpmentData);
+
+  //앱에서 위치 수신
+  useEffect(() => {
+    const isReactNativeWebView =
+      typeof window != 'undefined' && window.ReactNativeWebView != null;
+
+    if (isReactNativeWebView) {
+      const handleMessage = (event: any) => {
+        try {
+          const data = JSON.parse(event.data);
+
+          if (data.latitude && data.longitude) {
+            console.log('앱에서 받은 위치:', data.latitude, data.longitude);
+            // navermaps가 있을 때만 setUserLocation 호출
+            if (navermaps) {
+              setUserLocation(
+                new navermaps.LatLng(data.latitude, data.longitude)
+              );
+            }
+          }
+        } catch (error) {
+          console.error('메시지 파싱 오류:', error);
+        }
+      };
+
+      // IOS
+      window.addEventListener('message', handleMessage);
+      // Android
+      document.addEventListener('message', handleMessage);
+
+      return () => {
+        window.removeEventListener('message', handleMessage);
+        document.removeEventListener('message', handleMessage);
+      };
+    }
+  }, [navermaps, setUserLocation]);
 
   useEffect(() => {
     if (!navermaps) return;
 
     let watchId: number;
-
-    if (navigator.geolocation) {
-      watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          try {
-            const { latitude, longitude } = position.coords;
-            if (latitude && longitude) {
-              setUserLocation(new navermaps.LatLng(latitude, longitude));
-            }
-          } catch (error) {
-            console.error('Error:', error);
-            setErrorMessage('위치 정보를 가져올 수 없습니다.');
-            setUserLocation(new navermaps.LatLng(37.5665, 126.978));
-          }
-        },
-        (error) => {
-          console.error('Error:', error);
-          setErrorMessage('브라우저가 위치 정보를 지원하지 않습니다.');
-          setUserLocation(new navermaps.LatLng(37.5665, 126.978));
-        },
-        {
-          enableHighAccuracy: true, // 높은 정확도
-          maximumAge: 0, // 캐시된 위치정보를 사용하지 않음
-          timeout: 5000,
-        }
+    const isReactNativeWebView =
+      typeof window != 'undefined' && window.ReactNativeWebView != null;
+    // 리액트 네이티브 앱이면 postMessage로 전송
+    if (isReactNativeWebView) {
+      window.ReactNativeWebView!.postMessage(
+        JSON.stringify({ type: 'GPS_PERMISSIONS' })
       );
+      return;
+    } else {
+      if (navigator.geolocation) {
+        watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            try {
+              const { latitude, longitude } = position.coords;
+              if (latitude && longitude) {
+                setUserLocation(new navermaps.LatLng(latitude, longitude));
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              setErrorMessage('위치 정보를 가져올 수 없습니다.');
+              setUserLocation(new navermaps.LatLng(37.5665, 126.978));
+            }
+          },
+          (error) => {
+            console.error('Error:', error);
+            setErrorMessage('브라우저가 위치 정보를 지원하지 않습니다.');
+            setUserLocation(new navermaps.LatLng(37.5665, 126.978));
+          },
+          {
+            enableHighAccuracy: true, // 높은 정확도
+            maximumAge: 0, // 캐시된 위치정보를 사용하지 않음
+            timeout: 5000,
+          }
+        );
+      }
     }
 
     // cleanup
@@ -117,13 +169,13 @@ const MapComponent: React.FC<MapComponentProps> = ({
           {escarpmentData.length > 0
             ? escarpmentData.map((item, index) => {
                 // console.log(item);
-                const grade = item.inspections[0]?.riskLevel.includes('A')
+                const grade = item.disaster?.riskLevel.includes('A')
                   ? 'A'
-                  : item.inspections[0]?.riskLevel.includes('B')
+                  : item.disaster?.riskLevel.includes('B')
                   ? 'B'
-                  : item.inspections[0]?.riskLevel.includes('C')
+                  : item.disaster?.riskLevel.includes('C')
                   ? 'C'
-                  : item.inspections[0]?.riskLevel.includes('D')
+                  : item.disaster?.riskLevel.includes('D')
                   ? 'D'
                   : 'F';
 

@@ -1,10 +1,13 @@
 import styled from 'styled-components';
 import noInfoIcon from '../../../assets/noInfo.png';
 
-const NoInfo = () => (
+interface NoInfoProps {
+  text: string;
+}
+const NoInfo = ({ text }: NoInfoProps) => (
   <NoInfoContainer>
     <NoneIcon src={noInfoIcon} />
-    <NoInfoTitle>등록된 주소가 없습니다.</NoInfoTitle>
+    <NoInfoTitle>{text}</NoInfoTitle>
   </NoInfoContainer>
 );
 export default NoInfo;
@@ -17,6 +20,7 @@ const NoInfoContainer = styled.div`
   align-items: center;
   gap: 15px;
   padding: 20px;
+  margin-top: 20px;
 `;
 const NoInfoTitle = styled.div`
   font-size: 16px;
