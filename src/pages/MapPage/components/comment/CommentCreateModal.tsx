@@ -101,7 +101,7 @@ const CommentAddModal = ({
         JSON.stringify({
           type: 'OPEN_GALLERY',
           resetImages: false,
-          maxImages: 5 - images.length, // 남은 슬롯 수 전달
+          maxImages: 5 - images.length,
         })
       );
     }
