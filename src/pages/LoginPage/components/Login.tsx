@@ -52,6 +52,11 @@ const Login = () => {
       }));
     }
   };
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      onSubmit();
+    }
+  };
   return (
     <InputWrapper>
       <Input
@@ -77,6 +82,7 @@ const Login = () => {
         placeholder="비밀번호"
         type="password"
         onChange={handleChange}
+        onKeyDown={handleKeyDown}
       />
       <LoginButton onClick={onSubmit}>로그인</LoginButton>
     </InputWrapper>
