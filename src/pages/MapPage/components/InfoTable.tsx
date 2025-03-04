@@ -3,21 +3,21 @@ import { InfotableProps } from '../interface';
 
 const InfoTable: React.FC<InfotableProps> = ({ selectItem, onCloseInfo }) => {
   if (!selectItem) return null;
-  const grade = selectItem.disaster?.riskLevel.includes('A')
+  const grade = selectItem.disaster?.riskLevel?.includes('A')
     ? 'A'
-    : selectItem.disaster?.riskLevel.includes('B')
+    : selectItem.disaster?.riskLevel?.includes('B')
     ? 'B'
-    : selectItem.disaster?.riskLevel.includes('C')
+    : selectItem.disaster?.riskLevel?.includes('C')
     ? 'C'
-    : selectItem.disaster?.riskLevel.includes('D')
+    : selectItem.disaster?.riskLevel?.includes('D')
     ? 'D'
     : 'F';
   return (
     <InnerContainer>
       <HeaderWrapper>
         <TitleWrapper>
-          <Title>{selectItem.name}</Title>
-          <Num>{selectItem.managementNo}</Num>
+          <Title>{selectItem?.name || ''}</Title>
+          <Num>{selectItem?.managementNo || ''}</Num>
         </TitleWrapper>
 
         <CloseButton onClick={onCloseInfo}>&times;</CloseButton>
@@ -25,34 +25,44 @@ const InfoTable: React.FC<InfotableProps> = ({ selectItem, onCloseInfo }) => {
       <ContentSection>
         <InfoRow>
           <Label>관리번호</Label>
-          <Value>{selectItem.managementNo}</Value>
+          <Value>{selectItem?.managementNo || ''}</Value>
         </InfoRow>
         <InfoRow>
           <Label>시행청명</Label>
-          <Value>{selectItem.management.organization}</Value>
+          <Value>{selectItem?.management?.organization || ''}</Value>
         </InfoRow>
         <InfoRow>
           <Label>소관부서명</Label>
-          <Value>{selectItem.management.department}</Value>
+          <Value>{selectItem?.management?.department || ''}</Value>
         </InfoRow>
 
         <AddressWrapper>
           <Label>주소</Label>
           <AddressValue>
-            {selectItem.location.province} {selectItem.location.city}{' '}
-            {selectItem.location.district}
-            {selectItem.location.address}
+            {selectItem?.location?.province || ''}{' '}
+            {selectItem?.location?.city || ''}
+            {selectItem?.location?.district || ''}
+            {selectItem?.location?.address || ''}
           </AddressValue>
         </AddressWrapper>
         <InfoRow>
           <Label>등급</Label>
           <GradeValue $grade={grade}>{grade}</GradeValue>
         </InfoRow>
+        {/* <InfoRow>
+          <Label>좌표</Label>
+          <Value>
+            {selectItem?.location?.coordinates?.start?.coordinates?.[1] || ''}
+            {selectItem?.location?.coordinates?.start?.coordinates?.[0] || ''}
+          </Value>
+        </InfoRow> */}
         <InfoRow>
           <Label>좌표</Label>
           <Value>
-            {selectItem.location.coordinates.start.coordinates[1]},{' '}
-            {selectItem.location.coordinates.start.coordinates[0]}
+            {selectItem?.location?.coordinates?.start?.coordinates?.[1] &&
+            selectItem?.location?.coordinates?.start?.coordinates?.[0]
+              ? `위도: ${selectItem.location.coordinates.start.coordinates[1].toString()}° / 경도: ${selectItem.location.coordinates.start.coordinates[0].toString()}°`
+              : '좌표 정보 없음'}
           </Value>
         </InfoRow>
       </ContentSection>

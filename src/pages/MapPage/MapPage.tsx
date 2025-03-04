@@ -79,7 +79,6 @@ const MapPage = () => {
   //아이템 선택
   const chooseSelectItem = useCallback(
     (item: Slope, index: number) => {
-      setSearchMod(false);
       if (mapInstance && item) {
         // 지도 이동
         const coordinates = item.location.coordinates.start.coordinates;

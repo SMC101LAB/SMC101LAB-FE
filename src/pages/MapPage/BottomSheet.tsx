@@ -105,15 +105,19 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           } else {
             return (
               <ListWrapper>
-                {slopeData.map((item, index) => (
-                  <ListContainer
-                    key={index}
-                    item={item}
-                    onClick={() => {
-                      onItemClick(item, index);
-                    }}
-                  ></ListContainer>
-                ))}
+                {!slopeData || slopeData.length === 0 ? (
+                  <div>데이터 조회 중</div>
+                ) : (
+                  slopeData.map((item, index) => (
+                    <ListContainer
+                      key={index}
+                      item={item}
+                      onClick={() => {
+                        onItemClick(item, index);
+                      }}
+                    ></ListContainer>
+                  ))
+                )}
               </ListWrapper>
             );
           }
