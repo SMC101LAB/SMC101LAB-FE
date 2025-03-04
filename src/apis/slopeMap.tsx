@@ -77,7 +77,7 @@ export const slopeMapAPI = {
       latitude,
       longitude,
     });
-    console.log('근처 급 경사지 조회', response.data);
+    // console.log('근처 급 경사지 조회', response.data);
     return response.data.data;
   },
 
@@ -100,7 +100,7 @@ export const slopeMapAPI = {
 export const slopeCommentAPI = {
   getComment: async (slopeId: string) => {
     const response = await api.get(`slopes/${slopeId}/comments`);
-    console.log('급경사지 코멘트 조회 완료', response.data);
+    // console.log('급경사지 코멘트 조회 완료', response.data);
     return response.data.data;
   },
   createComment: async (formData: FormData) => {
@@ -110,7 +110,7 @@ export const slopeCommentAPI = {
         'Content-Type': 'multipart/form-data',
       },
     });
-    console.log('급경사지 코멘트 생성 완료', response.data);
+    // console.log('급경사지 코멘트 생성 완료', response.data);
     return response.data;
   },
   updateComment: async (formData: FormData) => {
@@ -120,12 +120,12 @@ export const slopeCommentAPI = {
         'Content-Type': 'multipart/form-data',
       },
     });
-    console.log('급경사지 코멘트 수정 완료', response.data);
+    // console.log('급경사지 코멘트 수정 완료', response.data);
     return response.data;
   },
   deleteComment: async (commentId: string) => {
     const response = await api.delete(`slopes/comments/${commentId}`);
-    console.log('급경사지 코멘트 삭제 완료', response.data);
+    // console.log('급경사지 코멘트 삭제 완료', response.data);
     return response.data;
   },
 };
