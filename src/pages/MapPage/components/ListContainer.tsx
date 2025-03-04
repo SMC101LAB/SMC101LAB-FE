@@ -16,8 +16,8 @@ const ListContainer: React.FC<ListProps> = ({ item, onClick }) => {
   return (
     <Container onClick={onClick}>
       <Wrapper>
-        <GradeBackground grade={grade}>
-          <GradeText grade={grade}>{grade}</GradeText>
+        <GradeBackground $grade={grade}>
+          <GradeText $grade={grade}>{grade}</GradeText>
         </GradeBackground>
         <MainInnerContainer>
           <TitleWrapper>
@@ -57,15 +57,15 @@ const MainInnerContainer = styled.div`
   gap: 6px;
 `;
 
-const GradeBackground = styled.div<{ grade: string }>`
+const GradeBackground = styled.div<{ $grade: string }>`
   width: 40px;
   height: 40px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${({ grade }) => {
-    switch (grade) {
+  background-color: ${({ $grade }) => {
+    switch ($grade) {
       case 'A':
         return 'rgba(46, 204, 113, 0.15)'; // #2ecc71 with opacity
       case 'B':
@@ -79,11 +79,11 @@ const GradeBackground = styled.div<{ grade: string }>`
     }
   }};
 `;
-const GradeText = styled.div<{ grade: string }>`
+const GradeText = styled.div<{ $grade: string }>`
   font-size: 20px;
   font-weight: 600;
-  color: ${({ grade }) => {
-    switch (grade) {
+  color: ${({ $grade }) => {
+    switch ($grade) {
       case 'A':
         return '#2ecc71';
       case 'B':

@@ -46,7 +46,7 @@ const InfoTable: React.FC<InfotableProps> = ({ selectItem, onCloseInfo }) => {
         </AddressWrapper>
         <InfoRow>
           <Label>등급</Label>
-          <GradeValue grade={grade}>{grade}</GradeValue>
+          <GradeValue $grade={grade}>{grade}</GradeValue>
         </InfoRow>
         <InfoRow>
           <Label>좌표</Label>
@@ -125,9 +125,9 @@ const AddressValue = styled(Value)`
   line-height: 1.4;
 `;
 
-const GradeValue = styled(Value)<{ grade: string }>`
-  color: ${({ grade }) => {
-    switch (grade) {
+const GradeValue = styled(Value)<{ $grade: string }>`
+  color: ${({ $grade }) => {
+    switch ($grade) {
       case 'A':
         return '#2ecc71';
       case 'B':
