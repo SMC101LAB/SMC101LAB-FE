@@ -176,7 +176,7 @@ const Join = () => {
         {!pwVerfiy && <ErrorText>비밀번호가 일치하지 않습니다.</ErrorText>}
         <AllAgreeWrapper>
           <AllAgreeText>전체 동의</AllAgreeText>
-          <input
+          <AgreeCheckBox
             checked={agreements.all}
             onChange={handleAllAgree}
             type="checkbox"
@@ -187,7 +187,7 @@ const Join = () => {
           <AgreeContent onClick={() => setIsTermofUseOpen(true)}>
             이용약관 &nbsp; &gt;
           </AgreeContent>
-          <input
+          <AgreeCheckBox
             name="terms"
             checked={agreements.terms}
             onChange={handleSingleAgree}
@@ -199,7 +199,7 @@ const Join = () => {
           <AgreeContent onClick={() => setIsPrivacyPolicyOpen(true)}>
             개인정보 수집 및 이용동의 &nbsp; &gt;
           </AgreeContent>
-          <input
+          <AgreeCheckBox
             name="privacy"
             checked={agreements.privacy}
             onChange={handleSingleAgree}
@@ -249,4 +249,7 @@ const EssentialText = styled.div`
 const AgreeContent = styled.div`
   flex: 1;
   cursor: pointer;
+`;
+const AgreeCheckBox = styled.input`
+  width: 20px;
 `;
