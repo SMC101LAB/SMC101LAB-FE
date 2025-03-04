@@ -21,7 +21,7 @@ const MapPage = () => {
   const [searchMod, setSearchMod] = useState<boolean>(false);
   const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(200); //bottomsheet 높이 조절 state
 
-  const fetchSlopes = async () => {
+  const fetchSlopes = useCallback(async () => {
     //위치정보가 없는 경우 호출 안함
     if (!userLocation?.lat() || !userLocation?.lng()) return;
 
@@ -35,11 +35,11 @@ const MapPage = () => {
       console.error('Error fetching slopes:', error);
       setSlopeData([]);
     }
-  };
+  }, [userLocation]);
 
   useEffect(() => {
     if (!searchMod) fetchSlopes();
-  }, [userLocation]);
+  }, [userLocation, searchMod, fetchSlopes]);
 
   //검색 핸들 callback
   const handleSearch = useCallback(
