@@ -40,6 +40,7 @@ const MapPage = () => {
   useEffect(() => {
     if (!searchMod) fetchSlopes();
   }, [userLocation, searchMod, fetchSlopes]);
+  const [mapInstance, setMapInstance] = useState<naver.maps.Map | null>(null);
 
   //검색 핸들 callback
   const handleSearch = useCallback(
@@ -50,12 +51,11 @@ const MapPage = () => {
         setSelectedMarkerId(null);
         return;
       }
-
+      setSelectedMarkerId(null);
       setSearchMod(true);
 
       const searchSlope = async () => {
-        //위치정보가 없는 경우 호출 안함
-        if (!userLocation?.lat() || !userLocation?.lng()) return;
+        if (!userLocation?.lat() || !userLocation?.lng()) return; //위치정보가 없는 경우 호출 안함
         // console.log('Searching for:', searchValue);
         // console.log('Searching Mod:', searchMod);
         try {
@@ -65,6 +65,12 @@ const MapPage = () => {
             userLocation.lng()
           );
           setSlopeData(data || []);
+          if (mapInstance && data) {
+            const coordinates = data[0].location.coordinates.start.coordinates;
+            mapInstance.panTo(
+              new naver.maps.LatLng(coordinates[1], coordinates[0])
+            );
+          }
         } catch (error) {
           console.error('Error search slopes:', error);
           setSlopeData([]);
@@ -75,7 +81,6 @@ const MapPage = () => {
     [userLocation]
   );
 
-  const [mapInstance, setMapInstance] = useState<naver.maps.Map | null>(null);
   //아이템 선택
   const chooseSelectItem = useCallback(
     (item: Slope, index: number) => {
