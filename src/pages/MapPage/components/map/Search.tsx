@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import search from '../../../../assets/Icons/searchWhite.svg';
-import hamburger from '../../../../assets/Icons/hamburger.svg';
 import { SearchComponentProps } from '../../interface';
 import LeftModal from './LeftModal';
-
+import MenuIcon from '@mui/icons-material/MenuRounded';
+import SearchIcon from '@mui/icons-material/SearchRounded';
 const SearchComponent = ({ onSearch }: SearchComponentProps) => {
   const [searchInput, setSearchInput] = useState<string>('');
 
@@ -29,13 +28,13 @@ const SearchComponent = ({ onSearch }: SearchComponentProps) => {
     <>
       <SearchContainer>
         <InputContainer>
-          <HamburgerIcon
+          <MenuIcon
+            sx={{ cursor: 'pointer' }}
             onClick={() => {
               setIsLeftOpen(true);
             }}
-          >
-            <HamburgerImg src={hamburger} alt="메뉴" />
-          </HamburgerIcon>
+          />
+
           <SearchInput
             placeholder="검색..."
             value={searchInput}
@@ -44,7 +43,14 @@ const SearchComponent = ({ onSearch }: SearchComponentProps) => {
           />
         </InputContainer>
         <SearchIconWrapper>
-          <SearchIcon src={search} alt="검색" onClick={() => handleSearch()} />
+          <SearchIcon
+            sx={{
+              width: 23,
+              zIndex: 1,
+              color: '#fff',
+            }}
+            onClick={() => handleSearch()}
+          />
         </SearchIconWrapper>
       </SearchContainer>
       <LeftModal isOpen={isLeftOpen} onClose={onCloseLeftModal} />
@@ -86,11 +92,6 @@ const SearchInput = styled.input`
   }
 `;
 
-const SearchIcon = styled.img`
-  width: 23px;
-  z-index: 1;
-`;
-
 const SearchIconWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -104,16 +105,4 @@ const SearchIconWrapper = styled.div`
   &:active {
     transform: scale(1.1);
   }
-`;
-
-const HamburgerImg = styled.img`
-  width: 20px;
-  height: 20px;
-`;
-
-const HamburgerIcon = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
 `;

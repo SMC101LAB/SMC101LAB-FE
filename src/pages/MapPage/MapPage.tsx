@@ -8,6 +8,7 @@ import SearchComponent from './components/map/Search';
 
 import { Slope, slopeMapAPI } from '../../apis/slopeMap';
 import myposition from '../../assets/Icons/myposition.svg';
+import MyLocationIcon from '@mui/icons-material/MyLocationRounded';
 const MapPage = () => {
   // console.log(escarpmentData);
   // console.log(escarpmentData);
@@ -150,7 +151,7 @@ const MapPage = () => {
         {allTextShow ? '전체표기' : '개별표기'}
       </AllShowButton>
       <MyPosition onClick={moveToMyLocation}>
-        <MyPositionIcon src={myposition} alt="position" />
+        <MyLocationIcon />
       </MyPosition>
     </BaseBackground>
   );

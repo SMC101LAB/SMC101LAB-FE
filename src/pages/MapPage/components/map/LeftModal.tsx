@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import backIcon from '../../../../assets/Icons/back.svg';
 import PrivacyPolicyModal from './PrivacyPolicyModal';
 import DeleteIdModal from './DeleteIdModal';
 import { userAPI } from '../../../../apis/User';
 import TermsofUseModal from './TermsofUseModal';
-
+import ArrowBackIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 interface LeftModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -56,7 +55,14 @@ const LeftModal = ({ isOpen, onClose }: LeftModalProps) => {
         onClick={(e) => e.stopPropagation()}
       >
         <TitleContainer>
-          <BackButton src={backIcon} onClick={handleBackClick} />
+          <ArrowBackIcon
+            sx={{
+              width: 20,
+              height: 20,
+              cursor: 'pointer',
+            }}
+            onClick={handleBackClick}
+          />
           <Menu>{selectedMenu || '메뉴'}</Menu>
         </TitleContainer>
         <Divider />
@@ -140,15 +146,11 @@ const TitleContainer = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 15px;
-`;
-
-const BackButton = styled.img`
-  cursor: pointer;
-  width: 36px;
+  margin-top: 35px;
 `;
 
 const Menu = styled.div`
-  font-size: 22px;
+  font-size: ${({ theme }) => theme.fonts.sizes.ml};
   font-weight: 500;
   padding: 5px 0;
 `;
@@ -161,7 +163,7 @@ const Divider = styled.div`
 
 const MenuItem = styled.div`
   padding: 8px 0;
-  font-size: 18px;
+  font-size: ${({ theme }) => theme.fonts.sizes.mm};
   cursor: pointer;
 `;
 interface UserInfo {
