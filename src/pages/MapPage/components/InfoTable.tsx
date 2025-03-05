@@ -49,19 +49,17 @@ const InfoTable: React.FC<InfotableProps> = ({ selectItem, onCloseInfo }) => {
           <Label>등급</Label>
           <GradeValue $grade={grade}>{grade}</GradeValue>
         </InfoRow>
-        {/* <InfoRow>
-          <Label>좌표</Label>
-          <Value>
-            {selectItem?.location?.coordinates?.start?.coordinates?.[1] || ''}
-            {selectItem?.location?.coordinates?.start?.coordinates?.[0] || ''}
-          </Value>
-        </InfoRow> */}
         <InfoRow>
           <Label>좌표</Label>
           <Value>
             {selectItem?.location?.coordinates?.start?.coordinates?.[1] &&
             selectItem?.location?.coordinates?.start?.coordinates?.[0]
-              ? `위도: ${selectItem.location.coordinates.start.coordinates[1].toString()}° / 경도: ${selectItem.location.coordinates.start.coordinates[0].toString()}°`
+              ? `위도: ${selectItem.location.coordinates.start.coordinates[1]
+                  .toFixed(6)
+                  .toString()}°      
+                경도: ${selectItem.location.coordinates.start.coordinates[0]
+                  .toFixed(6)
+                  .toString()}°`
               : '좌표 정보 없음'}
           </Value>
         </InfoRow>
