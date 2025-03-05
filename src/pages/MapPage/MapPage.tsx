@@ -7,7 +7,6 @@ import MapComponent from './components/map/MapComponent';
 import SearchComponent from './components/map/Search';
 
 import { Slope, slopeMapAPI } from '../../apis/slopeMap';
-import myposition from '../../assets/Icons/myposition.svg';
 import MyLocationIcon from '@mui/icons-material/MyLocationRounded';
 const MapPage = () => {
   // console.log(escarpmentData);
@@ -210,8 +209,4 @@ const MyPosition = styled.button`
   &:active {
     transform: scale(1.1);
   }
-`;
-const MyPositionIcon = styled.img`
-  width: 20px;
-  height: 20px;
 `;
