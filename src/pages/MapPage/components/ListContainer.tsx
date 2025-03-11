@@ -16,21 +16,21 @@ const ListContainer: React.FC<ListProps> = ({ item, onClick }) => {
   return (
     <Container onClick={onClick}>
       <Wrapper>
-        <GradeBackground grade={grade}>
-          <GradeText grade={grade}>{grade}</GradeText>
+        <GradeBackground $grade={grade}>
+          <GradeText $grade={grade}>{grade}</GradeText>
         </GradeBackground>
         <MainInnerContainer>
           <TitleWrapper>
             <Title>{item.name}</Title>
             <Num>{item.managementNo}</Num>
           </TitleWrapper>
-          <div>
+          <AddressWrapper>
             <AddressText>
               {item.location.province} {item.location.city}
               {item.location.district}
             </AddressText>
             <SmallAddressText>{item.location.address}</SmallAddressText>
-          </div>
+          </AddressWrapper>
         </MainInnerContainer>
       </Wrapper>
     </Container>
@@ -46,26 +46,31 @@ const Container = styled.div`
   border-radius: 15px;
 `;
 const Wrapper = styled.div`
+  width: 100%;
   display: flex;
   gap: 30px;
   align-items: center;
 `;
 
 const MainInnerContainer = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
 `;
 
-const GradeBackground = styled.div<{ grade: string }>`
+const GradeBackground = styled.div<{ $grade: string }>`
   width: 40px;
   height: 40px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${({ grade }) => {
-    switch (grade) {
+  flex-shrink: 0;
+  background-color: ${({ $grade }) => {
+    switch ($grade) {
       case 'A':
         return 'rgba(46, 204, 113, 0.15)'; // #2ecc71 with opacity
       case 'B':
@@ -79,11 +84,11 @@ const GradeBackground = styled.div<{ grade: string }>`
     }
   }};
 `;
-const GradeText = styled.div<{ grade: string }>`
+const GradeText = styled.div<{ $grade: string }>`
   font-size: 20px;
   font-weight: 600;
-  color: ${({ grade }) => {
-    switch (grade) {
+  color: ${({ $grade }) => {
+    switch ($grade) {
       case 'A':
         return '#2ecc71';
       case 'B':
@@ -114,38 +119,17 @@ const Num = styled.div`
   color: #7e7e7e;
 `;
 
-// const TopWrapper = styled.div`
-//   display: flex;
-//   align-items: center;
-//   justify-content: space-between;
-//   padding-bottom: 15px;
-// `;
-// const InfoRow = styled.div`
-//   display: flex;
-//   align-items: center;
-//   gap: 12px;
-// `;
-
-// const Label = styled.div`
-//   min-width: 30px;
-//   font-size: ${({ theme }) => theme.fonts.sizes.ms};
-//   color: ${({ theme }) => theme.colors.grey[600]};
-//   font-weight: ${({ theme }) => theme.fonts.weights.medium};
-// `;
-
-// const AddressWrapper = styled(InfoRow)`
-//   align-items: flex-start;
-// `;
 const AddressText = styled.div`
   font-size: ${({ theme }) => theme.fonts.sizes.ms};
   color: ${({ theme }) => theme.colors.grey[700]};
   font-weight: ${({ theme }) => theme.fonts.weights.medium};
 `;
+const AddressWrapper = styled.div`
+  width: 100%;
+`;
 const SmallAddressText = styled.div`
+  width: 100%;
   font-size: ${({ theme }) => theme.fonts.sizes.cl};
   color: ${({ theme }) => theme.colors.grey[600]};
   font-weight: ${({ theme }) => theme.fonts.weights.medium};
 `;
-// const AddressValue = styled(Value)`
-//   line-height: 1.4;
-// `;

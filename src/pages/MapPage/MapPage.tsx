@@ -7,7 +7,7 @@ import MapComponent from './components/map/MapComponent';
 import SearchComponent from './components/map/Search';
 
 import { Slope, slopeMapAPI } from '../../apis/slopeMap';
-import myposition from '../../assets/Icons/myposition.svg';
+import MyLocationIcon from '@mui/icons-material/MyLocationRounded';
 const MapPage = () => {
   // console.log(escarpmentData);
   // console.log(escarpmentData);
@@ -21,7 +21,7 @@ const MapPage = () => {
   const [searchMod, setSearchMod] = useState<boolean>(false);
   const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(200); //bottomsheet 높이 조절 state
 
-  const fetchSlopes = async () => {
+  const fetchSlopes = useCallback(async () => {
     //위치정보가 없는 경우 호출 안함
     if (!userLocation?.lat() || !userLocation?.lng()) return;
 
@@ -35,11 +35,12 @@ const MapPage = () => {
       console.error('Error fetching slopes:', error);
       setSlopeData([]);
     }
-  };
+  }, [userLocation]);
 
   useEffect(() => {
     if (!searchMod) fetchSlopes();
-  }, [userLocation]);
+  }, [userLocation, searchMod, fetchSlopes]);
+  const [mapInstance, setMapInstance] = useState<naver.maps.Map | null>(null);
 
   //검색 핸들 callback
   const handleSearch = useCallback(
@@ -50,12 +51,11 @@ const MapPage = () => {
         setSelectedMarkerId(null);
         return;
       }
-
+      setSelectedMarkerId(null);
       setSearchMod(true);
 
       const searchSlope = async () => {
-        //위치정보가 없는 경우 호출 안함
-        if (!userLocation?.lat() || !userLocation?.lng()) return;
+        if (!userLocation?.lat() || !userLocation?.lng()) return; //위치정보가 없는 경우 호출 안함
         // console.log('Searching for:', searchValue);
         // console.log('Searching Mod:', searchMod);
         try {
@@ -65,6 +65,12 @@ const MapPage = () => {
             userLocation.lng()
           );
           setSlopeData(data || []);
+          if (mapInstance && data) {
+            const coordinates = data[0].location.coordinates.start.coordinates;
+            mapInstance.panTo(
+              new naver.maps.LatLng(coordinates[1], coordinates[0])
+            );
+          }
         } catch (error) {
           console.error('Error search slopes:', error);
           setSlopeData([]);
@@ -75,11 +81,9 @@ const MapPage = () => {
     [userLocation]
   );
 
-  const [mapInstance, setMapInstance] = useState<naver.maps.Map | null>(null);
   //아이템 선택
   const chooseSelectItem = useCallback(
     (item: Slope, index: number) => {
-      setSearchMod(false);
       if (mapInstance && item) {
         // 지도 이동
         const coordinates = item.location.coordinates.start.coordinates;
@@ -146,7 +150,7 @@ const MapPage = () => {
         {allTextShow ? '전체표기' : '개별표기'}
       </AllShowButton>
       <MyPosition onClick={moveToMyLocation}>
-        <MyPositionIcon src={myposition} alt="position" />
+        <MyLocationIcon />
       </MyPosition>
     </BaseBackground>
   );
@@ -205,8 +209,4 @@ const MyPosition = styled.button`
   &:active {
     transform: scale(1.1);
   }
-`;
-const MyPositionIcon = styled.img`
-  width: 20px;
-  height: 20px;
 `;

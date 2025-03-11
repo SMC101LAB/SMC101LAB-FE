@@ -11,14 +11,16 @@ import {
   getSortedRowModel,
   getPaginationRowModel,
 } from '@tanstack/react-table';
-import search from '../../../../assets/Icons/search.svg';
-import approve from '../../../../assets/Icons/approve.svg';
-import reject from '../../../../assets/Icons/reject.svg';
 import { FilterFn, getFilteredRowModel } from '@tanstack/react-table';
 import { rankItem } from '@tanstack/match-sorter-utils';
+
 import Title from '../../components/Title';
 import { DebouncedInputProps } from '../../interface';
 import Pagination from '../../components/Pagination';
+
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
+import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 const columnHelper = createColumnHelper<User>();
 
 declare module '@tanstack/react-table' {
@@ -86,25 +88,23 @@ const UserLookUp = () => {
       cell: ({ row }) =>
         row.original.isApproved === false && (
           <DecisionWrapper>
-            <DecisionIcon
+            <DoneIcon
+              sx={{ width: '40px', height: '40px' }}
               onClick={() => {
                 console.log('click', row.original._id);
                 if (confirm('승인하시겠습니까?')) {
                   ApproveMutation.mutate(row.original._id);
                 }
               }}
-              src={approve}
-              alt="승인"
             />
-            <DecisionIcon
-              src={reject}
+            <ClearIcon
+              sx={{ width: '40px', height: '40px' }}
               onClick={() => {
                 console.log('click', row.original._id);
                 if (confirm('삭제하시겠습니까?')) {
                   DeleteMutation.mutate(row.original._id);
                 }
               }}
-              alt="거절"
             />
           </DecisionWrapper>
         ),
@@ -204,7 +204,7 @@ const UserLookUp = () => {
           </div>
           <SearchWrapper>
             <SearchInput>
-              <SearchIcon src={search} alt="search" />
+              <SearchIcon />
               <DebouncedInput
                 value={globalFilter ?? ''}
                 onChange={(value) => {
@@ -311,29 +311,45 @@ const SearchInput = styled.div`
     border-radius: 8px;
   }
 `;
-const SearchIcon = styled.img`
+const SearchIcon = styled(SearchRoundedIcon)`
   position: absolute;
   width: 30px;
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
+  color: #bdbdbd;
+  cursor: pointer;
 `;
 const DecisionWrapper = styled.div`
   display: flex;
   justify-content: space-evenly;
 `;
-const DecisionIcon = styled.img`
-  width: 40px;
+
+const DoneIcon = styled(DoneRoundedIcon)`
   padding: 6px;
   border-radius: 8px;
   cursor: pointer;
-  transition: box-shadow 0.2s ease-in-out;
+  color: #4caf50;
+  transition: all 0.3s ease-in-out;
 
   &:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    background-color: rgba(76, 175, 80, 0.1);
   }
 `;
 
+const ClearIcon = styled(ClearRoundedIcon)`
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #f44336;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    background-color: rgba(244, 67, 54, 0.1);
+  }
+`;
 const Table = styled.table`
   width: 100%;
   th {

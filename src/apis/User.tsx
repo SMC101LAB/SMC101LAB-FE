@@ -15,7 +15,12 @@ export interface LoginFormType {
 export const userAPI = {
   fetchUser: async () => {
     const response = await api.get('auth/users');
-    console.log('User조회', response.data.data);
+    // console.log('User조회', response.data.data);
+    return response.data.data;
+  },
+  getUser: async (id: string) => {
+    const response = await api.get(`auth/users/${id}`);
+    // console.log('User 단일조회', response.data.data);
     return response.data.data;
   },
   approveUser: async (id: number) => {
@@ -23,10 +28,16 @@ export const userAPI = {
     return response.data;
   },
   deleteUser: async (id: number) => {
+    //관리 페이지
     const response = await api.delete(`auth/users/${id}`);
     return response.data;
   },
-
+  selfDeleteUser: async (id: string) => {
+    //사용자 직접 삭제
+    const response = await api.delete(`auth/users/${id}`);
+    alert('회원탈퇴가 정상처리 되었습니다.');
+    return response.data;
+  },
   modifyUser: async (data: User) => {
     const response = await api.put(`auth/users/${data._id}`, data, {
       headers: {
