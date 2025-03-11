@@ -1,11 +1,10 @@
 import React, { useState, useRef, DragEvent, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import Title from '../../components/Title';
-import upload from '../../../../assets/Icons/upload.svg';
 import { slopeManageAPI } from '../../../../apis/slopeManage';
 import AddSlope from '../components/AddSlopeContainer';
 import { Slope } from '../../../../apis/slopeMap';
-
+import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded';
 interface FileInputContainerProps {
   $isDragActive?: boolean;
   $hasFile?: boolean;
@@ -145,7 +144,7 @@ const SteepSlopeAdd: React.FC = () => {
             </FileInfo>
           ) : (
             <UploadArea onClick={handleContainerClick}>
-              <UploadImg src={upload} alt="upload" />
+              <CloudUploadRoundedIcon sx={{ width: '50px', height: '50px' }} />
               <UploadText>
                 <p>클릭 혹은 파일을 이곳에 드롭하세요.</p>
               </UploadText>
@@ -221,11 +220,6 @@ const UploadArea = styled.div`
   &:hover {
     background-color: rgba(0, 0, 0, 0.02);
   }
-`;
-
-const UploadImg = styled.img`
-  width: 60px;
-  height: 60px;
 `;
 
 const UploadText = styled.div`

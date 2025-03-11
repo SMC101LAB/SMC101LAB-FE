@@ -26,11 +26,13 @@ import Title from '../../components/Title';
 import LoadingMessage from '../../components/LoadingMessage';
 import RegionFilterModal from '../components/RegionFilterModal';
 
-import filterIcon from '../../../../assets/Icons/column.svg';
-import search from '../../../../assets/Icons/search.svg';
-import refresh from '../../../../assets/Icons/refresh.svg';
 import DeleteConfirmModal from '../components/DeleteModal';
 import EditModal from '../components/EditModal';
+
+import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
+import CachedRoundedIcon from '@mui/icons-material/CachedRounded';
+import TravelExploreRoundedIcon from '@mui/icons-material/TravelExploreRounded';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 
 const FETCH_SIZE = 50;
 declare module '@tanstack/react-table' {
@@ -610,10 +612,24 @@ const StepSlopeDup = () => {
               setIsModalOpen(true);
             }}
           >
-            <FilterIcon src={filterIcon} alt="filter" />
+            <TuneRoundedIcon
+              sx={{
+                width: '18px',
+                height: '18px',
+                color: '#24478f',
+              }}
+            />
+
             <p>표시할 열 항목 설정</p>
           </FilterButton>
           <FilterButton onClick={() => setIsRegionModalOpen(true)}>
+            <TravelExploreRoundedIcon
+              sx={{
+                width: '18px',
+                height: '18px',
+                color: '#24478f',
+              }}
+            />
             {selectedRegion
               ? `${selectedRegion.city} ${
                   selectedRegion.county === '모두' ? '' : selectedRegion.county
@@ -621,16 +637,19 @@ const StepSlopeDup = () => {
               : '지역선택'}
           </FilterButton>
           <FilterButton onClick={handleReset}>
-            <FilterIcon src={refresh} alt="refresh" />
+            <CachedRoundedIcon
+              sx={{
+                width: '18px',
+                height: '18px',
+                color: '#24478f',
+              }}
+            />
             <p>초기화</p>
           </FilterButton>
+
           <SearchWrapper>
             <SearchInput>
-              <SearchIcon
-                src={search}
-                alt="search"
-                onClick={() => setSearchQuery(inputValue)}
-              />
+              <SearchIcon onClick={() => setSearchQuery(inputValue)} />
               <input
                 placeholder="검색..."
                 value={inputValue}
@@ -777,12 +796,6 @@ const FilterButton = styled.button`
   }
 `;
 
-const FilterIcon = styled.img`
-  width: 20px;
-  height: 20px;
-  opacity: 0.7;
-`;
-
 //검색바
 const SearchWrapper = styled.div`
   display: flex;
@@ -799,12 +812,14 @@ const SearchInput = styled.div`
     border-radius: 8px;
   }
 `;
-const SearchIcon = styled.img`
+const SearchIcon = styled(SearchRoundedIcon)`
   position: absolute;
   width: 30px;
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
+  color: #bdbdbd;
+  cursor: pointer;
 `;
 
 const TableSubInfo = styled.div`

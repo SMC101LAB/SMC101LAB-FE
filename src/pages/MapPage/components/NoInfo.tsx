@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import noInfoIcon from '../../../assets/noInfo.png';
+import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
 
 interface NoInfoProps {
   text: string;
 }
 const NoInfo = ({ text }: NoInfoProps) => (
   <NoInfoContainer>
-    <NoneIcon src={noInfoIcon} />
+    <NoneIcon />
     <NoInfoTitle>{text}</NoInfoTitle>
   </NoInfoContainer>
 );
@@ -26,6 +26,6 @@ const NoInfoTitle = styled.div`
   font-size: 16px;
   font-weight: 600;
 `;
-const NoneIcon = styled.img`
+const NoneIcon = styled(ErrorOutlineRoundedIcon)`
   width: 32px;
 `;

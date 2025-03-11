@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import moreIcon from '../../../../assets/Icons/more.svg';
+import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import { CommentContainerProps } from '../../interface';
 import { slopeCommentAPI } from '../../../../apis/slopeMap';
 import CommentDeleteModal from './CommentDeleteModal';
@@ -83,7 +83,9 @@ const CommentContainer = ({ comment, fetchComment }: CommentContainerProps) => {
                 setIsMore(true);
               }}
             >
-              <MoreIcon src={moreIcon} alt="more" />
+              <MoreIcon
+                sx={{ width: '20px', height: '20px', opacity: '0.6' }}
+              />
             </MoreButton>
             {isMore && (
               <>
@@ -207,9 +209,7 @@ const MoreButton = styled.button`
   }
 `;
 
-const MoreIcon = styled.img`
-  width: 20px;
-  height: 20px;
+const MoreIcon = styled(MoreHorizRoundedIcon)`
   opacity: 0.6;
 `;
 
