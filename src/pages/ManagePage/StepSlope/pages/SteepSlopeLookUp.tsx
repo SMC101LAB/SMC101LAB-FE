@@ -116,8 +116,7 @@ const SteepSlopeLookUp = () => {
     () => [
       columnHelper.accessor(
         (_row, index) => {
-          const pageIndex = Math.floor(index / FETCH_SIZE);
-          return pageIndex * FETCH_SIZE + index + 1;
+          return index + 1;
         },
         {
           id: 'index',
