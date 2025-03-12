@@ -5,8 +5,12 @@ import { authAPI, JoinFormType } from '../../../apis/Auth';
 import styled from 'styled-components';
 import PrivacyPolicyModal from '../../MapPage/components/map/PrivacyPolicyModal';
 import TermsofUseModal from '../../MapPage/components/map/TermsofUseModal';
+import { useNotificationStore } from '../../../hooks/notificationStore';
 
-const Join = () => {
+interface joinPropsType {
+  completeJoin: () => void;
+}
+const Join = ({ completeJoin }: joinPropsType) => {
   const [joinForm, setJoinForm] = useState<JoinFormType>({
     name: '',
     phone: '',
@@ -25,6 +29,10 @@ const Join = () => {
   const [agreementError, setAgreementError] = useState<boolean>(false);
   const [isPrivacyPolicyOpen, setIsPrivacyPolicyOpen] = useState(false);
   const [isTermofUseOpen, setIsTermofUseOpen] = useState(false);
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  );
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -39,7 +47,7 @@ const Join = () => {
         [name]: value,
       }));
     }
-    console.log(joinForm);
+    // console.log(joinForm);
   };
 
   const handlePwCheckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +92,7 @@ const Join = () => {
   const joinMutation = useMutation({
     mutationFn: (data: JoinFormType) => authAPI.join(data),
     onSuccess: () => {
-      alert('회원가입이 완료되었습니다.');
+      showNotification('회원가입 성공!', { severity: 'success' });
       setJoinForm({
         name: '',
         phone: '',
@@ -98,9 +106,13 @@ const Join = () => {
         terms: false,
         privacy: false,
       });
+      completeJoin();
     },
-    onError: (error) => {
-      alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+    onError: (error: any) => {
+      const errorMes =
+        error.response?.data?.message ||
+        '회원가입에 실패했습니다. 다시 시도해주세요.';
+      showNotification(errorMes, { severity: 'error', autoHideDuration: 6000 });
       console.error('join Error:', error);
     },
   });
@@ -116,7 +128,9 @@ const Join = () => {
     if (pwVerfiy && isFormFilled && isAgreementsChecked) {
       joinMutation.mutate(joinForm);
     } else {
-      alert('정보를 정확히 입력하고 필수 약관에 동의해주세요.');
+      showNotification('정보를 정확히 입력하고 필수 약관에 동의해주세요.', {
+        severity: 'error',
+      });
     }
   };
 
