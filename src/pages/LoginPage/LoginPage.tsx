@@ -44,6 +44,8 @@ const Background = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-x: hidden;
+  padding: 10px 0px;
 `;
 const LogoContainer = styled.img`
   width: 100%;
