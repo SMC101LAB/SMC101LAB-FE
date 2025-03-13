@@ -16,7 +16,11 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { FilterFn } from '@tanstack/react-table';
 import { rankItem } from '@tanstack/match-sorter-utils';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { Slope } from '../../../../apis/slopeMap';
 import styled from 'styled-components';
 
@@ -34,6 +38,7 @@ import CachedRoundedIcon from '@mui/icons-material/CachedRounded';
 import TravelExploreRoundedIcon from '@mui/icons-material/TravelExploreRounded';
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import { useNotificationStore } from '../../../../hooks/notificationStore';
 
 const FETCH_SIZE = 50;
 declare module '@tanstack/react-table' {
@@ -96,7 +101,7 @@ const SteepSlopeLookUp = () => {
     initialPageParam: 0,
   });
 
-  // //flatData를 통해 페이지  계산
+  //flatData를 통해 페이지  계산
   const flatData = useMemo(() => {
     return data?.pages.flatMap((page) => page.data) ?? [];
   }, [data]);
@@ -530,16 +535,43 @@ const SteepSlopeLookUp = () => {
     }
   };
 
-  const handleDownload = async () => {
-    try {
-      await slopeManageAPI.downloadExcel({
-        searchQuery: searchQuery || undefined,
-        city: selectedRegion?.city,
-        county: selectedRegion?.county,
+  // 알림 함수 가져오기
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  );
+
+  // 다운로드 mutation 설정
+  const { mutate: downloadExcel, isPending: isDownloading } = useMutation({
+    mutationFn: (params: {
+      searchQuery?: string;
+      city?: string;
+      county?: string;
+    }) => slopeManageAPI.downloadExcel(params),
+
+    onSuccess: () => {
+      showNotification('엑셀 파일 다운로드가 완료되었습니다.', {
+        severity: 'success',
       });
-    } catch (error) {
+    },
+
+    onError: (error: any) => {
+      const errorMessage =
+        error.response?.data?.message || '다운로드에 실패했습니다.';
+      showNotification(errorMessage, {
+        severity: 'error',
+        autoHideDuration: 6000,
+      });
       console.error('다운로드 실패:', error);
-    }
+    },
+  });
+
+  // 다운로드 버튼 클릭 핸들러
+  const handleDownload = () => {
+    downloadExcel({
+      searchQuery: searchQuery || undefined,
+      city: selectedRegion?.city,
+      county: selectedRegion?.county,
+    });
   };
   return (
     <Container>
@@ -606,7 +638,7 @@ const SteepSlopeLookUp = () => {
             />
             <p>초기화</p>
           </FilterButton>
-          <FilterButton onClick={handleDownload}>
+          <FilterButton onClick={handleDownload} disabled={isDownloading}>
             <DownloadRoundedIcon
               sx={{
                 width: '18px',
@@ -614,7 +646,7 @@ const SteepSlopeLookUp = () => {
                 color: '#24478f',
               }}
             />
-            <p>다운로드</p>
+            <p>{isDownloading ? '다운로드 중...' : '엑셀 다운로드'}</p>
           </FilterButton>
           <SearchWrapper>
             <SearchInput>
