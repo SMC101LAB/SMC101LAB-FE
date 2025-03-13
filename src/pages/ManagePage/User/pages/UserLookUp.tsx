@@ -21,6 +21,7 @@ import Pagination from '../../components/Pagination';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
+import { useNotificationStore } from '../../../../hooks/notificationStore';
 const columnHelper = createColumnHelper<User>();
 
 declare module '@tanstack/react-table' {
@@ -31,15 +32,18 @@ declare module '@tanstack/react-table' {
 
 const UserLookUp = () => {
   const queryClient = useQueryClient();
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  );
   //승인API
   const ApproveMutation = useMutation({
     mutationFn: (id: number) => userAPI.approveUser(id),
     onSuccess: () => {
-      alert('승인 성공');
+      showNotification('승인 성공!', { severity: 'success' });
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
     onError: (error) => {
-      alert('승인에 실패했습니다. 다시 시도해주세요.');
+      showNotification('승인에 실패했습니다.', { severity: 'error' });
       console.error('approve Error:', error);
     },
   });
@@ -47,11 +51,11 @@ const UserLookUp = () => {
   const DeleteMutation = useMutation({
     mutationFn: (id: number) => userAPI.deleteUser(id),
     onSuccess: () => {
-      alert('삭제 성공');
+      showNotification('삭제 성공!', { severity: 'success' });
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
     onError: (error) => {
-      alert('삭제에 실패했습니다. 다시 시도해주세요.');
+      showNotification('삭제에 실패했습니다.', { severity: 'error' });
       console.error('approve Error:', error);
     },
   });

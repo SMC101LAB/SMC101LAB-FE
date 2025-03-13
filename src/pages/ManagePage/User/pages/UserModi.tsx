@@ -22,6 +22,7 @@ import EditModal from '../components/UserEditModal';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
+import { useNotificationStore } from '../../../../hooks/notificationStore';
 
 const columnHelper = createColumnHelper<User>();
 
@@ -33,16 +34,18 @@ declare module '@tanstack/react-table' {
 
 const UserModi = () => {
   const queryClient = useQueryClient();
-
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  );
   //승인API
   const ModifyMutation = useMutation({
     mutationFn: (Modiuser: User) => userAPI.modifyUser(Modiuser),
     onSuccess: () => {
-      alert('수정 성공');
+      showNotification('수정 성공!', { severity: 'success' });
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
     onError: (error) => {
-      alert('수정에 실패했습니다. 다시 시도해주세요.');
+      showNotification('수정에 실패했습니다.', { severity: 'error' });
       console.error('approve Error:', error);
     },
   });
@@ -50,11 +53,11 @@ const UserModi = () => {
   const DeleteMutation = useMutation({
     mutationFn: (id: number) => userAPI.deleteUser(id),
     onSuccess: () => {
-      alert('삭제 성공');
+      showNotification('삭제 성공!', { severity: 'success' });
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
     onError: (error) => {
-      alert('삭제에 실패했습니다. 다시 시도해주세요.');
+      showNotification('삭제에 실패했습니다.', { severity: 'error' });
       console.error('approve Error:', error);
     },
   });

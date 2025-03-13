@@ -45,7 +45,7 @@ const Login = () => {
     if (isFormFilled) {
       joinMutation.mutate(loginForm);
     } else {
-      alert('빈칸 없이 입력해주세요.');
+      showNotification('빈칸 없이 입력해주세요', { severity: 'warning' });
     }
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
