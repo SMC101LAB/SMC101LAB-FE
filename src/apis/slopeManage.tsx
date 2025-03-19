@@ -21,7 +21,6 @@ export const slopeManageAPI = {
       },
     });
     console.log('엑셀 업로드', response);
-    alert(`${response.data.message}\n${response.data.count}건 추가되었습니다.`);
     return response.data;
   },
   createSlope: async (newSlope: Slope) => {

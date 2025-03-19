@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useNotificationStore } from '../../../../hooks/notificationStore';
 
 interface CommentAddModalProps {
   isOpen: boolean;
@@ -29,6 +30,10 @@ const CommentAddModal = ({
 }: CommentAddModalProps) => {
   const [comment, setComment] = useState('');
   const [images, setImages] = useState<ImageFile[]>([]);
+  //전역 알람
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  );
   const isReactNativeWebView =
     typeof window !== 'undefined' && window.ReactNativeWebView != null;
   //모달이 열릴 때 초기상태로 복원
@@ -141,7 +146,7 @@ const CommentAddModal = ({
           }
         }
       } catch (error) {
-        alert(`React Native에서 오는 메시지 수신 useEffect\n${error}`);
+        showNotification('Error:', { severity: 'error' });
         console.error('모바일 메시지 처리 오류:', error);
       }
     };

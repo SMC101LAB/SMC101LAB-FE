@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import { userAPI } from '../../../../apis/User';
+import { useNotificationStore } from '../../../../hooks/notificationStore';
 interface DeleteConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -25,11 +26,16 @@ const DeleteIdModal = ({ isOpen, onClose }: DeleteConfirmModalProps) => {
     };
     getUser();
   }, []);
-
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  );
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputValue === '회원탈퇴') {
       userAPI.selfDeleteUser(user!._id);
+      showNotification('회원탈퇴가 정상처리 되었습니다.', {
+        severity: 'success',
+      });
       window.location.href = '/';
     }
   };
