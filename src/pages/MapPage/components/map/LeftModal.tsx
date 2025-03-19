@@ -131,7 +131,7 @@ const ModalOverlay = styled.div`
 `;
 
 const LeftModalContainer = styled.div<{ $animationOpen: boolean }>`
-  width: 80%;
+  width: 70%;
   height: 100%;
   background-color: #fff;
   position: absolute;
