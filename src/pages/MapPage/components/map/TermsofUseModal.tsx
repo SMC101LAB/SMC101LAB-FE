@@ -363,6 +363,7 @@ const ModalHeader = styled.div`
   top: 0;
   background-color: white;
   z-index: 10;
+  margin-top: 35px;
 `;
 
 const HeaderTitle = styled.h1`
