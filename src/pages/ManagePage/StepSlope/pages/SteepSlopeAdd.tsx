@@ -5,6 +5,7 @@ import { slopeManageAPI } from '../../../../apis/slopeManage';
 import AddSlope from '../components/AddSlopeContainer';
 import { Slope } from '../../../../apis/slopeMap';
 import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded';
+import { useNotificationStore } from '../../../../hooks/notificationStore';
 interface FileInputContainerProps {
   $isDragActive?: boolean;
   $hasFile?: boolean;
@@ -17,7 +18,10 @@ const SteepSlopeAdd: React.FC = () => {
   const [fileName, setFileName] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  //전역 알림
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  );
   // 드래그 시작 핸들러
   const handleDragStart = (event: DragEvent<HTMLDivElement>): void => {
     event.preventDefault();
@@ -86,8 +90,10 @@ const SteepSlopeAdd: React.FC = () => {
       console.log('파일 업로드 시작:', uploadedFile);
       const formData = new FormData();
       formData.append('file', uploadedFile);
-      await slopeManageAPI.uploadExcelSlope(formData);
-
+      const data = await slopeManageAPI.uploadExcelSlope(formData);
+      showNotification(`${data.message}\n${data.count}건 추가되었습니다.`, {
+        severity: 'success',
+      });
       // 업로드 성공 후 상태 초기화
       setUploadedFile(null);
       setFileName('');
@@ -95,6 +101,9 @@ const SteepSlopeAdd: React.FC = () => {
         fileInputRef.current.value = '';
       }
     } catch (error) {
+      showNotification('파일 업로드 오류', {
+        severity: 'error',
+      });
       console.error('파일 업로드 오류:', error);
     } finally {
       setIsUploading(false);

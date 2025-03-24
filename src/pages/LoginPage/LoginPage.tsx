@@ -7,6 +7,7 @@ import Join from './components/Join';
 
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState<boolean>(true);
+
   return (
     <Background>
       <LoginContainer>
@@ -30,7 +31,15 @@ const LoginPage = () => {
           </TabButton>
         </TabContainer>
 
-        {isLogin ? <Login /> : <Join />}
+        {isLogin ? (
+          <Login />
+        ) : (
+          <Join
+            completeJoin={() => {
+              setIsLogin(true);
+            }}
+          />
+        )}
       </LoginContainer>
     </Background>
   );
@@ -44,6 +53,8 @@ const Background = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-x: hidden;
+  padding: 10px 0px;
 `;
 const LogoContainer = styled.img`
   width: 100%;

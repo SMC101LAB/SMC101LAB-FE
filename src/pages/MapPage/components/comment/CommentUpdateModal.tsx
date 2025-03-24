@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useNotificationStore } from '../../../../hooks/notificationStore';
 
 interface CommentUpdateModalProps {
   isOpen: boolean;
@@ -46,7 +47,9 @@ const CommentUpdateModal = ({
   );
   const isReactNativeWebView =
     typeof window !== 'undefined' && window.ReactNativeWebView != null;
-
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  );
   // 모달이 열릴 때마다 초기 상태로 재설정
   useEffect(() => {
     if (isOpen) {
@@ -213,7 +216,8 @@ const CommentUpdateModal = ({
           }
         }
       } catch (error) {
-        alert(`React Native에서 오는 메시지 수신 useEffect\n${error}`);
+        showNotification('Error:', { severity: 'error' });
+
         console.error('모바일 메시지 처리 오류:', error);
       }
     };

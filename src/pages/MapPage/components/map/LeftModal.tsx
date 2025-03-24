@@ -5,6 +5,7 @@ import DeleteIdModal from './DeleteIdModal';
 import { userAPI } from '../../../../apis/User';
 import TermsofUseModal from './TermsofUseModal';
 import ArrowBackIcon from '@mui/icons-material/ArrowBackIosNewRounded';
+import { useNotificationStore } from '../../../../hooks/notificationStore';
 interface LeftModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -16,7 +17,10 @@ const LeftModal = ({ isOpen, onClose }: LeftModalProps) => {
   const [isPrivacyPolicyOpen, setIsPrivacyPolicyOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isTermofUseOpen, setIsTermofUseOpen] = useState(false);
-
+  //전역 알람
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  );
   useEffect(() => {
     if (isOpen) setTimeout(() => setAnimationOpen(true), 10);
     else {
@@ -44,7 +48,7 @@ const LeftModal = ({ isOpen, onClose }: LeftModalProps) => {
     localStorage.removeItem('_id');
     localStorage.removeItem('isAdmin');
     onClose();
-    alert('로그아웃 되었습니다.');
+    showNotification('로그아웃 되었습니다.', { severity: 'success' });
     window.location.href = '/';
   };
 
@@ -131,7 +135,7 @@ const ModalOverlay = styled.div`
 `;
 
 const LeftModalContainer = styled.div<{ $animationOpen: boolean }>`
-  width: 80%;
+  width: 70%;
   height: 100%;
   background-color: #fff;
   position: absolute;
