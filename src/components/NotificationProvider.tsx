@@ -38,7 +38,7 @@ export const NotificationProvider = () => {
         onClose={handleClose}
         severity={severity}
         variant="filled"
-        sx={{ marginTop: '30px' }}
+        sx={{ marginTop: '40px' }}
       >
         {message}
       </Alert>
