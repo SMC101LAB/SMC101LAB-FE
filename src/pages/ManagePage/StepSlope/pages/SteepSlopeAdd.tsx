@@ -2,10 +2,9 @@ import React, { useState, useRef, DragEvent, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import Title from '../../components/Title';
 import { slopeManageAPI } from '../../../../apis/slopeManage';
-import AddSlope from '../components/AddSlopeContainer';
-import { Slope } from '../../../../apis/slopeMap';
 import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded';
 import { useNotificationStore } from '../../../../hooks/notificationStore';
+import AddSlope from '../components/AddSlopeContainer';
 interface FileInputContainerProps {
   $isDragActive?: boolean;
   $hasFile?: boolean;
@@ -109,64 +108,63 @@ const SteepSlopeAdd: React.FC = () => {
       setIsUploading(false);
     }
   };
-  const handleAdd = async (newSlopeData: Slope) => {
-    try {
-      await slopeManageAPI.createSlope(newSlopeData);
-    } catch (error) {
-      console.error('파일 업로드 오류:', error);
-    }
-  };
-  return (
-    <Container>
-      <HeaderContainer>
-        <Title text={'급경사지 추가(엑셀업로드)'}></Title>
-      </HeaderContainer>
-      <InputContainerWrapper>
-        <FileInputContainer
-          $isDragActive={isDragActive}
-          $hasFile={!!uploadedFile}
-          onDragEnter={handleDragStart}
-          onDragOver={(event: DragEvent<HTMLDivElement>) => {
-            event.preventDefault();
-            setIsDragActive(true);
-          }}
-          onDragLeave={handleDragEnd}
-          onDrop={handleDrop}
-        >
-          <input
-            type="file"
-            style={{ display: 'none' }}
-            ref={fileInputRef}
-            onChange={handleFileSelect}
-          />
 
-          {uploadedFile ? (
-            <FileInfo>
-              <FileName>{fileName}</FileName>
-              <FileSize>{(uploadedFile.size / 1024).toFixed(2)} KB</FileSize>
-              <ButtonContainer>
-                <UploadButton onClick={handleUpload} disabled={isUploading}>
-                  {isUploading ? '업로드 중...' : '업로드'}
-                </UploadButton>
-                <CancelButton onClick={handleCancelUpload}>취소</CancelButton>
-              </ButtonContainer>
-            </FileInfo>
-          ) : (
-            <UploadArea onClick={handleContainerClick}>
-              <CloudUploadRoundedIcon sx={{ width: '50px', height: '50px' }} />
-              <UploadText>
-                <p>클릭 혹은 파일을 이곳에 드롭하세요.</p>
-              </UploadText>
-            </UploadArea>
-          )}
-        </FileInputContainer>
-      </InputContainerWrapper>
-      <Line />
-      <HeaderContainer>
-        <Title text={'급경사지 추가(직접 업로드)'}></Title>
-      </HeaderContainer>
-      <AddSlope onSubmit={handleAdd} />
-    </Container>
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <AddSlope isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <Container>
+        <HeaderContainer>
+          <Title text={'급경사지 추가(엑셀업로드)'}></Title>
+          <SubmitButton onClick={() => setIsOpen(!isOpen)}>
+            직접 추가
+          </SubmitButton>
+        </HeaderContainer>
+        <InputContainerWrapper>
+          <FileInputContainer
+            $isDragActive={isDragActive}
+            $hasFile={!!uploadedFile}
+            onDragEnter={handleDragStart}
+            onDragOver={(event: DragEvent<HTMLDivElement>) => {
+              event.preventDefault();
+              setIsDragActive(true);
+            }}
+            onDragLeave={handleDragEnd}
+            onDrop={handleDrop}
+          >
+            <input
+              type="file"
+              style={{ display: 'none' }}
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+            />
+
+            {uploadedFile ? (
+              <FileInfo>
+                <FileName>{fileName}</FileName>
+                <FileSize>{(uploadedFile.size / 1024).toFixed(2)} KB</FileSize>
+                <ButtonContainer>
+                  <UploadButton onClick={handleUpload} disabled={isUploading}>
+                    {isUploading ? '업로드 중...' : '업로드'}
+                  </UploadButton>
+                  <CancelButton onClick={handleCancelUpload}>취소</CancelButton>
+                </ButtonContainer>
+              </FileInfo>
+            ) : (
+              <UploadArea onClick={handleContainerClick}>
+                <CloudUploadRoundedIcon
+                  sx={{ width: '50px', height: '50px' }}
+                />
+                <UploadText>
+                  <p>클릭 혹은 파일을 이곳에 드롭하세요.</p>
+                </UploadText>
+              </UploadArea>
+            )}
+          </FileInputContainer>
+        </InputContainerWrapper>
+      </Container>
+    </>
   );
 };
 
@@ -180,10 +178,7 @@ const Container = styled.div`
   gap: 30px;
   padding-top: 20px;
 `;
-const Line = styled.div`
-  margin-top: 30px;
-  border-bottom: 3px solid ${({ theme }) => theme.colors.grey[200]};
-`;
+
 const HeaderContainer = styled.div`
   width: 100%;
   height: 8%;
@@ -291,5 +286,23 @@ const CancelButton = styled.button`
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.grey[100]};
+  }
+`;
+
+const Button = styled.button`
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+`;
+
+const SubmitButton = styled(Button)`
+  background: #24478f;
+  color: white;
+  border: none;
+
+  &:hover {
+    opacity: 0.9;
   }
 `;
