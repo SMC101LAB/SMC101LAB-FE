@@ -282,10 +282,59 @@ export const getSlopeColumns = () => [
     header: '정비사업년도',
     size: 120,
   }),
+  columnHelper.accessor((row) => row.priority?.usage || '', {
+    id: 'usage',
+    header: '비탈면용도',
+    size: 120,
+  }),
+  columnHelper.accessor((row) => row.priority?.slopeNature || '', {
+    id: 'slopeNature',
+    header: '자연/인공',
+    size: 100,
+  }),
+  columnHelper.accessor((row) => row.priority?.slopeType || '', {
+    id: 'slopeType',
+    header: '비탈면유형',
+    size: 120,
+  }),
+  columnHelper.accessor((row) => row.priority?.slopeStructure || '', {
+    id: 'slopeStructure',
+    header: '비탈면구조',
+    size: 120,
+  }),
+  columnHelper.accessor((row) => row.priority?.maxVerticalHeight || '', {
+    id: 'maxVerticalHeight',
+    header: '최고수직고',
+    size: 100,
+  }),
+  columnHelper.accessor((row) => row.priority?.longitudinalLength || '', {
+    id: 'longitudinalLength',
+    header: '종단길이',
+    size: 100,
+  }),
+  columnHelper.accessor((row) => row.priority?.averageSlope || '', {
+    id: 'averageSlope',
+    header: '평균경사',
+    size: 100,
+  }),
+  columnHelper.accessor((row) => row.priority?.Score || '', {
+    id: 'Score',
+    header: '점수',
+    size: 80,
+  }),
+  columnHelper.accessor((row) => row.priority?.grade || '', {
+    id: 'grade',
+    header: '등급',
+    size: 80,
+  }),
 ];
 
 // 기본 표시할 열 항목 필터 설정
 export const getDefaultColumnVisibility = () => ({
+  roadAddress: false,
+  mountainAddress: false,
+  mainLotNumber: false,
+  subLotNumber: false,
   startLatDegree: false,
   startLatMinute: false,
   startLatSecond: false,
@@ -298,4 +347,18 @@ export const getDefaultColumnVisibility = () => ({
   endLongDegree: false,
   endLongMinute: false,
   endLongSecond: false,
+  inspections_serialNumber: false,
+  inspectionDate: false,
+  inspectionResult: false,
+  serialNumber: false,
+  riskDate: false,
+  riskLevel: false,
+  riskScore: false,
+  riskType: false,
+  districtNo: false,
+  districtName: false,
+  riskDesignation: false,
+  designationDate: false,
+  maintenanceProject: false,
+  maintenanceYear: false,
 });
