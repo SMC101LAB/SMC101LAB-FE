@@ -15,6 +15,7 @@ export interface TableState<T> {
   searchQuery: string;
   inputValue: string;
   selectedRegion: { city: string; county: string } | null;
+  grade: string;
 
   // 모달 상태
   isModalOpen: boolean;
@@ -32,7 +33,7 @@ export interface TableState<T> {
   setSearchQuery: (query: string) => void;
   setInputValue: (value: string) => void;
   setSelectedRegion: (region: { city: string; county: string } | null) => void;
-
+  setGrade: (value: string) => void;
   openModal: () => void;
   closeModal: () => void;
   openRegionModal: () => void;
@@ -56,7 +57,7 @@ export function createTableStore<T>(initialState: Partial<TableState<T>> = {}) {
     searchQuery: '',
     inputValue: '',
     selectedRegion: null,
-
+    grade: '선택안함',
     isModalOpen: false,
     isRegionModalOpen: false,
     isDeleteModalOpen: false,
@@ -91,6 +92,7 @@ export function createTableStore<T>(initialState: Partial<TableState<T>> = {}) {
     setSearchQuery: (query) => set({ searchQuery: query }),
     setInputValue: (value) => set({ inputValue: value }),
     setSelectedRegion: (region) => set({ selectedRegion: region }),
+    setGrade: (grade) => set({ grade: grade }),
 
     openModal: () => set({ isModalOpen: true }),
     closeModal: () => set({ isModalOpen: false }),

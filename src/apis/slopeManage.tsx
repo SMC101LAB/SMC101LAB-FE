@@ -5,6 +5,7 @@ interface FetchSlopeParams {
   pageSize: number;
   searchQuery?: string;
   city?: string;
+  grade?: string;
   county?: string;
 }
 

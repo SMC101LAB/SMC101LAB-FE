@@ -49,6 +49,8 @@ const SteepSlopeLookUp = () => {
     setInputValue,
     selectedRegion,
     setSelectedRegion,
+    grade,
+    setGrade,
 
     isModalOpen,
     closeModal,
@@ -84,13 +86,14 @@ const SteepSlopeLookUp = () => {
     isFetchingNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ['slopes', searchQuery, selectedRegion],
+    queryKey: ['slopes', searchQuery, selectedRegion, grade],
     queryFn: async ({ pageParam = 0 }) => {
       const response = await slopeManageAPI.batchSlope({
         page: pageParam,
         pageSize: FETCH_SIZE,
         searchQuery: searchQuery || undefined,
         city: selectedRegion?.city,
+        grade: grade,
         county: selectedRegion?.county,
       });
       return response;
@@ -255,6 +258,7 @@ const SteepSlopeLookUp = () => {
         inputValue={inputValue}
         setInputValue={setInputValue}
         selectedRegion={selectedRegion}
+        setGrade={setGrade}
         resetFilters={resetFilters}
         downloadExcel={() =>
           downloadExcel({

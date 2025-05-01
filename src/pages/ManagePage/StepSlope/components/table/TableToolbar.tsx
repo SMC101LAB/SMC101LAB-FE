@@ -7,7 +7,8 @@ import TravelExploreRoundedIcon from '@mui/icons-material/TravelExploreRounded';
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import { useSteepSlopeStore } from './store/steepSlopeStore';
-
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 interface Region {
   city: string;
   county: string;
@@ -18,6 +19,7 @@ interface TableToolbarProps {
   setSearchQuery: (query: string) => void;
   inputValue: string;
   setInputValue: (value: string) => void;
+  setGrade: (value: string) => void;
   selectedRegion: Region | null;
   resetFilters: () => void;
   downloadExcel: () => void;
@@ -35,6 +37,7 @@ const TableToolbar: React.FC<TableToolbarProps> = ({
   downloadExcel,
   isDownloading,
   totalCount,
+  setGrade,
 }) => {
   const { openModal, openRegionModal } = useSteepSlopeStore();
 
@@ -87,6 +90,7 @@ const TableToolbar: React.FC<TableToolbarProps> = ({
             />
             <p>{isDownloading ? '다운로드 중...' : '엑셀 다운로드'}</p>
           </FilterButton>
+          <GradeButton />
           <SearchWrapper>
             <SearchInput>
               <SearchIcon onClick={() => setSearchQuery(inputValue)} />
@@ -194,3 +198,44 @@ const TotalCount = styled.div`
   color: #374151;
   margin-bottom: 8px;
 `;
+
+const GradeButton = () => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [selectedGrade, setSelectedGrade] = React.useState<string>('선택안함');
+  const open = Boolean(anchorEl);
+  const setGrade = useSteepSlopeStore((state) => state.setGrade);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleGradeSelect = (grade: string) => {
+    setSelectedGrade(grade);
+    setGrade(grade);
+    handleClose();
+  };
+
+  return (
+    <>
+      <FilterButton onClick={handleClick}>등급: {selectedGrade}</FilterButton>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={() => handleGradeSelect('선택안함')}>
+          선택안함
+        </MenuItem>
+        <MenuItem onClick={() => handleGradeSelect('A')}>A</MenuItem>
+        <MenuItem onClick={() => handleGradeSelect('B')}>B</MenuItem>
+        <MenuItem onClick={() => handleGradeSelect('C')}>C</MenuItem>
+        <MenuItem onClick={() => handleGradeSelect('D')}>D</MenuItem>
+        <MenuItem onClick={() => handleGradeSelect('F')}>F</MenuItem>
+      </Menu>
+    </>
+  );
+};
