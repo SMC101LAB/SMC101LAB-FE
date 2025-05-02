@@ -19,7 +19,6 @@ interface TableToolbarProps {
   setSearchQuery: (query: string) => void;
   inputValue: string;
   setInputValue: (value: string) => void;
-  setGrade: (value: string) => void;
   selectedRegion: Region | null;
   resetFilters: () => void;
   downloadExcel: () => void;
@@ -37,7 +36,6 @@ const TableToolbar: React.FC<TableToolbarProps> = ({
   downloadExcel,
   isDownloading,
   totalCount,
-  setGrade,
 }) => {
   const { openModal, openRegionModal } = useSteepSlopeStore();
 

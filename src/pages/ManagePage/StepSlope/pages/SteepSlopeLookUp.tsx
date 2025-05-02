@@ -50,7 +50,6 @@ const SteepSlopeLookUp = () => {
     selectedRegion,
     setSelectedRegion,
     grade,
-    setGrade,
 
     isModalOpen,
     closeModal,
@@ -258,7 +257,6 @@ const SteepSlopeLookUp = () => {
         inputValue={inputValue}
         setInputValue={setInputValue}
         selectedRegion={selectedRegion}
-        setGrade={setGrade}
         resetFilters={resetFilters}
         downloadExcel={() =>
           downloadExcel({

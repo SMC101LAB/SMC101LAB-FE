@@ -1,4 +1,3 @@
-import styled from 'styled-components';
 import { Slope } from '../../../../apis/slopeMap';
 import { useState, useEffect } from 'react';
 import SlopeForm from './SlopeForm';
