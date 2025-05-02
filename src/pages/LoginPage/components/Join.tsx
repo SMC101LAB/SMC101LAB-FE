@@ -92,7 +92,9 @@ const Join = ({ completeJoin }: joinPropsType) => {
   const joinMutation = useMutation({
     mutationFn: (data: JoinFormType) => authAPI.join(data),
     onSuccess: () => {
-      showNotification('회원가입 성공!', { severity: 'success' });
+      showNotification('회원가입 완료! 관리자의 승인 후 로그인이 가능합니다.', {
+        severity: 'success',
+      });
       setJoinForm({
         name: '',
         phone: '',
