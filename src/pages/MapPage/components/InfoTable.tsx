@@ -3,13 +3,13 @@ import { InfotableProps } from '../interface';
 
 const InfoTable: React.FC<InfotableProps> = ({ selectItem, onCloseInfo }) => {
   if (!selectItem) return null;
-  const grade = selectItem.disaster?.riskLevel?.includes('A')
+  const grade = selectItem.priority?.grade?.includes('A')
     ? 'A'
-    : selectItem.disaster?.riskLevel?.includes('B')
+    : selectItem.priority?.grade?.includes('B')
     ? 'B'
-    : selectItem.disaster?.riskLevel?.includes('C')
+    : selectItem.priority?.grade?.includes('C')
     ? 'C'
-    : selectItem.disaster?.riskLevel?.includes('D')
+    : selectItem.priority?.grade?.includes('D')
     ? 'D'
     : 'F';
   return (
@@ -35,22 +35,38 @@ const InfoTable: React.FC<InfotableProps> = ({ selectItem, onCloseInfo }) => {
           <Label>소관부서명</Label>
           <Value>{selectItem?.management?.department || ''}</Value>
         </InfoRow>
-
         <AddressWrapper>
           <Label>주소</Label>
           <AddressValue>
-            {selectItem?.location?.province || ''}{' '}
+            {selectItem?.location?.province || ''}
             {selectItem?.location?.city || ''}
             {selectItem?.location?.district || ''}
             {selectItem?.location?.address || ''}
           </AddressValue>
         </AddressWrapper>
+        <Line />
+        {selectItem?.priority?.usage && (
+          <InfoRow>
+            <Label>비탈면용도</Label>
+            <Value>{selectItem.priority.usage}</Value>
+          </InfoRow>
+        )}
+        <InfoRow>
+          <Label>자연/인공 구분</Label>
+          <Value>{selectItem.priority.slopeNature}</Value>
+        </InfoRow>
+        <InfoRow>
+          <Label>비탈면유형</Label>
+          <Value>{selectItem.priority.slopeType}</Value>
+        </InfoRow>
         <InfoRow>
           <Label>등급</Label>
           <GradeValue $grade={grade}>{grade}</GradeValue>
         </InfoRow>
+        <Line />
+
         <InfoRow>
-          <Label>좌표</Label>
+          <Label>시점 좌표</Label>
           <Value>
             {selectItem?.location?.coordinates?.start?.coordinates?.[1] &&
             selectItem?.location?.coordinates?.start?.coordinates?.[0]
@@ -58,6 +74,20 @@ const InfoTable: React.FC<InfotableProps> = ({ selectItem, onCloseInfo }) => {
                   .toFixed(6)
                   .toString()}°      
                 경도: ${selectItem.location.coordinates.start.coordinates[0]
+                  .toFixed(6)
+                  .toString()}°`
+              : '좌표 정보 없음'}
+          </Value>
+        </InfoRow>
+        <InfoRow>
+          <Label>종점 좌표</Label>
+          <Value>
+            {selectItem?.location?.coordinates?.end?.coordinates?.[1] &&
+            selectItem?.location?.coordinates?.end?.coordinates?.[0]
+              ? `위도: ${selectItem.location.coordinates.end.coordinates[1]
+                  .toFixed(6)
+                  .toString()}°      
+                경도: ${selectItem.location.coordinates.end.coordinates[0]
                   .toFixed(6)
                   .toString()}°`
               : '좌표 정보 없음'}
@@ -134,16 +164,18 @@ const AddressValue = styled(Value)`
 `;
 
 const GradeValue = styled(Value)<{ $grade: string }>`
-  color: ${({ $grade }) => {
+  color: ${({ $grade, theme }) => {
     switch ($grade) {
       case 'A':
-        return '#2ecc71';
+        return theme.colors.grade.A;
       case 'B':
-        return '#f1c40f';
+        return theme.colors.grade.B;
       case 'C':
-        return '#e67e22';
+        return theme.colors.grade.C;
       case 'D':
-        return '#e74c3c';
+        return theme.colors.grade.D;
+      case 'F':
+        return theme.colors.grade.F;
       default:
         return '#333';
     }
@@ -161,4 +193,8 @@ const CloseButton = styled.button`
     color: #333;
   }
   padding: 8px 15px;
+`;
+
+const Line = styled.div`
+  border-bottom: 1px dashed ${({ theme }) => theme.colors.grey[200]};
 `;

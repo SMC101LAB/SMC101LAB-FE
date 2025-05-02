@@ -81,6 +81,8 @@ const GradeBackground = styled.div<{ $grade: string }>`
         return theme.colors.grade.D;
       case 'F':
         return theme.colors.grade.F;
+      default:
+        return '#333';
     }
   }};
 `;
