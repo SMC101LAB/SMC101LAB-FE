@@ -9,8 +9,6 @@ import SearchComponent from './components/map/Search';
 import { Slope, slopeMapAPI } from '../../apis/slopeMap';
 import MyLocationIcon from '@mui/icons-material/MyLocationRounded';
 const MapPage = () => {
-  // console.log(escarpmentData);
-  // console.log(escarpmentData);
   const [selectedMarkerId, setSelectedMarkerId] = useState<number | null>(null);
   const [allTextShow, setAllTextShow] = useState<boolean>(false);
   const [userLocation, setUserLocation] = useState<naver.maps.LatLng | null>(

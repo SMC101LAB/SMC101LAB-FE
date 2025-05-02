@@ -4,20 +4,20 @@ import { ListProps } from '../interface';
 
 const ListContainer: React.FC<ListProps> = ({ item, onClick }) => {
   if (!item) return null;
-  const grade = item.disaster?.riskLevel.includes('A')
+  const grade = item.priority?.grade.includes('A')
     ? 'A'
-    : item.disaster?.riskLevel.includes('B')
+    : item.priority?.grade.includes('B')
     ? 'B'
-    : item.disaster?.riskLevel.includes('C')
+    : item.priority?.grade.includes('C')
     ? 'C'
-    : item.disaster?.riskLevel.includes('D')
+    : item.priority?.grade.includes('D')
     ? 'D'
     : 'F';
   return (
     <Container onClick={onClick}>
       <Wrapper>
         <GradeBackground $grade={grade}>
-          <GradeText $grade={grade}>{grade}</GradeText>
+          <GradeText>{grade}</GradeText>
         </GradeBackground>
         <MainInnerContainer>
           <TitleWrapper>
@@ -69,38 +69,25 @@ const GradeBackground = styled.div<{ $grade: string }>`
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
-  background-color: ${({ $grade }) => {
+  background-color: ${({ $grade, theme }) => {
     switch ($grade) {
       case 'A':
-        return 'rgba(46, 204, 113, 0.15)'; // #2ecc71 with opacity
+        return theme.colors.grade.A;
       case 'B':
-        return 'rgba(241, 196, 15, 0.15)'; // #f1c40f with opacity
+        return theme.colors.grade.B;
       case 'C':
-        return 'rgba(230, 126, 34, 0.15)'; // #e67e22 with opacity
+        return theme.colors.grade.C;
       case 'D':
-        return 'rgba(231, 76, 60, 0.15)'; // #e74c3c with opacity
-      default:
-        return 'rgba(51, 51, 51, 0.15)'; // #333333 with opacity
+        return theme.colors.grade.D;
+      case 'F':
+        return theme.colors.grade.F;
     }
   }};
 `;
-const GradeText = styled.div<{ $grade: string }>`
+const GradeText = styled.div`
   font-size: 20px;
   font-weight: 600;
-  color: ${({ $grade }) => {
-    switch ($grade) {
-      case 'A':
-        return '#2ecc71';
-      case 'B':
-        return '#f1c40f';
-      case 'C':
-        return '#e67e22';
-      case 'D':
-        return '#e74c3c';
-      default:
-        return '#333';
-    }
-  }};
+  color: ${({ theme }) => theme.colors.grey[100]};
 `;
 
 const TitleWrapper = styled.div`
