@@ -66,6 +66,24 @@ export interface Slope {
     historyNumber: string;
     inspectionDate: string;
   };
+  priority: {
+    usage: string; // 비탈면용도
+    slopeNature: string; // 자연/인공 구분
+    slopeType: string; // 비탈면유형
+    slopeStructure: string; // 비탈면구조
+    maxVerticalHeight: string; // 최고수직고 (단위: m)
+    longitudinalLength: string; // 종단길이 (단위: m)
+    averageSlope: string; // 평균경사 (단위: 도)
+    images: [
+      {
+        // 이미지
+        url: string; // url
+        createdAt: Date; // 이미지 생성날짜
+      }
+    ];
+    Score: string; //점수
+    grade: string; // 등급
+  };
   createdAt: Date;
   _id: string;
 }

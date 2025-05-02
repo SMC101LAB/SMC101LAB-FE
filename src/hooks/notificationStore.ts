@@ -20,7 +20,7 @@ export const useNotificationStore = create<NotificationState>((set) => ({
   isOpen: false,
   message: '',
   severity: 'info',
-  autoHideDuration: 4000,
+  autoHideDuration: 3000,
 
   showNotification: (message, options = {}) =>
     set({
@@ -30,7 +30,7 @@ export const useNotificationStore = create<NotificationState>((set) => ({
       autoHideDuration:
         options.autoHideDuration !== undefined
           ? options.autoHideDuration
-          : 4000,
+          : 3000,
     }),
 
   hideNotification: () => set({ isOpen: false }),
