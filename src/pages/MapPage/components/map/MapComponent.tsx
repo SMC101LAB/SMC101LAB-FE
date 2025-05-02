@@ -13,6 +13,7 @@ import DmarkerIcon from '../../../../assets/d.webp';
 import FmarkerIcon from '../../../../assets/f.webp';
 import UserPosIcon from '../../../../assets/current_position.png';
 import { MapComponentProps } from '../../interface';
+import { MapTypeId, useMapStore } from '../../mapStore';
 declare global {
   interface Window {
     ReactNativeWebView?: {
@@ -32,10 +33,30 @@ const MapComponent: React.FC<MapComponentProps> = ({
   setMapInstance,
   onMarkerClick,
 }) => {
+  const { mapTypeId, setIsMapReady } = useMapStore();
   const navermaps = useNavermaps();
   const [_errorMessage, setErrorMessage] = useState<string | null>(null);
-  // console.log(errorMessage);
-  // console.log(escarpmentData);
+
+  //지도가 준비된 경우
+  useEffect(() => {
+    if (mapInstance) setIsMapReady(true);
+  }, [mapInstance, setIsMapReady]);
+
+  const getNaverMapTypeId = () => {
+    if (!navermaps) return undefined;
+
+    switch (mapTypeId) {
+      case MapTypeId.SATELLITE:
+        return navermaps.MapTypeId.SATELLITE;
+      case MapTypeId.HYBRID:
+        return navermaps.MapTypeId.HYBRID;
+      case MapTypeId.TERRAIN:
+        return navermaps.MapTypeId.TERRAIN;
+      case MapTypeId.NORMAL:
+      default:
+        return navermaps.MapTypeId.NORMAL;
+    }
+  };
 
   //앱에서 위치 수신
   useEffect(() => {
@@ -140,6 +161,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
               setMapInstance(ref);
             }
           }}
+          mapTypeId={getNaverMapTypeId()}
         >
           <Marker
             position={userLocation}

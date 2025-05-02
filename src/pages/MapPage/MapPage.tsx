@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 
 import styled from 'styled-components';
 
@@ -6,142 +6,71 @@ import BottomSheet from './BottomSheet';
 import MapComponent from './components/map/MapComponent';
 import SearchComponent from './components/map/Search';
 
-import { Slope, slopeMapAPI } from '../../apis/slopeMap';
-import MyLocationIcon from '@mui/icons-material/MyLocationRounded';
+import { useMapStore } from './mapStore';
+import ButtonGroup from './components/ButtonGroup';
 const MapPage = () => {
-  const [selectedMarkerId, setSelectedMarkerId] = useState<number | null>(null);
-  const [allTextShow, setAllTextShow] = useState<boolean>(false);
-  const [userLocation, setUserLocation] = useState<naver.maps.LatLng | null>(
-    null
-  );
-  const [slopeData, setSlopeData] = useState<Slope[]>([]);
-
-  const [searchMod, setSearchMod] = useState<boolean>(false);
-  const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(200); //bottomsheet 높이 조절 state
-
-  const fetchSlopes = useCallback(async () => {
-    //위치정보가 없는 경우 호출 안함
-    if (!userLocation?.lat() || !userLocation?.lng()) return;
-
-    try {
-      const data = await slopeMapAPI.fetchNearbySlopes(
-        userLocation.lat(),
-        userLocation.lng()
-      );
-      setSlopeData(data || []);
-    } catch (error) {
-      console.error('Error fetching slopes:', error);
-      setSlopeData([]);
-    }
-  }, [userLocation]);
+  const {
+    selectedMarkerId,
+    allTextShow,
+    userLocation,
+    slopeData,
+    searchMod,
+    bottomSheetHeight,
+    mapInstance,
+    setAllTextShow,
+    setBottomSheetHeight,
+    fetchSlopes,
+    handleSearch,
+    chooseSelectItem,
+    moveToMyLocation,
+    setUserLocation,
+    setMapInstance,
+    setSelectedMarkerId,
+  } = useMapStore();
 
   useEffect(() => {
     if (!searchMod) fetchSlopes();
   }, [userLocation, searchMod, fetchSlopes]);
-  const [mapInstance, setMapInstance] = useState<naver.maps.Map | null>(null);
 
-  //검색 핸들 callback
-  const handleSearch = useCallback(
-    (searchValue: string) => {
-      if (searchValue === '') {
-        setSearchMod(false);
-        fetchSlopes();
-        setSelectedMarkerId(null);
-        return;
-      }
-      setSelectedMarkerId(null);
-      setSearchMod(true);
-
-      const searchSlope = async () => {
-        if (!userLocation?.lat() || !userLocation?.lng()) return; //위치정보가 없는 경우 호출 안함
-        // console.log('Searching for:', searchValue);
-        // console.log('Searching Mod:', searchMod);
-        try {
-          const data = await slopeMapAPI.searchSlopes(
-            searchValue,
-            userLocation.lat(),
-            userLocation.lng()
-          );
-          setSlopeData(data || []);
-          if (mapInstance && data) {
-            const coordinates = data[0].location.coordinates.start.coordinates;
-            mapInstance.panTo(
-              new naver.maps.LatLng(coordinates[1], coordinates[0])
-            );
-          }
-        } catch (error) {
-          console.error('Error search slopes:', error);
-          setSlopeData([]);
-        }
-      };
-      searchSlope();
-    },
-    [userLocation]
-  );
-
-  //아이템 선택
-  const chooseSelectItem = useCallback(
-    (item: Slope, index: number) => {
-      if (mapInstance && item) {
-        // 지도 이동
-        const coordinates = item.location.coordinates.start.coordinates;
-        mapInstance.panTo(
-          new naver.maps.LatLng(coordinates[1], coordinates[0])
-        );
-
-        // 마커 선택 상태 변경
-        setSelectedMarkerId((prevId) => (prevId === index ? null : index));
-      }
-    },
-    [mapInstance]
-  );
-
-  //내 위치로 이동
-  const moveToMyLocation = useCallback(() => {
-    if (!mapInstance || !userLocation) return;
-
-    // 줌 레벨 먼저 변경
-    mapInstance.setZoom(15);
-
-    // 약간 지연 후 위치 이동
-    setTimeout(() => {
-      mapInstance.panTo(userLocation);
-    }, 100);
-
-    fetchSlopes();
-  }, [mapInstance, userLocation, fetchSlopes]);
   return (
-    <BaseBackground>
-      <MapComponent
-        selectedMarkerId={selectedMarkerId}
-        escarpmentData={slopeData}
-        allTextShow={allTextShow}
-        userLocation={userLocation}
-        setUserLocation={setUserLocation}
-        mapInstance={mapInstance}
-        setMapInstance={setMapInstance}
-        onMarkerClick={chooseSelectItem}
-      />
-      <BottomSheet
-        slopeData={slopeData}
-        selectItem={
-          selectedMarkerId !== null ? slopeData[selectedMarkerId] : null
-        }
-        onItemClick={chooseSelectItem}
-        height={bottomSheetHeight}
-        setHeight={setBottomSheetHeight}
-        onCloseInfo={() => {
-          setSelectedMarkerId(null);
-        }}
-        searchMod={searchMod}
-      />
+    <>
+      <BaseBackground>
+        <MapComponent
+          selectedMarkerId={selectedMarkerId}
+          escarpmentData={slopeData}
+          allTextShow={allTextShow}
+          userLocation={userLocation}
+          setUserLocation={setUserLocation}
+          mapInstance={mapInstance}
+          setMapInstance={setMapInstance}
+          onMarkerClick={chooseSelectItem}
+        />
+        <BottomSheet
+          slopeData={slopeData}
+          selectItem={
+            selectedMarkerId !== null ? slopeData[selectedMarkerId] : null
+          }
+          onItemClick={chooseSelectItem}
+          height={bottomSheetHeight}
+          setHeight={setBottomSheetHeight}
+          onCloseInfo={() => {
+            setSelectedMarkerId(null);
+          }}
+          searchMod={searchMod}
+        />
 
-      <SearchComponent onSearch={handleSearch} />
+        <SearchComponent onSearch={handleSearch} />
+        {/* <AllShowButton
+        $isSelect={allTextShow}
+        onClick={() => {
+          setAllTextShow(!allTextShow);
+        }}
+      >
+        {allTextShow ? '위성지도' : '일반지도'}
+      </AllShowButton>
       <AllShowButton
         $isSelect={allTextShow}
         onClick={() => {
-          // console.log(allTextShow);
-          // console.log(allTextShow);
           setAllTextShow(!allTextShow);
         }}
       >
@@ -149,8 +78,10 @@ const MapPage = () => {
       </AllShowButton>
       <MyPosition onClick={moveToMyLocation}>
         <MyLocationIcon />
-      </MyPosition>
-    </BaseBackground>
+      </MyPosition> */}
+        <ButtonGroup />
+      </BaseBackground>
+    </>
   );
 };
 
