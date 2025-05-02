@@ -17,12 +17,10 @@ const MapPage = () => {
     searchMod,
     bottomSheetHeight,
     mapInstance,
-    setAllTextShow,
     setBottomSheetHeight,
     fetchSlopes,
     handleSearch,
     chooseSelectItem,
-    moveToMyLocation,
     setUserLocation,
     setMapInstance,
     setSelectedMarkerId,
@@ -94,48 +92,4 @@ const BaseBackground = styled.div`
   flex-direction: column;
   overscroll-behavior: none;
   position: relative;
-`;
-
-const AllShowButton = styled.button<{ $isSelect: boolean }>`
-  position: absolute;
-  top: 50px;
-  right: 10px;
-  border: none;
-  border-radius: 8px;
-  height: 30px;
-  padding: 5px 10px;
-  box-shadow: ${({ theme }) => theme.shadows.sm};
-  font-weight: ${({ theme }) => theme.fonts.weights.bold};
-  font-size: ${({ theme }) => theme.fonts.sizes.ms};
-  background-color: ${({ $isSelect, theme }) =>
-    $isSelect ? theme.colors.primaryDark : '#fff'};
-  color: ${({ $isSelect, theme }) =>
-    !$isSelect ? theme.colors.primaryDark : '#fff'};
-  &:focus {
-    outline: none;
-  }
-  transition: all 0.15s ease-in-out;
-
-  &:active {
-    transform: scale(1.1);
-  }
-`;
-
-const MyPosition = styled.button`
-  position: absolute;
-  top: 90px;
-  right: 10px;
-  border: none;
-  border-radius: 8px;
-  padding: 5px 10px;
-  box-shadow: ${({ theme }) => theme.shadows.sm};
-  font-weight: 550;
-  background-color: #fff;
-  transition: all 0.15s ease-in-out;
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.grey[200]};
-  }
-  &:active {
-    transform: scale(1.1);
-  }
 `;
