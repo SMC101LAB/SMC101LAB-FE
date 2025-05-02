@@ -6,13 +6,14 @@ import {
   Marker,
 } from 'react-naver-maps';
 import { useState, useEffect } from 'react';
-import AmarkerIcon from '../../../../assets/a.png';
-import BmarkerIcon from '../../../../assets/b.png';
-import CmarkerIcon from '../../../../assets/c.png';
-import DmarkerIcon from '../../../../assets/d.png';
-import FmarkerIcon from '../../../../assets/f.png';
+import AmarkerIcon from '../../../../assets/a.webp';
+import BmarkerIcon from '../../../../assets/b.webp';
+import CmarkerIcon from '../../../../assets/c.webp';
+import DmarkerIcon from '../../../../assets/d.webp';
+import FmarkerIcon from '../../../../assets/f.webp';
 import UserPosIcon from '../../../../assets/current_position.png';
 import { MapComponentProps } from '../../interface';
+import { MapTypeId, useMapStore } from '../../mapStore';
 declare global {
   interface Window {
     ReactNativeWebView?: {
@@ -32,10 +33,30 @@ const MapComponent: React.FC<MapComponentProps> = ({
   setMapInstance,
   onMarkerClick,
 }) => {
+  const { mapTypeId, setIsMapReady } = useMapStore();
   const navermaps = useNavermaps();
   const [_errorMessage, setErrorMessage] = useState<string | null>(null);
-  // console.log(errorMessage);
-  // console.log(escarpmentData);
+
+  //지도가 준비된 경우
+  useEffect(() => {
+    if (mapInstance) setIsMapReady(true);
+  }, [mapInstance, setIsMapReady]);
+
+  const getNaverMapTypeId = () => {
+    if (!navermaps) return undefined;
+
+    switch (mapTypeId) {
+      case MapTypeId.SATELLITE:
+        return navermaps.MapTypeId.SATELLITE;
+      case MapTypeId.HYBRID:
+        return navermaps.MapTypeId.HYBRID;
+      case MapTypeId.TERRAIN:
+        return navermaps.MapTypeId.TERRAIN;
+      case MapTypeId.NORMAL:
+      default:
+        return navermaps.MapTypeId.NORMAL;
+    }
+  };
 
   //앱에서 위치 수신
   useEffect(() => {
@@ -140,6 +161,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
               setMapInstance(ref);
             }
           }}
+          mapTypeId={getNaverMapTypeId()}
         >
           <Marker
             position={userLocation}
@@ -169,13 +191,13 @@ const MapComponent: React.FC<MapComponentProps> = ({
           {escarpmentData.length > 0
             ? escarpmentData.map((item, index) => {
                 // console.log(item);
-                const grade = item.disaster?.riskLevel.includes('A')
+                const grade = item.priority?.grade.includes('A')
                   ? 'A'
-                  : item.disaster?.riskLevel.includes('B')
+                  : item.priority?.grade.includes('B')
                   ? 'B'
-                  : item.disaster?.riskLevel.includes('C')
+                  : item.priority?.grade.includes('C')
                   ? 'C'
-                  : item.disaster?.riskLevel.includes('D')
+                  : item.priority?.grade.includes('D')
                   ? 'D'
                   : 'F';
 
@@ -205,7 +227,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
           <div style="cursor: pointer; position:relative;">
           ${
             selectedMarkerId === index || allTextShow
-              ? `<div style="position:absolute; top:-15px; left:-46px; width:120px; display:flex; justify-content:center;z-index:1;">
+              ? `<div style="position:absolute; top:-20px; left:-51px; width:120px; display:flex; justify-content:center;z-index:1;">
                   <div style="${
                     selectedMarkerId === index
                       ? 'color:#0b5275;font-weight:500;'
@@ -218,7 +240,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
           }
                     <img src="${markerIcon}"
                         alt="marker"
-                        style="width: 22px; height: 22px;"
+                        style="width: 32px; height: 32px;"
                     />
                   </div>
                 `,

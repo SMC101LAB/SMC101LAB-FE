@@ -5,6 +5,8 @@ import { BottomSheetProps } from './interface';
 import ListContainer from './components/ListContainer';
 import CommentList from './components/comment/CommentList';
 import NoInfo from './components/NoInfo';
+import SearchResult from './components/SearchResult';
+import { Slope } from '../../apis/slopeMap';
 
 const BottomSheet: React.FC<BottomSheetProps> = ({
   slopeData,
@@ -75,6 +77,40 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       scrollWrapperRef.current.style.overflow = 'auto';
     }
   };
+
+  const countGrades = (slopes: Slope[]) => {
+    const counts = {
+      aCount: 0,
+      bCount: 0,
+      cCount: 0,
+      dCount: 0,
+      fCount: 0,
+    };
+
+    for (let i = 0; i < slopes.length; i++) {
+      const grade = slopes[i].priority.grade.toUpperCase();
+
+      switch (grade) {
+        case 'A':
+          counts.aCount++;
+          break;
+        case 'B':
+          counts.bCount++;
+          break;
+        case 'C':
+          counts.cCount++;
+          break;
+        case 'D':
+          counts.dCount++;
+          break;
+        case 'F':
+          counts.fCount++;
+          break;
+      }
+    }
+    return counts;
+  };
+
   return (
     <BaseContainer height={height} $isDragging={isDragging.current}>
       <ScrollWrapper ref={scrollWrapperRef}>
@@ -103,22 +139,36 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
               return <NoInfo text="5km 반경 내 급경사지 데이터가 없습니다." />;
             }
           } else {
+            const { aCount, bCount, cCount, dCount, fCount } =
+              countGrades(slopeData);
             return (
-              <ListWrapper>
-                {!slopeData || slopeData.length === 0 ? (
-                  <div>데이터 조회 중</div>
-                ) : (
-                  slopeData.map((item, index) => (
-                    <ListContainer
-                      key={index}
-                      item={item}
-                      onClick={() => {
-                        onItemClick(item, index);
-                      }}
-                    ></ListContainer>
-                  ))
-                )}
-              </ListWrapper>
+              <>
+                <SearchResult
+                  resultCount={slopeData.length}
+                  gradeCount={{
+                    A: aCount,
+                    B: bCount,
+                    C: cCount,
+                    D: dCount,
+                    F: fCount,
+                  }}
+                />
+                <ListWrapper>
+                  {!slopeData || slopeData.length === 0 ? (
+                    <div>데이터 조회 중</div>
+                  ) : (
+                    slopeData.map((item, index) => (
+                      <ListContainer
+                        key={index}
+                        item={item}
+                        onClick={() => {
+                          onItemClick(item, index);
+                        }}
+                      ></ListContainer>
+                    ))
+                  )}
+                </ListWrapper>
+              </>
             );
           }
         })()}
