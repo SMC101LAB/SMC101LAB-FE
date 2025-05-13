@@ -2,18 +2,8 @@ import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import { userAPI } from '../../../../apis/User';
 import { useNotificationStore } from '../../../../hooks/notificationStore';
-interface DeleteConfirmModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import { DeleteConfirmModalProps, UserDelete } from '../../interface';
 
-interface UserDelete {
-  _id: string;
-  isAdmin: string;
-  name: string;
-  organization: string;
-  phone: string;
-}
 const DeleteIdModal = ({ isOpen, onClose }: DeleteConfirmModalProps) => {
   const [inputValue, setInputValue] = useState('');
   const [user, setUser] = useState<UserDelete | null>(null);
