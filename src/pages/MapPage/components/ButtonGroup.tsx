@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useMapStore, MapTypeId } from '../mapStore';
+import { useMapStore, MapTypeId } from '../../../stores/mapStore';
 import MyLocationIcon from '@mui/icons-material/MyLocationRounded';
 
 const ButtonGroup = () => {

@@ -12,7 +12,7 @@ import CmarkerIcon from '../../../../assets/c.webp';
 import DmarkerIcon from '../../../../assets/d.webp';
 import FmarkerIcon from '../../../../assets/f.webp';
 import UserPosIcon from '../../../../assets/current_position.png';
-import { MapTypeId, useMapStore } from '../../mapStore';
+import { MapTypeId, useMapStore } from '../../../../stores/mapStore';
 declare global {
   interface Window {
     ReactNativeWebView?: {

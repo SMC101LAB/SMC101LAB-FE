@@ -6,7 +6,7 @@ import CommentList from './components/comment/CommentList';
 import NoInfo from './components/NoInfo';
 import SearchResult from './components/SearchResult';
 import { Slope } from '../../apis/slopeMap';
-import { useMapStore } from './mapStore';
+import { useMapStore } from '../../stores/mapStore';
 
 const BottomSheet = () => {
   const {

@@ -1,12 +1,10 @@
 import { useEffect } from 'react';
-
+import { useMapStore } from '../../stores/mapStore';
 import styled from 'styled-components';
-
 import BottomSheet from './BottomSheet';
 import MapComponent from './components/map/MapComponent';
 import SearchComponent from './components/map/Search';
 
-import { useMapStore } from './mapStore';
 import ButtonGroup from './components/ButtonGroup';
 const MapPage = () => {
   const { userLocation, searchMod, fetchSlopes, handleSearch } = useMapStore();

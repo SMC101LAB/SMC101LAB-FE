@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { InfotableProps } from '../interface';
-import { useMapStore } from '../mapStore';
+import { useMapStore } from '../../../stores/mapStore';
 
-const InfoTable: React.FC<InfotableProps> = ({ selectItem }) => {
+const InfoTable = ({ selectItem }: InfotableProps) => {
   const { setSelectedMarkerId } = useMapStore();
   const onCloseInfo = () => {
     setSelectedMarkerId(null);
