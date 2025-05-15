@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Slope, slopeMapAPI } from '../../apis/slopeMap';
+import { Slope, slopeMapAPI } from '../apis/slopeMap';
 
 // 문자열 상수로 맵 타입 정의
 export enum MapTypeId {
