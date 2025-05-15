@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNotificationStore } from '../../../../hooks/notificationStore';
-
-interface CommentAddModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (comment: string, images: File[]) => void;
-}
+import { CommentAddModalProps } from '../../interface';
+import { useCommentStore } from '../../../../stores/commentStore';
 
 interface ImageFile {
   file: File;
@@ -23,11 +19,11 @@ interface MobileImageAsset {
   dataUrl?: string;
 }
 
-const CommentAddModal = ({
-  isOpen,
-  onClose,
-  onSubmit,
-}: CommentAddModalProps) => {
+const CommentAddModal = ({ onSubmit }: CommentAddModalProps) => {
+  const { isMoreOpen, setIsMore } = useCommentStore();
+  const onClose = () => {
+    setIsMore(false);
+  };
   const [comment, setComment] = useState('');
   const [images, setImages] = useState<ImageFile[]>([]);
   //전역 알람
@@ -38,11 +34,11 @@ const CommentAddModal = ({
     typeof window !== 'undefined' && window.ReactNativeWebView != null;
   //모달이 열릴 때 초기상태로 복원
   useEffect(() => {
-    if (isOpen) {
+    if (isMoreOpen) {
       setComment('');
       setImages([]);
     }
-  }, [isOpen]);
+  }, [isMoreOpen]);
 
   //사진 권한 요청
   useEffect(() => {
@@ -243,7 +239,7 @@ const CommentAddModal = ({
   };
 
   return (
-    <ModalOverlay $isOpen={isOpen}>
+    <ModalOverlay $isOpen={isMoreOpen}>
       <ModalContent>
         <ModalHeader>
           <h2>코멘트 작성</h2>

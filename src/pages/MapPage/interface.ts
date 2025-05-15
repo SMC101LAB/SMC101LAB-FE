@@ -46,15 +46,21 @@ export interface SearchResultProps {
     F: number;
   };
 }
+export interface CommentAddModalProps {
+  onSubmit: (comment: string, images: File[]) => void;
+}
 export interface DeleteModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   onSubmit: () => void;
 }
 export interface CommentListProps {
   slopeId: string;
 }
-
+export interface CommentUpdateModalProps {
+  onSubmit: (formData: FormData) => void;
+  defaultComment: string;
+  defaultImages: string[];
+  commentId: string;
+}
 //모달 관련
 
 export interface DeleteConfirmModalProps {

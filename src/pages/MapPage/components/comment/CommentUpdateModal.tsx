@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNotificationStore } from '../../../../hooks/notificationStore';
-
-interface CommentUpdateModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (formData: FormData) => void;
-  defaultComment: string;
-  defaultImages: string[];
-  commentId: string;
-}
+import { useCommentStore } from '../../../../stores/commentStore';
+import { CommentUpdateModalProps } from '../../interface';
 
 interface ImageFile {
   file: File | null;
@@ -28,13 +21,15 @@ interface MobileImageAsset {
   dataUrl?: string;
 }
 const CommentUpdateModal = ({
-  isOpen,
-  onClose,
   onSubmit,
   defaultComment,
   defaultImages,
   commentId,
 }: CommentUpdateModalProps) => {
+  const { isModiOpen, setIsModi } = useCommentStore();
+  const onClose = () => {
+    setIsModi(false);
+  };
   const [comment, setComment] = useState(defaultComment);
   const [images, setImages] = useState<ImageFile[]>(() =>
     defaultImages.map((url) => ({
@@ -45,6 +40,7 @@ const CommentUpdateModal = ({
       url: url,
     }))
   );
+
   const isReactNativeWebView =
     typeof window !== 'undefined' && window.ReactNativeWebView != null;
   const showNotification = useNotificationStore(
@@ -52,7 +48,7 @@ const CommentUpdateModal = ({
   );
   // 모달이 열릴 때마다 초기 상태로 재설정
   useEffect(() => {
-    if (isOpen) {
+    if (isModiOpen) {
       setComment(defaultComment);
       setImages(
         defaultImages.map((url) => ({
@@ -64,7 +60,7 @@ const CommentUpdateModal = ({
         }))
       );
     }
-  }, [isOpen]);
+  }, [isModiOpen]);
 
   // 디버깅용 로그
   useEffect(() => {
@@ -314,7 +310,7 @@ const CommentUpdateModal = ({
     }
   };
   return (
-    <ModalOverlay $isOpen={isOpen}>
+    <ModalOverlay $isOpen={isModiOpen}>
       <ModalContent>
         <ModalHeader>
           <h2>코멘트 수정</h2>
