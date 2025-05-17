@@ -169,7 +169,7 @@ const SteepSlopeLookUp = () => {
     // 선택된 행 정보 업데이트
     setSelectedRows(selectedRowsArray);
     setSelectedRow(selectedRowsArray.length > 0 ? selectedRowsArray[0] : null);
-  }, [rowSelection, flatData]);
+  }, [rowSelection, flatData, setSelectedRow, setSelectedRows]);
 
   // 스크롤 이벤트 핸들러(무한스크롤 기능)
   const handleScroll = useCallback(() => {
