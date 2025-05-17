@@ -1,16 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
-import { Slope } from '../../../../../apis/slopeMap';
 import LoadingMessage from '../../../components/LoadingMessage';
-
-interface TableActionProps {
-  isLoading: boolean;
-  selectedRow: Slope | null;
-  // 선택된 행들 배열 추가
-  selectedRows: Slope[];
-  openEditModal: () => void;
-  openDeleteModal: () => void;
-}
+import { TableActionProps } from '../../../interface';
 
 const TableAction: React.FC<TableActionProps> = ({
   isLoading,

@@ -1,27 +1,9 @@
 import React from 'react';
-import { Slope } from '../../../../../apis/slopeMap';
 import FilterModal from '../ColumnFilterModal';
 import DeleteConfirmModal from '../DeleteModal';
 import EditModal from '../EditModal';
 import RegionFilterModal from '../RegionFilterModal';
-import { Table as TableInstance } from '@tanstack/react-table';
-
-interface TableModalProps {
-  isModalOpen: boolean;
-  closeModal: () => void;
-  table: TableInstance<any>;
-  isRegionModalOpen: boolean;
-  closeRegionModal: () => void;
-  handleRegionSelect: (city: string, county: string) => void;
-  isDeleteModalOpen: boolean;
-  closeDeleteModal: () => void;
-  handleDelete: () => void;
-  selectedRow: Slope | null;
-  selectedRows: Slope[];
-  isEditModalOpen: boolean;
-  closeEditModal: () => void;
-  handleEdit: (updatedSlope: Slope) => void;
-}
+import { TableModalProps } from '../../../interface';
 
 const TableModals: React.FC<TableModalProps> = ({
   isModalOpen,

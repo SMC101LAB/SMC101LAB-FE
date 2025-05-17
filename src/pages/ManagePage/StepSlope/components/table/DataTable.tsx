@@ -1,22 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  Table as TableInstance,
-  Row as RowInstance,
-} from '@tanstack/react-table';
-
-import { Virtualizer } from '@tanstack/react-virtual';
-import { Slope } from '../../../../../apis/slopeMap';
-
-interface DataTableProps {
-  tableContainerRef: React.RefObject<HTMLDivElement>;
-  handleScroll: () => void;
-  table: TableInstance<any>;
-  rows: RowInstance<any>[];
-  rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
-  selectedRow: Slope | null;
-  setSelectedRow: (row: Slope | null) => void;
-}
+import { DataTableProps } from '../../../interface';
 
 const DataTable: React.FC<DataTableProps> = ({
   tableContainerRef,

@@ -1,14 +1,6 @@
 import styled from 'styled-components';
-import { Slope } from '../../../../apis/slopeMap';
 import { useEffect, useState } from 'react';
-
-interface DeleteConfirmModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  selectedRow: Slope | null;
-  selectedRows: Slope[];
-}
+import { DeleteConfirmModalProps } from '../../interface';
 
 const DeleteConfirmModal = ({
   isOpen,

@@ -1,11 +1,7 @@
 import { Slope } from '../../../../apis/slopeMap';
 import SlopeForm from './SlopeForm';
 import { slopeManageAPI } from '../../../../apis/slopeManage';
-
-interface AddSlopeProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import { AddSlopeProps } from '../../interface';
 
 const AddSlope = ({ isOpen, onClose }: AddSlopeProps) => {
   const onSubmit = async (newSlopeData: Slope) => {

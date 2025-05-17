@@ -1,12 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
-
-interface TableCheckboxProps {
-  indeterminate?: boolean;
-  checked?: boolean;
-  disabled?: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+import { TableCheckboxProps } from '../../../interface';
 
 const TableCheckbox: React.FC<TableCheckboxProps> = ({
   indeterminate = false,

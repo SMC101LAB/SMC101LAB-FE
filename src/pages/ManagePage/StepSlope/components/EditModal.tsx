@@ -1,13 +1,7 @@
 import { Slope } from '../../../../apis/slopeMap';
 import { useState, useEffect } from 'react';
 import SlopeForm from './SlopeForm';
-
-interface EditModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (updatedSlope: Slope) => void;
-  selectedRow: Slope | null;
-}
+import { EditModalProps } from '../../interface';
 
 const EditModal = ({
   isOpen,

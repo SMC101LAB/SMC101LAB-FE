@@ -9,22 +9,7 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import { useSteepSlopeStore } from '../../../../../stores/steepSlopeStore';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-interface Region {
-  city: string;
-  county: string;
-}
-
-interface TableToolbarProps {
-  title: string;
-  setSearchQuery: (query: string) => void;
-  inputValue: string;
-  setInputValue: (value: string) => void;
-  selectedRegion: Region | null;
-  resetFilters: () => void;
-  downloadExcel: () => void;
-  isDownloading: boolean;
-  totalCount: number;
-}
+import { TableToolbarProps } from '../../../interface';
 
 const TableToolbar: React.FC<TableToolbarProps> = ({
   title,
