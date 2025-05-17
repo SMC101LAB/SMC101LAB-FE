@@ -6,7 +6,7 @@ const SideComponents: FC<SideComponentsProps> = ({
   selectPage,
   ChooseIndex,
 }) => {
-  const [toggle, setToggle] = useState<[boolean, boolean]>([false, false]);
+  const [toggle, setToggle] = useState<boolean[]>([false, false, false]);
   return (
     <SideContainer>
       <LogoWrapper>
@@ -21,7 +21,7 @@ const SideComponents: FC<SideComponentsProps> = ({
         </IndexContainer> */}
         <ToggleIndexContainer
           onClick={() => {
-            setToggle([!toggle[0], toggle[1]]);
+            setToggle([!toggle[0], toggle[1], toggle[2]]);
           }}
         >
           <ToggleIndexText $isOpen={toggle[0]}>급경사지 관리</ToggleIndexText>
@@ -43,45 +43,67 @@ const SideComponents: FC<SideComponentsProps> = ({
             >
               <IndexText $isSelect={selectPage[2]}>급경사지 추가</IndexText>
             </SubIndexContainer>
-            <SubIndexContainer
-              $isSelect={selectPage[3]}
-              onClick={() => ChooseIndex(3)}
-            >
-              <IndexText $isSelect={selectPage[3]}>
-                급경사지 이상값 찾기
-              </IndexText>
-            </SubIndexContainer>
           </>
         )}
         <ToggleIndexContainer
           onClick={() => {
-            setToggle([toggle[0], !toggle[1]]);
+            setToggle([toggle[0], !toggle[1], toggle[2]]);
           }}
         >
-          <ToggleIndexText $isOpen={toggle[1]}>회원관리</ToggleIndexText>
+          <ToggleIndexText $isOpen={toggle[1]}>급경사지 이상값</ToggleIndexText>
           <Arrow $isOpen={toggle[1]} />
         </ToggleIndexContainer>
         {toggle[1] && (
           <>
             <SubIndexContainer
+              $isSelect={selectPage[3]}
+              onClick={() => ChooseIndex(3)}
+            >
+              <IndexText $isSelect={selectPage[3]}>빈값 찾기</IndexText>
+            </SubIndexContainer>
+            <SubIndexContainer
               $isSelect={selectPage[4]}
               onClick={() => ChooseIndex(4)}
             >
-              <IndexText $isSelect={selectPage[4]}>회원조회 및 승인</IndexText>
+              <IndexText $isSelect={selectPage[4]}>중복값 찾기</IndexText>
             </SubIndexContainer>
-            <SubIndexContainer
+            {/* <SubIndexContainer
               $isSelect={selectPage[5]}
               onClick={() => ChooseIndex(5)}
             >
-              <IndexText $isSelect={selectPage[5]}>회원수정 및 삭제</IndexText>
+              <IndexText $isSelect={selectPage[5]}>위치이상</IndexText>
+            </SubIndexContainer> */}
+          </>
+        )}
+        <ToggleIndexContainer
+          onClick={() => {
+            setToggle([toggle[0], toggle[1], !toggle[2]]);
+          }}
+        >
+          <ToggleIndexText $isOpen={toggle[2]}>회원관리</ToggleIndexText>
+          <Arrow $isOpen={toggle[2]} />
+        </ToggleIndexContainer>
+        {toggle[2] && (
+          <>
+            <SubIndexContainer
+              $isSelect={selectPage[6]}
+              onClick={() => ChooseIndex(6)}
+            >
+              <IndexText $isSelect={selectPage[6]}>회원조회 및 승인</IndexText>
+            </SubIndexContainer>
+            <SubIndexContainer
+              $isSelect={selectPage[7]}
+              onClick={() => ChooseIndex(7)}
+            >
+              <IndexText $isSelect={selectPage[7]}>회원수정 및 삭제</IndexText>
             </SubIndexContainer>
           </>
         )}
         <IndexContainer
-          $isSelect={selectPage[6]}
-          onClick={() => ChooseIndex(6)}
+          $isSelect={selectPage[8]}
+          onClick={() => ChooseIndex(8)}
         >
-          <TitleIndexText $isSelect={selectPage[6]}>지도</TitleIndexText>
+          <TitleIndexText $isSelect={selectPage[8]}>지도</TitleIndexText>
         </IndexContainer>
       </IndexWrapper>
       <CopyrightWrapper>

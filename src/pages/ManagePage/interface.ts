@@ -6,6 +6,8 @@ export type SelectPageState = [
   boolean,
   boolean,
   boolean,
+  boolean,
+  boolean,
   boolean
 ];
 // 목차 선택 페이지 관련 타입

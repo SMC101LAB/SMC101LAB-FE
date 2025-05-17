@@ -19,7 +19,7 @@ import styled from 'styled-components';
 import { slopeManageAPI } from '../../../../apis/slopeManage';
 import { useNotificationStore } from '../../../../hooks/notificationStore';
 import { getSlopeColumns } from '../components/table/coloums';
-import { useSteepSlopeStore } from '../../../../stores/steepSlopeStore';
+import { useSteepSlopeDupStore } from '../../../../stores/steepSlopeStore';
 
 import TableToolbar from '../components/table/TableToolbar';
 import DataTable from '../components/table/DataTable';
@@ -33,7 +33,7 @@ declare module '@tanstack/react-table' {
   }
 }
 
-const SteepSlopeLookUp = () => {
+const SteepSlopeDup = () => {
   const queryClient = useQueryClient();
 
   // Zustand 스토어에서 상태 및 액션 가져오기
@@ -69,7 +69,7 @@ const SteepSlopeLookUp = () => {
     resetFilters,
     setSelectedRows,
     selectedRows,
-  } = useSteepSlopeStore();
+  } = useSteepSlopeDupStore();
 
   // 테이블 컨테이너 ref는 훅 내에서 직접 생성
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -90,7 +90,7 @@ const SteepSlopeLookUp = () => {
   } = useInfiniteQuery({
     queryKey: ['slopes', searchQuery, selectedRegion, grade],
     queryFn: async ({ pageParam = 0 }) => {
-      const response = await slopeManageAPI.batchSlope({
+      const response = await slopeManageAPI.findOutlierDup({
         page: pageParam,
         pageSize: FETCH_SIZE,
         searchQuery: searchQuery || undefined,
@@ -299,7 +299,7 @@ const SteepSlopeLookUp = () => {
       />
 
       <TableToolbar
-        title="급경사지 조회"
+        title="관리번호 중복 값 찾기"
         setSearchQuery={setSearchQuery}
         inputValue={inputValue}
         setInputValue={setInputValue}
@@ -315,7 +315,6 @@ const SteepSlopeLookUp = () => {
         isDownloading={isDownloading}
         totalCount={totalCount}
       />
-
       <DataTable
         tableContainerRef={tableContainerRef}
         handleScroll={handleScroll}
@@ -337,7 +336,7 @@ const SteepSlopeLookUp = () => {
   );
 };
 
-export default SteepSlopeLookUp;
+export default SteepSlopeDup;
 
 //전체 컨테이너너
 const Container = styled.div`
