@@ -32,6 +32,22 @@ const DataTable: React.FC<DataTableProps> = ({
     rowVirtualizer.getTotalSize() -
     (paddingTop + rowVirtualizer.getVirtualItems().length * 40);
 
+  // 셀 렌더링 함수
+  const renderCell = (cell: any) => {
+    // 체크박스 열인 경우 별도 처리
+    if (cell.column.id === 'select') {
+      // 컬럼 정의에서 cell 함수를 호출
+      const cellContent = (cell.column.columnDef as any).cell;
+      if (typeof cellContent === 'function') {
+        return cellContent({ row: cell.row, table, column: cell.column });
+      }
+      return cellContent;
+    }
+
+    // 일반 셀
+    return cell.getValue() as string;
+  };
+
   return (
     <TableContainer ref={tableContainerRef} onScroll={handleScroll}>
       <Table>
@@ -39,7 +55,14 @@ const DataTable: React.FC<DataTableProps> = ({
           <tr>
             {table.getHeaderGroups()[0].headers.map((header) => (
               <HeaderCell key={header.id} width={header.getSize()}>
-                {header.column.columnDef.header as string}
+                {header.column.id === 'select'
+                  ? typeof (header.column.columnDef as any).header ===
+                    'function'
+                    ? ((header.column.columnDef as any).header as any)({
+                        table,
+                      })
+                    : (header.column.columnDef as any).header
+                  : (header.column.columnDef.header as string)}
                 <ResizeHandle
                   onMouseDown={header.getResizeHandler()}
                   onTouchStart={header.getResizeHandler()}
@@ -62,20 +85,27 @@ const DataTable: React.FC<DataTableProps> = ({
             return (
               <TableRow
                 key={virtualRow.index}
-                onClick={() => {
-                  setSelectedRow(
-                    selectedRow?.managementNo === row.original.managementNo
-                      ? null
-                      : row.original
-                  );
+                onClick={(e) => {
+                  // 체크박스 열이 아닌 부분을 클릭했을 때만 기존 선택 동작 수행
+                  if (
+                    !(e.target as HTMLElement).closest('input[type="checkbox"]')
+                  ) {
+                    setSelectedRow(
+                      selectedRow?.managementNo === row.original.managementNo
+                        ? null
+                        : row.original
+                    );
+                  }
                 }}
                 $selected={
-                  selectedRow?.managementNo === row.original.managementNo
+                  selectedRow?.managementNo === row.original.managementNo ||
+                  row.getIsSelected?.() ||
+                  false
                 }
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id} width={cell.column.getSize()}>
-                    {cell.getValue() as string}
+                    {renderCell(cell)}
                   </TableCell>
                 ))}
               </TableRow>

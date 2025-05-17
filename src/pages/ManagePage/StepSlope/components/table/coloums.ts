@@ -1,9 +1,38 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Slope } from '../../../../../apis/slopeMap';
-
+import TableCheckbox from './TableCheckbox';
+import React from 'react';
 const columnHelper = createColumnHelper<Slope>();
 
 export const getSlopeColumns = () => [
+  columnHelper.display({
+    id: 'select',
+    header: ({ table }) => {
+      // 이벤트 핸들러를 올바르게 정의
+      const handleToggleAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+        table.toggleAllRowsSelected?.(e.target.checked);
+      };
+
+      return React.createElement(TableCheckbox, {
+        checked: table.getIsAllRowsSelected?.() || false,
+        indeterminate: table.getIsSomeRowsSelected?.() || false,
+        onChange: handleToggleAll, // 함수 자체를 전달, 호출 결과 아님
+      });
+    },
+    cell: ({ row }) => {
+      // 이벤트 핸들러를 올바르게 정의
+      const handleToggleRow = (e: React.ChangeEvent<HTMLInputElement>) => {
+        row.toggleSelected?.(e.target.checked);
+      };
+
+      return React.createElement(TableCheckbox, {
+        checked: row.getIsSelected?.() || false,
+        disabled: !row.getCanSelect?.() || false,
+        onChange: handleToggleRow, // 함수 자체를 전달, 호출 결과 아님
+      });
+    },
+    size: 50,
+  }),
   columnHelper.accessor(
     (_row, index) => {
       return index + 1;

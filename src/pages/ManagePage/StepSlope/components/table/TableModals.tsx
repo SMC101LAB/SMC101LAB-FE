@@ -17,6 +17,7 @@ interface TableModalProps {
   closeDeleteModal: () => void;
   handleDelete: () => void;
   selectedRow: Slope | null;
+  selectedRows: Slope[];
   isEditModalOpen: boolean;
   closeEditModal: () => void;
   handleEdit: (updatedSlope: Slope) => void;
@@ -33,6 +34,7 @@ const TableModals: React.FC<TableModalProps> = ({
   closeDeleteModal,
   handleDelete,
   selectedRow,
+  selectedRows,
   isEditModalOpen,
   closeEditModal,
   handleEdit,
@@ -49,6 +51,7 @@ const TableModals: React.FC<TableModalProps> = ({
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
         onConfirm={handleDelete}
+        selectedRows={selectedRows}
         selectedRow={selectedRow}
       />
       <EditModal

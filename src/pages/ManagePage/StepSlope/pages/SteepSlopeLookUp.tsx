@@ -1,9 +1,10 @@
-import React, { useRef, useCallback, useEffect } from 'react';
+import React, { useRef, useCallback, useEffect, useState } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
   ColumnResizeMode,
   FilterFn,
+  RowSelectionState,
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { rankItem } from '@tanstack/match-sorter-utils';
@@ -66,6 +67,8 @@ const SteepSlopeLookUp = () => {
     selectedRow,
     setSelectedRow,
     resetFilters,
+    setSelectedRows,
+    selectedRows,
   } = useSteepSlopeStore();
 
   // 테이블 컨테이너 ref는 훅 내에서 직접 생성
@@ -128,6 +131,8 @@ const SteepSlopeLookUp = () => {
     addMeta({ itemRank });
     return itemRank.passed;
   };
+  // 행 선택 상태 추가
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   //테이블 선언
   const table = useReactTable({
@@ -136,11 +141,14 @@ const SteepSlopeLookUp = () => {
     state: {
       columnVisibility,
       columnSizing,
+      rowSelection,
     },
     onColumnVisibilityChange: setColumnVisibility,
     onColumnSizingChange: setColumnSizing,
     columnResizeMode: 'onChange' as ColumnResizeMode,
     enableColumnResizing: true,
+    onRowSelectionChange: setRowSelection,
+    enableRowSelection: true,
     getCoreRowModel: getCoreRowModel(),
     defaultColumn: {
       minSize: 80,
@@ -151,6 +159,17 @@ const SteepSlopeLookUp = () => {
     },
     globalFilterFn: 'fuzzy',
   });
+
+  useEffect(() => {
+    // rowSelection 상태에서 선택된 행 추출
+    const selectedRowsArray = Object.keys(rowSelection)
+      .filter((key) => rowSelection[key])
+      .map((key) => flatData[parseInt(key)]);
+
+    // 선택된 행 정보 업데이트
+    setSelectedRows(selectedRowsArray);
+    setSelectedRow(selectedRowsArray.length > 0 ? selectedRowsArray[0] : null);
+  }, [rowSelection, flatData]);
 
   // 스크롤 이벤트 핸들러(무한스크롤 기능)
   const handleScroll = useCallback(() => {
@@ -181,20 +200,58 @@ const SteepSlopeLookUp = () => {
     setSelectedRegion({ city, county });
   };
 
+  // const handleDelete = async () => {
+  //   try {
+  //     if (selectedRow) {
+  //       await slopeManageAPI.deleteSlope([selectedRow._id]);
+  //       // 삭제 성공 후 데이터 갱신
+  //       await queryClient.invalidateQueries({ queryKey: ['slopes'] });
+  //       setSelectedRow(null);
+  //       closeDeleteModal();
+  //     }
+  //   } catch (error) {
+  //     console.error('삭제 실패:', error);
+  //   }
+  // };
   const handleDelete = async () => {
     try {
-      if (selectedRow) {
-        await slopeManageAPI.deleteSlope([selectedRow._id]);
-        // 삭제 성공 후 데이터 갱신
-        await queryClient.invalidateQueries({ queryKey: ['slopes'] });
+      // 선택된 행들이 있는지 확인 (단일 선택 또는 다중 선택)
+      const rowsToDelete =
+        selectedRows.length > 0
+          ? selectedRows
+          : selectedRow
+          ? [selectedRow]
+          : [];
+
+      if (rowsToDelete.length > 0) {
+        const idsToDelete = rowsToDelete.map((row) => row._id); // 선택된 모든 항목의 ID 추출
+        await slopeManageAPI.deleteSlope(idsToDelete); // API 호출로 삭제 처리
+        await queryClient.invalidateQueries({ queryKey: ['slopes'] }); // 삭제 성공 후 데이터 갱신
+
+        // rowSelection 상태를 사용하는 경우
+        if (setRowSelection) setRowSelection({});
+        // 선택된 행 상태 초기화
+        if (setSelectedRows) setSelectedRows([]);
         setSelectedRow(null);
-        closeDeleteModal();
+
+        closeDeleteModal(); // 모달 닫기
+
+        if (showNotification) {
+          showNotification(`${idsToDelete.length}개 항목이 삭제되었습니다.`, {
+            severity: 'success',
+          });
+        }
       }
     } catch (error) {
       console.error('삭제 실패:', error);
+      // 실패 알림 (알림 기능이 있는 경우)
+      if (showNotification) {
+        showNotification('삭제 중 오류가 발생했습니다.', {
+          severity: 'error',
+        });
+      }
     }
   };
-
   const handleEdit = async (updatedSlope: Slope) => {
     try {
       await slopeManageAPI.updateSlope(updatedSlope);
@@ -246,6 +303,7 @@ const SteepSlopeLookUp = () => {
         closeDeleteModal={closeDeleteModal}
         handleDelete={handleDelete}
         selectedRow={selectedRow}
+        selectedRows={selectedRows}
         isEditModalOpen={isEditModalOpen}
         closeEditModal={closeEditModal}
         handleEdit={handleEdit}
@@ -281,6 +339,7 @@ const SteepSlopeLookUp = () => {
       <TableAction
         isLoading={isFetchingNextPage || !data}
         selectedRow={selectedRow}
+        selectedRows={selectedRows}
         openEditModal={openEditModal}
         openDeleteModal={openDeleteModal}
       />
