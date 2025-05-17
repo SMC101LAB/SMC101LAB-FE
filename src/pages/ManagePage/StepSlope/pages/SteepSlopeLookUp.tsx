@@ -200,19 +200,6 @@ const SteepSlopeLookUp = () => {
     setSelectedRegion({ city, county });
   };
 
-  // const handleDelete = async () => {
-  //   try {
-  //     if (selectedRow) {
-  //       await slopeManageAPI.deleteSlope([selectedRow._id]);
-  //       // 삭제 성공 후 데이터 갱신
-  //       await queryClient.invalidateQueries({ queryKey: ['slopes'] });
-  //       setSelectedRow(null);
-  //       closeDeleteModal();
-  //     }
-  //   } catch (error) {
-  //     console.error('삭제 실패:', error);
-  //   }
-  // };
   const handleDelete = async () => {
     try {
       // 선택된 행들이 있는지 확인 (단일 선택 또는 다중 선택)
