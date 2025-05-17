@@ -6,7 +6,7 @@ import CachedRoundedIcon from '@mui/icons-material/CachedRounded';
 import TravelExploreRoundedIcon from '@mui/icons-material/TravelExploreRounded';
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import { useSteepSlopeStore } from './store/steepSlopeStore';
+import { useSteepSlopeStore } from '../../../../../stores/steepSlopeStore';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 interface Region {

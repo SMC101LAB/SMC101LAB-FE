@@ -5,7 +5,7 @@ import {
   OnChangeFn,
   RowSelectionState,
 } from '@tanstack/react-table';
-import { getDefaultColumnVisibility } from '..//coloums';
+import { getDefaultColumnVisibility } from '../pages/ManagePage/StepSlope/components/table/coloums';
 
 // 제네릭 타입 T는 각 테이블에서 사용할 데이터 타입입니다 (Slope, SlopeOutlier 등)
 export interface TableState<T> {

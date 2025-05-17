@@ -19,7 +19,7 @@ import styled from 'styled-components';
 import { slopeManageAPI } from '../../../../apis/slopeManage';
 import { useNotificationStore } from '../../../../hooks/notificationStore';
 import { getSlopeColumns } from '../components/table/coloums';
-import { useSteepSlopeStore } from '../components/table/store/steepSlopeStore';
+import { useSteepSlopeStore } from '../../../../stores/steepSlopeStore';
 
 import TableToolbar from '../components/table/TableToolbar';
 import DataTable from '../components/table/DataTable';
