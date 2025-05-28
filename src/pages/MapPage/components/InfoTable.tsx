@@ -17,38 +17,74 @@ const InfoTable = ({ selectItem }: InfotableProps) => {
     : selectItem.priority?.grade?.includes('D')
     ? 'D'
     : 'E';
+
   return (
     <InnerContainer>
       <HeaderWrapper>
         <TitleWrapper>
           <Title>{selectItem?.name || ''}</Title>
-          <Num>{selectItem?.managementNo || ''}</Num>
+          <UpperAddressValue>
+            {selectItem?.location?.province || ''}
+            {selectItem?.location?.city || ''}
+            {selectItem?.location?.district || ''}
+            {selectItem?.location?.address || ''}
+            {selectItem?.location?.mountainAddress === 'Y' ? '(산)' : ''}
+          </UpperAddressValue>
         </TitleWrapper>
 
         <CloseButton onClick={onCloseInfo}>&times;</CloseButton>
       </HeaderWrapper>
       <ContentSection>
         <InfoRow>
-          <Label>관리번호</Label>
-          <Value>{selectItem?.managementNo || ''}</Value>
+          <Label>관리주체명</Label>
+          <Value>{selectItem?.inspections?.serialNumber || ''}</Value>
         </InfoRow>
-        <InfoRow>
-          <Label>시행청명</Label>
-          <Value>{selectItem?.management?.organization || ''}</Value>
-        </InfoRow>
-        <InfoRow>
-          <Label>소관부서명</Label>
-          <Value>{selectItem?.management?.department || ''}</Value>
-        </InfoRow>
+
         <AddressWrapper>
           <Label>주소</Label>
-          <AddressValue>
-            {selectItem?.location?.province || ''}
-            {selectItem?.location?.city || ''}
-            {selectItem?.location?.district || ''}
-            {selectItem?.location?.address || ''}
-          </AddressValue>
+          <ValueColumn>
+            <AddressValue>
+              {selectItem?.location?.province || ''}
+              {selectItem?.location?.city || ''}
+              {selectItem?.location?.district || ''}
+              {selectItem?.location?.address || ''}
+
+              {selectItem?.location?.mainLotNumber
+                ? selectItem?.location?.subLotNumber
+                  ? `   ${selectItem?.location?.mainLotNumber}-${selectItem?.location?.subLotNumber}`
+                  : `   ${selectItem?.location?.mainLotNumber}`
+                : ''}
+            </AddressValue>
+            <AddressValue>
+              {selectItem?.location?.roadAddress
+                ? `(${selectItem?.location?.roadAddress})`
+                : ''}
+            </AddressValue>
+          </ValueColumn>
         </AddressWrapper>
+        <Line />
+        <InfoRow>
+          <Label>최고수직고</Label>
+          <Value>{selectItem.priority.maxVerticalHeight}</Value>
+        </InfoRow>
+        <InfoRow>
+          <Label>종단길이</Label>
+          <Value>{selectItem.priority.longitudinalLength}</Value>
+        </InfoRow>
+        <InfoRow>
+          <Label>평균경사</Label>
+          <Value>{selectItem.priority.averageSlope}</Value>
+        </InfoRow>
+
+        <InfoRow>
+          <Label>점수</Label>
+          <Value>{selectItem.priority.Score}</Value>
+        </InfoRow>
+        <InfoRow>
+          <Label>등급</Label>
+          <GradeValue $grade={grade}>{grade}</GradeValue>
+        </InfoRow>
+
         <Line />
         {selectItem?.priority?.usage && (
           <InfoRow>
@@ -63,40 +99,6 @@ const InfoTable = ({ selectItem }: InfotableProps) => {
         <InfoRow>
           <Label>비탈면유형</Label>
           <Value>{selectItem.priority.slopeType}</Value>
-        </InfoRow>
-        <InfoRow>
-          <Label>등급</Label>
-          <GradeValue $grade={grade}>{grade}</GradeValue>
-        </InfoRow>
-        <Line />
-
-        <InfoRow>
-          <Label>시점 좌표</Label>
-          <Value>
-            {selectItem?.location?.coordinates?.start?.coordinates?.[1] &&
-            selectItem?.location?.coordinates?.start?.coordinates?.[0]
-              ? `위도: ${selectItem.location.coordinates.start.coordinates[1]
-                  .toFixed(6)
-                  .toString()}°      
-                경도: ${selectItem.location.coordinates.start.coordinates[0]
-                  .toFixed(6)
-                  .toString()}°`
-              : '좌표 정보 없음'}
-          </Value>
-        </InfoRow>
-        <InfoRow>
-          <Label>종점 좌표</Label>
-          <Value>
-            {selectItem?.location?.coordinates?.end?.coordinates?.[1] &&
-            selectItem?.location?.coordinates?.end?.coordinates?.[0]
-              ? `위도: ${selectItem.location.coordinates.end.coordinates[1]
-                  .toFixed(6)
-                  .toString()}°      
-                경도: ${selectItem.location.coordinates.end.coordinates[0]
-                  .toFixed(6)
-                  .toString()}°`
-              : '좌표 정보 없음'}
-          </Value>
         </InfoRow>
       </ContentSection>
     </InnerContainer>
@@ -128,7 +130,7 @@ const Title = styled.div`
   font-weight: 600;
 `;
 
-const Num = styled.div`
+const UpperAddressValue = styled.div`
   font-size: 14px;
   color: #7e7e7e;
 `;
@@ -167,7 +169,10 @@ const AddressWrapper = styled(InfoRow)`
 const AddressValue = styled(Value)`
   line-height: 1.4;
 `;
-
+const ValueColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 const GradeValue = styled(Value)<{ $grade: string }>`
   color: ${({ $grade, theme }) => {
     switch ($grade) {
