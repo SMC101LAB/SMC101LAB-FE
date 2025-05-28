@@ -224,27 +224,36 @@ const MapComponent = () => {
                     }
                     icon={{
                       content: `
-          <div style="cursor: pointer; position:relative;">
-          ${
-            selectedMarkerId === index || allTextShow
-              ? `<div style="position:absolute; top:-20px; left:-51px; width:120px; display:flex; justify-content:center;z-index:1;">
-                  <div style="${
-                    selectedMarkerId === index
-                      ? 'color:#0b5275;font-weight:500;'
-                      : ''
-                  } font-size:16px;">
-                    ${item.name}
-                  </div>
-                </div>`
-              : ''
-          }
-                    <img src="${markerIcon}"
-                        alt="marker"
-                        style="width: 32px; height: 32px;"
-                    />
-                  </div>
-                `,
-                      anchor: new navermaps.Point(16, 16),
+                              <div style="cursor: pointer; position:relative;">
+                              ${
+                                selectedMarkerId === index || allTextShow
+                                  ? `<div style="position:absolute; top:-25px; left:50%; transform:translateX(-50%); z-index:1;">
+                                      <div style="
+                                        ${
+                                          selectedMarkerId === index
+                                            ? 'color:#0b5275;font-weight:700;'
+                                            : 'color:#333;'
+                                        }
+                                        font-size:16px;
+                                        background-color:white;
+                                        padding:2px 6px;
+                                        border-radius:6px;
+                                        white-space:nowrap;
+                                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                                        border: 1px solid #e0e0e0;
+                                      ">
+                                        ${item.name}
+                                      </div>
+                                    </div>`
+                                  : ''
+                              }
+                              <img src="${markerIcon}"
+                                  alt="marker"
+                                  style="width: 36px; height: 36px;"
+                              />
+                              </div>
+                            `,
+                      anchor: new navermaps.Point(18, 18),
                     }}
                     onClick={() => {
                       chooseSelectItem(item, index);
