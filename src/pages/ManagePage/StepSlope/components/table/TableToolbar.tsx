@@ -217,7 +217,7 @@ const GradeButton = () => {
         <MenuItem onClick={() => handleGradeSelect('B')}>B</MenuItem>
         <MenuItem onClick={() => handleGradeSelect('C')}>C</MenuItem>
         <MenuItem onClick={() => handleGradeSelect('D')}>D</MenuItem>
-        <MenuItem onClick={() => handleGradeSelect('F')}>F</MenuItem>
+        <MenuItem onClick={() => handleGradeSelect('E')}>E</MenuItem>
       </Menu>
     </>
   );

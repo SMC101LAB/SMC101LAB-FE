@@ -43,7 +43,7 @@ export interface SearchResultProps {
     B: number;
     C: number;
     D: number;
-    F: number;
+    E: number;
   };
 }
 export interface CommentAddModalProps {

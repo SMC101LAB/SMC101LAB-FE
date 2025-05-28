@@ -54,7 +54,7 @@ const CommentList = ({ slopeId }: CommentListProps) => {
           setIsMore(true);
         }}
       >
-        글 등록/사진 등록
+        결함사진 등록
       </CreateButton>
       {commentData.length === 0 ? (
         <NoInfo text={'등록된 내용이 없습니다.'} />

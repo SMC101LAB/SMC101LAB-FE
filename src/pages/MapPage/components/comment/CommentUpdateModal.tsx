@@ -313,14 +313,14 @@ const CommentUpdateModal = ({
     <ModalOverlay $isOpen={isModiOpen}>
       <ModalContent>
         <ModalHeader>
-          <h2>코멘트 수정</h2>
+          <h2>결함사진 수정</h2>
           <CloseButton onClick={onClose}>&times;</CloseButton>
         </ModalHeader>
 
         <form onSubmit={handleSubmit}>
           <FormGroup>
             <CommentTextArea
-              placeholder="코멘트를 입력해주세요..."
+              placeholder="결함사진에 대해 설명해주세요..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
             />
