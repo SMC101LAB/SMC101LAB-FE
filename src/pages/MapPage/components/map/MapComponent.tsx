@@ -199,7 +199,7 @@ const MapComponent = () => {
                   ? 'C'
                   : item.priority?.grade.includes('D')
                   ? 'D'
-                  : 'F';
+                  : 'E';
 
                 // 적합한 마커 아이콘 선택
                 const markerIcon =

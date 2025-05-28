@@ -15,11 +15,11 @@ export const theme = {
     },
     error: '#CD1A1A',
     grade: {
-      A: '#4CAF50',
-      B: '#8BC34A',
-      C: '#FFC107',
+      A: '#008FCC',
+      B: '#4CAF50',
+      C: '#EBCD00',
       D: '#FF9800',
-      F: '#F44336',
+      E: '#CC0000',
     },
   },
   fonts: {

@@ -11,7 +11,7 @@ const ListContainer = ({ item, onClick }: ListProps) => {
     ? 'C'
     : item.priority?.grade.includes('D')
     ? 'D'
-    : 'F';
+    : 'E';
   return (
     <Container onClick={onClick}>
       <Wrapper>
@@ -78,8 +78,8 @@ const GradeBackground = styled.div<{ $grade: string }>`
         return theme.colors.grade.C;
       case 'D':
         return theme.colors.grade.D;
-      case 'F':
-        return theme.colors.grade.F;
+      case 'E':
+        return theme.colors.grade.E;
       default:
         return '#333';
     }

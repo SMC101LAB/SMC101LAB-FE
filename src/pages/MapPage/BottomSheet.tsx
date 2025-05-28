@@ -90,7 +90,7 @@ const BottomSheet = () => {
       bCount: 0,
       cCount: 0,
       dCount: 0,
-      fCount: 0,
+      eCount: 0,
     };
 
     for (let i = 0; i < slopes.length; i++) {
@@ -109,8 +109,8 @@ const BottomSheet = () => {
         case 'D':
           counts.dCount++;
           break;
-        case 'F':
-          counts.fCount++;
+        case 'E':
+          counts.eCount++;
           break;
       }
     }
@@ -145,7 +145,7 @@ const BottomSheet = () => {
               return <NoInfo text="5km 반경 내 급경사지 데이터가 없습니다." />;
             }
           } else {
-            const { aCount, bCount, cCount, dCount, fCount } =
+            const { aCount, bCount, cCount, dCount, eCount } =
               countGrades(slopeData);
             return (
               <>
@@ -156,7 +156,7 @@ const BottomSheet = () => {
                     B: bCount,
                     C: cCount,
                     D: dCount,
-                    F: fCount,
+                    E: eCount,
                   }}
                 />
                 <ListWrapper>

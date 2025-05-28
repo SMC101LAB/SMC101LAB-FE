@@ -16,7 +16,7 @@ const InfoTable = ({ selectItem }: InfotableProps) => {
     ? 'C'
     : selectItem.priority?.grade?.includes('D')
     ? 'D'
-    : 'F';
+    : 'E';
   return (
     <InnerContainer>
       <HeaderWrapper>
@@ -179,8 +179,8 @@ const GradeValue = styled(Value)<{ $grade: string }>`
         return theme.colors.grade.C;
       case 'D':
         return theme.colors.grade.D;
-      case 'F':
-        return theme.colors.grade.F;
+      case 'E':
+        return theme.colors.grade.E;
       default:
         return '#333';
     }

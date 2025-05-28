@@ -78,8 +78,8 @@ const GradeLabel = styled.div<GradeProps>`
         return theme.colors.grade.C;
       case 'D':
         return theme.colors.grade.D;
-      case 'F':
-        return theme.colors.grade.F;
+      case 'E':
+        return theme.colors.grade.E;
     }
   }};
 `;
