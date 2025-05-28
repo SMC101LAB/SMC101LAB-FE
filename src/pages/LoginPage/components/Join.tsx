@@ -150,12 +150,14 @@ const Join = ({ completeJoin }: joinPropsType) => {
           value={joinForm.name}
           onChange={handleChange}
           placeholder="이름"
+          autoComplete="name"
         />
         <Input
           name="organization"
           value={joinForm.organization}
           onChange={handleChange}
           placeholder="소속"
+          autoComplete="organization"
         />
         <Input
           type="number"
@@ -163,6 +165,7 @@ const Join = ({ completeJoin }: joinPropsType) => {
           value={joinForm.phone}
           onChange={handleChange}
           placeholder="전화번호"
+          autoComplete="tel"
           onKeyDown={(e) => {
             if (e.key === '-' || e.key === '+' || e.key === 'e') {
               e.preventDefault();
@@ -180,6 +183,7 @@ const Join = ({ completeJoin }: joinPropsType) => {
           onChange={handleChange}
           placeholder="비밀번호"
           type="password"
+          autoComplete="new-password"
         />
         <Input
           name="pwCheck"
