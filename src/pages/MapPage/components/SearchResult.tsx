@@ -1,15 +1,5 @@
 import styled from 'styled-components';
-
-interface SearchResultProps {
-  resultCount: number;
-  gradeCount: {
-    A: number;
-    B: number;
-    C: number;
-    D: number;
-    F: number;
-  };
-}
+import { SearchResultProps } from '../interface';
 
 const SearchResult = ({ resultCount, gradeCount }: SearchResultProps) => {
   return (

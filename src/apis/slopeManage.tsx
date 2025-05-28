@@ -8,7 +8,15 @@ interface FetchSlopeParams {
   grade?: string;
   county?: string;
 }
-
+interface OutlierFetchParams {
+  page: number;
+  pageSize: number;
+  searchQuery?: string;
+  city?: string;
+  grade?: string;
+  county?: string;
+  outlierType?: string;
+}
 export const slopeManageAPI = {
   batchSlope: async (params: FetchSlopeParams) => {
     const response = await api.get('/slopes/batch', { params });
@@ -69,9 +77,14 @@ export const slopeManageAPI = {
       throw error;
     }
   },
-  findOutlier: async () => {
-    const response = await api.get('/slopes/outlier');
-    console.log(' 경사지 이상값 조회', response.data.data);
-    return response.data.data;
+  findOutlierDup: async (params: OutlierFetchParams) => {
+    const response = await api.get('/slopes/outlier/dup', { params });
+    console.log(' 경사지 이상값 조회', response.data);
+    return response.data;
+  },
+  findOutlierEmpty: async (params: OutlierFetchParams) => {
+    const response = await api.get('/slopes/outlier/empty', { params });
+    console.log(' 경사지 이상값 조회', response.data);
+    return response.data;
   },
 };

@@ -5,11 +5,7 @@ import { slopeManageAPI } from '../../../../apis/slopeManage';
 import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded';
 import { useNotificationStore } from '../../../../hooks/notificationStore';
 import AddSlope from '../components/AddSlopeContainer';
-interface FileInputContainerProps {
-  $isDragActive?: boolean;
-  $hasFile?: boolean;
-  theme?: any;
-}
+import { FileInputContainerProps } from '../../interface';
 
 const SteepSlopeAdd: React.FC = () => {
   const [isDragActive, setIsDragActive] = useState<boolean>(false);

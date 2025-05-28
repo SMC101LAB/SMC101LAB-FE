@@ -19,7 +19,7 @@ import styled from 'styled-components';
 import { slopeManageAPI } from '../../../../apis/slopeManage';
 import { useNotificationStore } from '../../../../hooks/notificationStore';
 import { getSlopeColumns } from '../components/table/coloums';
-import { useSteepSlopeStore } from '../../../../stores/steepSlopeStore';
+import { useSteepSlopeEmptyStore } from '../../../../stores/steepSlopeStore';
 
 import TableToolbar from '../components/table/TableToolbar';
 import DataTable from '../components/table/DataTable';
@@ -33,7 +33,7 @@ declare module '@tanstack/react-table' {
   }
 }
 
-const SteepSlopeLookUp = () => {
+const SteepSlopeEmpty = () => {
   const queryClient = useQueryClient();
 
   // Zustand 스토어에서 상태 및 액션 가져오기
@@ -69,7 +69,7 @@ const SteepSlopeLookUp = () => {
     resetFilters,
     setSelectedRows,
     selectedRows,
-  } = useSteepSlopeStore();
+  } = useSteepSlopeEmptyStore();
 
   // 테이블 컨테이너 ref는 훅 내에서 직접 생성
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -90,7 +90,7 @@ const SteepSlopeLookUp = () => {
   } = useInfiniteQuery({
     queryKey: ['slopes', searchQuery, selectedRegion, grade],
     queryFn: async ({ pageParam = 0 }) => {
-      const response = await slopeManageAPI.batchSlope({
+      const response = await slopeManageAPI.findOutlierEmpty({
         page: pageParam,
         pageSize: FETCH_SIZE,
         searchQuery: searchQuery || undefined,
@@ -121,7 +121,6 @@ const SteepSlopeLookUp = () => {
       setTotalCount(data.pages[0].meta.totalCount);
     else setTotalCount(0);
   }, [data, setTotalCount]);
-
   //데이터 열 선언
   const columns = React.useMemo(() => getSlopeColumns(), []);
 
@@ -159,9 +158,7 @@ const SteepSlopeLookUp = () => {
     },
     globalFilterFn: 'fuzzy',
   });
-  useEffect(() => {
-    console.log('API 응답:', data);
-  }, [data]);
+
   useEffect(() => {
     // rowSelection 상태에서 선택된 행 추출
     const selectedRowsArray = Object.keys(rowSelection)
@@ -299,7 +296,7 @@ const SteepSlopeLookUp = () => {
       />
 
       <TableToolbar
-        title="급경사지 조회"
+        title="빈 값 찾기(관리번호, 이름, 지역)"
         setSearchQuery={setSearchQuery}
         inputValue={inputValue}
         setInputValue={setInputValue}
@@ -315,7 +312,6 @@ const SteepSlopeLookUp = () => {
         isDownloading={isDownloading}
         totalCount={totalCount}
       />
-
       <DataTable
         tableContainerRef={tableContainerRef}
         handleScroll={handleScroll}
@@ -337,7 +333,7 @@ const SteepSlopeLookUp = () => {
   );
 };
 
-export default SteepSlopeLookUp;
+export default SteepSlopeEmpty;
 
 //전체 컨테이너너
 const Container = styled.div`

@@ -1,17 +1,14 @@
 import styled from 'styled-components';
+import { DeleteModalProps } from '../../interface';
+import { useCommentStore } from '../../../../stores/commentStore';
 
-interface DeleteModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: () => void;
-}
-const CommentDeleteModal = ({
-  isOpen,
-  onClose,
-  onSubmit,
-}: DeleteModalProps) => {
+const CommentDeleteModal = ({ onSubmit }: DeleteModalProps) => {
+  const { isDeleteOpen, setIsDelete } = useCommentStore();
+  const onClose = () => {
+    setIsDelete(false);
+  };
   return (
-    <ModalOverlay $isOpen={isOpen}>
+    <ModalOverlay $isOpen={isDeleteOpen}>
       <DeleteModalContent>
         <ModalHeader>
           <h2>삭제 확인</h2>

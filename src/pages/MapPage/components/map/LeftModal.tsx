@@ -6,10 +6,7 @@ import { userAPI } from '../../../../apis/User';
 import TermsofUseModal from './TermsofUseModal';
 import ArrowBackIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import { useNotificationStore } from '../../../../hooks/notificationStore';
-interface LeftModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import { LeftModalProps } from '../../interface';
 
 const LeftModal = ({ isOpen, onClose }: LeftModalProps) => {
   const [animationOpen, setAnimationOpen] = useState(false);

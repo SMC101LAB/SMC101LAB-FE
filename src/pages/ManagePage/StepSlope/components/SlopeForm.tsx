@@ -1,15 +1,7 @@
 import styled from 'styled-components';
 import { Slope } from '../../../../apis/slopeMap';
 import { useState, useEffect } from 'react';
-
-interface SlopeFormProps {
-  titleText: string;
-  initialData: Slope;
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: Slope) => void;
-  submitButtonText: string;
-}
+import { SlopeFormProps } from '../../interface';
 
 const SlopeForm = ({
   titleText,

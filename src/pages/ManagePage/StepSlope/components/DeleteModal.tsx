@@ -1,25 +1,33 @@
 import styled from 'styled-components';
-import { Slope } from '../../../../apis/slopeMap';
-
-interface DeleteConfirmModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  selectedRow: Slope | null;
-}
+import { useEffect, useState } from 'react';
+import { DeleteConfirmModalProps } from '../../interface';
 
 const DeleteConfirmModal = ({
   isOpen,
   onClose,
   onConfirm,
   selectedRow,
+  selectedRows = [],
 }: DeleteConfirmModalProps) => {
+  const [count, setCount] = useState(0);
+  const [isMulti, setIsMulti] = useState(false);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onConfirm();
     onClose();
   };
-
+  useEffect(() => {
+    if (isOpen) {
+      const selectedCount = selectedRows.length;
+      setCount(selectedCount);
+      setIsMulti(selectedCount > 1);
+      console.log('Modal opened with:', {
+        selectedCount,
+        isMulti: selectedCount > 1,
+        selectedRows,
+      });
+    }
+  }, [isOpen, selectedRows]);
   return (
     <ModalOverlay $isOpen={isOpen}>
       <ModalContent>
@@ -29,8 +37,20 @@ const DeleteConfirmModal = ({
         </ModalHeader>
         <form onSubmit={handleSubmit}>
           <DeleteMessage>
-            <BoldName>{selectedRow?.name}</BoldName>를 삭제하시려면 입력창에
-            <BoldText>삭제</BoldText>라고 입력해 주세요.
+            {isMulti ? (
+              // 다중 선택 시 메시지
+              <>
+                선택한 <BoldName>{count}개</BoldName>의 항목을 삭제하시려면
+                입력창에
+                <BoldText>삭제</BoldText>라고 입력해 주세요.
+              </>
+            ) : (
+              // 단일 선택 시 메시지
+              <>
+                <BoldName>{selectedRow?.name}</BoldName>를 삭제하시려면 입력창에
+                <BoldText>삭제</BoldText>라고 입력해 주세요.
+              </>
+            )}
           </DeleteMessage>
           <FormGroup>
             <input
@@ -59,7 +79,6 @@ const DeleteConfirmModal = ({
     </ModalOverlay>
   );
 };
-
 const ModalOverlay = styled.div<{ $isOpen: boolean }>`
   display: ${(props) => (props.$isOpen ? 'flex' : 'none')};
   position: fixed;

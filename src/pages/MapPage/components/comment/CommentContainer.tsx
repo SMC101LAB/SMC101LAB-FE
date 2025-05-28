@@ -1,15 +1,13 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import { CommentContainerProps } from '../../interface';
 import { slopeCommentAPI } from '../../../../apis/slopeMap';
 import CommentDeleteModal from './CommentDeleteModal';
 import CommentUpdateModal from './CommentUpdateModal';
+import { useCommentStore } from '../../../../stores/commentStore';
 
 const CommentContainer = ({ comment, fetchComment }: CommentContainerProps) => {
-  const [isMore, setIsMore] = useState(false);
-  const [isDelete, setIsDelete] = useState(false);
-  const [isModi, setIsModi] = useState(false);
+  const { isMoreOpen, setIsMore, setIsDelete, setIsModi } = useCommentStore();
 
   //수정 삭제에 접근 가능한지
   const accessible = (): boolean => {
@@ -42,10 +40,6 @@ const CommentContainer = ({ comment, fetchComment }: CommentContainerProps) => {
     <>
       {/* 삭제모달 */}
       <CommentDeleteModal
-        isOpen={isDelete}
-        onClose={() => {
-          setIsDelete(false);
-        }}
         onSubmit={() => {
           handleDelete();
           setIsMore(false);
@@ -54,8 +48,6 @@ const CommentContainer = ({ comment, fetchComment }: CommentContainerProps) => {
       />
       {/*수정모달 */}
       <CommentUpdateModal
-        isOpen={isModi}
-        onClose={() => setIsModi(false)}
         onSubmit={handleUpdate}
         defaultComment={comment.content}
         defaultImages={comment.imageUrls.map(
@@ -87,7 +79,7 @@ const CommentContainer = ({ comment, fetchComment }: CommentContainerProps) => {
                 sx={{ width: '20px', height: '20px', opacity: '0.6' }}
               />
             </MoreButton>
-            {isMore && (
+            {isMoreOpen && (
               <>
                 <MoreMenuCancel
                   onClick={() => {

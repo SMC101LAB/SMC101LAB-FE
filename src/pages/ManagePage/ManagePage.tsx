@@ -14,13 +14,17 @@ const ManagePage = () => {
     false,
     false,
     false,
+    false,
+    false,
   ]);
 
   const Page = [
     './home',
     './slope/list',
     './slope/add',
-    './slope/outlier',
+    './outlier/empty',
+    './outlier/dup',
+    './outlier/location',
     './member/list',
     './member/edit',
     './map',

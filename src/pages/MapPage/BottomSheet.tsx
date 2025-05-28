@@ -1,22 +1,28 @@
 import { useRef, TouchEvent } from 'react';
 import styled from 'styled-components';
 import InfoTable from './components/InfoTable';
-import { BottomSheetProps } from './interface';
 import ListContainer from './components/ListContainer';
 import CommentList from './components/comment/CommentList';
 import NoInfo from './components/NoInfo';
 import SearchResult from './components/SearchResult';
 import { Slope } from '../../apis/slopeMap';
+import { useMapStore } from '../../stores/mapStore';
 
-const BottomSheet: React.FC<BottomSheetProps> = ({
-  slopeData,
-  selectItem,
-  onItemClick,
-  height,
-  setHeight,
-  onCloseInfo,
-  searchMod,
-}) => {
+const BottomSheet = () => {
+  const {
+    slopeData,
+    selectedMarkerId,
+    chooseSelectItem,
+    bottomSheetHeight,
+    setBottomSheetHeight,
+    searchMod,
+  } = useMapStore();
+
+  const height = bottomSheetHeight;
+  const setHeight = setBottomSheetHeight;
+  const selectItem =
+    selectedMarkerId !== null ? slopeData[selectedMarkerId] : null;
+
   const startY = useRef<number>(0);
   const currentHeight = useRef<number>(200); //현재 높이
   const isDragging = useRef<boolean>(false); //드래그 상태
@@ -128,7 +134,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           if (selectItem !== null) {
             return (
               <div>
-                <InfoTable selectItem={selectItem} onCloseInfo={onCloseInfo} />
+                <InfoTable selectItem={selectItem} />
                 <CommentList slopeId={selectItem._id} />
               </div>
             );
@@ -162,7 +168,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
                         key={index}
                         item={item}
                         onClick={() => {
-                          onItemClick(item, index);
+                          chooseSelectItem(item, index);
                         }}
                       ></ListContainer>
                     ))

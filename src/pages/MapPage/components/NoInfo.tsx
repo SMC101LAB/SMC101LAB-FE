@@ -1,9 +1,7 @@
 import styled from 'styled-components';
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
+import { NoInfoProps } from '../interface';
 
-interface NoInfoProps {
-  text: string;
-}
 const NoInfo = ({ text }: NoInfoProps) => (
   <NoInfoContainer>
     <NoneIcon />

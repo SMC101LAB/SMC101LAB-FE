@@ -1,14 +1,13 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import { CityOptions, CountyOptions } from './regionData';
+import { RegionFilterModalProps } from '../../interface';
 
-interface FilterModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onRegionSelect: (city: string, county: string) => void;
-}
-
-const FilterModal = ({ isOpen, onClose, onRegionSelect }: FilterModalProps) => {
+const RegionFilterModal = ({
+  isOpen,
+  onClose,
+  onRegionSelect,
+}: RegionFilterModalProps) => {
   const [selectedCity, setSelectedCity] = useState<string>('지역');
   const [selectedCounty, setSelectedCounty] = useState<string>('모두');
 
@@ -60,7 +59,7 @@ const FilterModal = ({ isOpen, onClose, onRegionSelect }: FilterModalProps) => {
   );
 };
 
-export default FilterModal;
+export default RegionFilterModal;
 
 const ModalOverlay = styled.div<{ $isOpen: boolean }>`
   display: ${(props) => (props.$isOpen ? 'flex' : 'none')};

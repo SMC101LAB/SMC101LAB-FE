@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-
-interface PrivacyPolicyModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import { PrivacyPolicyModalProps } from '../../interface';
 
 const PrivacyPolicyModal = ({ isOpen, onClose }: PrivacyPolicyModalProps) => {
   const [animationOpen, setAnimationOpen] = useState(false);

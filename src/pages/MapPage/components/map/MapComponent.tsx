@@ -12,8 +12,7 @@ import CmarkerIcon from '../../../../assets/c.webp';
 import DmarkerIcon from '../../../../assets/d.webp';
 import FmarkerIcon from '../../../../assets/f.webp';
 import UserPosIcon from '../../../../assets/current_position.png';
-import { MapComponentProps } from '../../interface';
-import { MapTypeId, useMapStore } from '../../mapStore';
+import { MapTypeId, useMapStore } from '../../../../stores/mapStore';
 declare global {
   interface Window {
     ReactNativeWebView?: {
@@ -22,17 +21,18 @@ declare global {
   }
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({
-  selectedMarkerId,
-  escarpmentData,
-  allTextShow,
-  userLocation,
-  setUserLocation,
-  //추가
-  mapInstance,
-  setMapInstance,
-  onMarkerClick,
-}) => {
+const MapComponent = () => {
+  const {
+    selectedMarkerId,
+    slopeData,
+    allTextShow,
+    userLocation,
+    setUserLocation,
+    mapInstance,
+    setMapInstance,
+    chooseSelectItem,
+  } = useMapStore();
+
   const { mapTypeId, setIsMapReady } = useMapStore();
   const navermaps = useNavermaps();
   const [_errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -188,8 +188,8 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 `,
             }}
           />
-          {escarpmentData.length > 0
-            ? escarpmentData.map((item, index) => {
+          {slopeData.length > 0
+            ? slopeData.map((item, index) => {
                 // console.log(item);
                 const grade = item.priority?.grade.includes('A')
                   ? 'A'
@@ -247,7 +247,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
                       anchor: new navermaps.Point(16, 16),
                     }}
                     onClick={() => {
-                      onMarkerClick(item, index);
+                      chooseSelectItem(item, index);
                     }}
                   />
                 );

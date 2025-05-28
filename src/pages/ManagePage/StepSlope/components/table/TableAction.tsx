@@ -1,28 +1,33 @@
 import styled from 'styled-components';
 import React from 'react';
-import { Slope } from '../../../../../apis/slopeMap';
 import LoadingMessage from '../../../components/LoadingMessage';
-interface TableActionProps {
-  isLoading: boolean;
-  selectedRow: Slope | null;
-  openEditModal: () => void;
-  openDeleteModal: () => void;
-}
+import { TableActionProps } from '../../../interface';
+
 const TableAction: React.FC<TableActionProps> = ({
   isLoading,
   selectedRow,
+  selectedRows,
   openEditModal,
   openDeleteModal,
 }) => {
+  // 선택된 행 수
+  const selectedCount = selectedRows?.length || 0;
+
   return (
     <>
       {isLoading && <LoadingMessage text="데이터를 불러오는 중" />}
-      {/* 하단 버튼 컨테이너 */}
-      {selectedRow && (
+
+      {/* 하단 버튼 컨테이너 - 단일 선택 또는 다중 선택 시 표시 */}
+      {(selectedRow || selectedCount > 0) && (
         <BottomButtonContainer>
-          <ActionButton onClick={openEditModal}>수정</ActionButton>
+          {/* 단일 선택일 때만 수정 버튼 표시 */}
+          {selectedCount <= 1 && selectedRow && (
+            <ActionButton onClick={openEditModal}>수정</ActionButton>
+          )}
+
+          {/* 삭제 버튼은 항상 표시, 다중 선택 시 개수 표시 */}
           <ActionButton onClick={openDeleteModal} className="delete">
-            삭제
+            {selectedCount > 1 ? `${selectedCount}개 항목 삭제` : '삭제'}
           </ActionButton>
         </BottomButtonContainer>
       )}

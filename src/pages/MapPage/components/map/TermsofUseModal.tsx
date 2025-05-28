@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
+import { TermsofUseModalProps } from '../../interface';
 import styled from 'styled-components';
-
-interface TermsofUseModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
 
 const TermsofUseModal = ({ isOpen, onClose }: TermsofUseModalProps) => {
   const [animationOpen, setAnimationOpen] = useState(false);

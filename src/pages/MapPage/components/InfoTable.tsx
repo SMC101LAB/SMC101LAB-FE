@@ -1,7 +1,12 @@
 import styled from 'styled-components';
 import { InfotableProps } from '../interface';
+import { useMapStore } from '../../../stores/mapStore';
 
-const InfoTable: React.FC<InfotableProps> = ({ selectItem, onCloseInfo }) => {
+const InfoTable = ({ selectItem }: InfotableProps) => {
+  const { setSelectedMarkerId } = useMapStore();
+  const onCloseInfo = () => {
+    setSelectedMarkerId(null);
+  };
   if (!selectItem) return null;
   const grade = selectItem.priority?.grade?.includes('A')
     ? 'A'

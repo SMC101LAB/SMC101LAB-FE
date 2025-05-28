@@ -1,8 +1,7 @@
-import React from 'react';
 import styled from 'styled-components';
 import { ListProps } from '../interface';
 
-const ListContainer: React.FC<ListProps> = ({ item, onClick }) => {
+const ListContainer = ({ item, onClick }: ListProps) => {
   if (!item) return null;
   const grade = item.priority?.grade.includes('A')
     ? 'A'
