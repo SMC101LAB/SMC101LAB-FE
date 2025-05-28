@@ -10,7 +10,7 @@ import AmarkerIcon from '../../../../assets/a.webp';
 import BmarkerIcon from '../../../../assets/b.webp';
 import CmarkerIcon from '../../../../assets/c.webp';
 import DmarkerIcon from '../../../../assets/d.webp';
-import FmarkerIcon from '../../../../assets/f.webp';
+import EmarkerIcon from '../../../../assets/e.webp';
 import UserPosIcon from '../../../../assets/current_position.png';
 import { MapTypeId, useMapStore } from '../../../../stores/mapStore';
 declare global {
@@ -211,7 +211,7 @@ const MapComponent = () => {
                     ? CmarkerIcon
                     : grade === 'D'
                     ? DmarkerIcon
-                    : FmarkerIcon;
+                    : EmarkerIcon;
 
                 return (
                   <Marker
