@@ -75,6 +75,7 @@ const Login = () => {
           value={loginForm.phone}
           placeholder="전화번호"
           type="number"
+          autoComplete="username"
           onChange={handleChange}
           onKeyDown={(e) => {
             if (e.key === '-' || e.key === '+' || e.key === 'e') {
@@ -92,6 +93,7 @@ const Login = () => {
           value={loginForm.password}
           placeholder="비밀번호"
           type="password"
+          autoComplete="current-password"
           onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
