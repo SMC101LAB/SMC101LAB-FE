@@ -31,18 +31,18 @@ export const getSlopeColumns = () => [
         onChange: handleToggleRow, // 함수 자체를 전달, 호출 결과 아님
       });
     },
-    size: 50,
+    size: 40,
   }),
-  columnHelper.accessor(
-    (_row, index) => {
-      return index + 1;
-    },
-    {
-      id: 'index',
-      header: '번호',
-      size: 60,
-    }
-  ),
+  // columnHelper.accessor(
+  //   (_row, index) => {
+  //     return index + 1;
+  //   },
+  //   {
+  //     id: 'index',
+  //     header: '번호',
+  //     size: 40,
+  //   }
+  // ),
   columnHelper.accessor('managementNo', {
     header: '관리번호',
     size: 120,
@@ -51,6 +51,14 @@ export const getSlopeColumns = () => [
     header: '급경사지명',
     size: 150,
   }),
+  columnHelper.accessor(
+    (row) => row.slopeInspectionHistory.historyNumber || '',
+    {
+      id: 'historyNumber',
+      header: 'SMC번호',
+      size: 120,
+    }
+  ),
   columnHelper.accessor((row) => row.management.organization || '', {
     id: 'organization',
     header: '시행청명',
