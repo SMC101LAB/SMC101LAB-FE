@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { useState } from 'react';
 import { useMapStore, MapTypeId } from '../../../stores/mapStore';
 import MyLocationIcon from '@mui/icons-material/MyLocationRounded';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
