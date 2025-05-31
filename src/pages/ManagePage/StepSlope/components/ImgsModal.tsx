@@ -389,8 +389,6 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
                             </>
                           ) : (
                             <PreviewPlaceholder>
-                              급경사지 등록대상
-                              <br />
                               사진({category.name})
                               {imageState.action === 'delete' && <br />}
                               {imageState.action === 'delete' && '삭제 예정'}
@@ -615,7 +613,7 @@ const CategoryContent = styled.div`
 `;
 
 const UploadPlaceholder = styled.div`
-  flex: 1;
+  flex: 3;
   border: 2px dashed #d1d5db;
   border-radius: 6px;
   padding: 20px;
@@ -638,7 +636,7 @@ const PlaceholderText = styled.div`
 `;
 
 const ImagePreviewArea = styled.div`
-  flex: 1;
+  flex: 2;
   position: relative;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
