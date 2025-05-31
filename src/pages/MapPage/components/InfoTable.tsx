@@ -246,42 +246,6 @@ const Line = styled.div`
   border-bottom: 1px dashed ${({ theme }) => theme.colors.grey[200]};
 `;
 
-// const ViewImgSection = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(4, 1fr);
-//   gap: 10px;
-//   @media ${({ theme }) => theme.device.mobile} {
-//     grid-template-columns: repeat(3, 1fr);
-//     grid-template-areas:
-//       'position position position'
-//       'start end overview';
-
-//     & > div:nth-child(1) {
-//       grid-area: position;
-//     }
-//     & > div:nth-child(2) {
-//       grid-area: start;
-//     }
-//     & > div:nth-child(3) {
-//       grid-area: end;
-//     }
-//     & > div:nth-child(4) {
-//       grid-area: overview;
-//     }
-//   }
-// `;
-// const ImgContainer = styled.div`
-//   display: flex;
-//   flex-direction: column;
-// `;
-// const Img = styled.img`
-//   width: 100%;
-//   height: 100%;
-// `;
-// const ImgTag = styled.div`
-//   font-size: ${({ theme }) => theme.fonts.sizes.ms};
-//   font-weight: ${({ theme }) => theme.fonts.weights.bold};
-// `;
 const ViewImgSection = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -325,7 +289,7 @@ const ImgTag = styled.div`
   font-size: ${({ theme }) => theme.fonts.sizes.ms};
   font-weight: ${({ theme }) => theme.fonts.weights.bold};
   text-align: center;
-  color: ${({ theme }) => theme.colors.grey[600]};
+  color: ${({ theme }) => theme.colors.grey[800]};
 `;
 const NoImagePlaceholder = styled.div`
   width: 100%;
