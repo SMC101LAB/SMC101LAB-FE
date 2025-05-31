@@ -10,6 +10,7 @@ const DataTable: React.FC<DataTableProps> = ({
   rowVirtualizer,
   selectedRow,
   setSelectedRow,
+  openImgsModal,
 }) => {
   const paddingTop = rowVirtualizer.getVirtualItems()[0]?.start || 0;
   const paddingBottom =
@@ -79,6 +80,17 @@ const DataTable: React.FC<DataTableProps> = ({
                         ? null
                         : row.original
                     );
+                  }
+                }}
+                onDoubleClick={(e) => {
+                  // 체크박스 열이 아닌 부분을 더블클릭했을 때만 모달 열기
+                  if (
+                    !(e.target as HTMLElement).closest('input[type="checkbox"]')
+                  ) {
+                    // 더블클릭한 행을 선택 상태로 설정
+                    setSelectedRow(row.original);
+                    // ImgsModal 열기
+                    openImgsModal();
                   }
                 }}
                 $selected={

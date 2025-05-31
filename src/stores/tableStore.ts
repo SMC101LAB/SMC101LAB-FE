@@ -26,6 +26,7 @@ export interface TableState<T> {
   isRegionModalOpen: boolean;
   isDeleteModalOpen: boolean;
   isEditModalOpen: boolean;
+  isImgsModalOpen: boolean;
 
   // 선택된 행 - 단일 선택에서 다중 선택으로 변경
   selectedRow: T | null; // 기존 호환성을 위해 유지
@@ -52,6 +53,8 @@ export interface TableState<T> {
   closeDeleteModal: () => void;
   openEditModal: () => void;
   closeEditModal: () => void;
+  openImgsModal: () => void;
+  closeImgsModal: () => void;
 
   setSelectedRow: (row: T | null) => void;
   resetFilters: () => void;
@@ -76,6 +79,7 @@ export function createTableStore<T>(initialState: Partial<TableState<T>> = {}) {
     isRegionModalOpen: false,
     isDeleteModalOpen: false,
     isEditModalOpen: false,
+    isImgsModalOpen: false,
 
     selectedRow: null,
     selectedRows: [], // 다중 선택 배열 초기화
@@ -130,6 +134,8 @@ export function createTableStore<T>(initialState: Partial<TableState<T>> = {}) {
     closeDeleteModal: () => set({ isDeleteModalOpen: false }),
     openEditModal: () => set({ isEditModalOpen: true }),
     closeEditModal: () => set({ isEditModalOpen: false }),
+    openImgsModal: () => set({ isImgsModalOpen: true }),
+    closeImgsModal: () => set({ isImgsModalOpen: false }),
 
     setSelectedRow: (row) => set({ selectedRow: row }),
 

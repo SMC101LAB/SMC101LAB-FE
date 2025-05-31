@@ -69,6 +69,10 @@ const SteepSlopeLookUp = () => {
     resetFilters,
     setSelectedRows,
     selectedRows,
+
+    isImgsModalOpen,
+    openImgsModal,
+    closeImgsModal,
   } = useSteepSlopeStore();
 
   // 테이블 컨테이너 ref는 훅 내에서 직접 생성
@@ -296,6 +300,8 @@ const SteepSlopeLookUp = () => {
         isEditModalOpen={isEditModalOpen}
         closeEditModal={closeEditModal}
         handleEdit={handleEdit}
+        isImgsModalOpen={isImgsModalOpen}
+        closeImgsModal={closeImgsModal}
       />
 
       <TableToolbar
@@ -324,6 +330,7 @@ const SteepSlopeLookUp = () => {
         rowVirtualizer={rowVirtualizer}
         selectedRow={selectedRow}
         setSelectedRow={setSelectedRow}
+        openImgsModal={openImgsModal}
       />
 
       <TableAction

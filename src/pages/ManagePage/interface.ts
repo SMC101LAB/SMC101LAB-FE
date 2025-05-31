@@ -55,6 +55,7 @@ export interface DataTableProps {
   rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
   selectedRow: Slope | null;
   setSelectedRow: (row: Slope | null) => void;
+  openImgsModal: () => void;
 }
 
 export interface TableActionProps {
@@ -88,6 +89,8 @@ export interface TableModalProps {
   isEditModalOpen: boolean;
   closeEditModal: () => void;
   handleEdit: (updatedSlope: Slope) => void;
+  isImgsModalOpen: boolean;
+  closeImgsModal: () => void;
 }
 
 export interface TableToolbarProps {
