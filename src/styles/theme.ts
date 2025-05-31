@@ -50,7 +50,7 @@ export const theme = {
     lg: '0 8px 16px rgba(0, 0, 0, 0.1)',
   },
   device: {
-    mobile: `screen and (min-width: 355px) and (max-width:767px)`,
+    mobile: `screen and (max-width:767px)`,
     tablet: `screen and (min-width:768px) and (max-width:1023px)`,
     laptop: `screen and (min-width: 1024px)`,
   },

@@ -214,6 +214,7 @@ const BaseContainer = styled.div<{ $isDragging?: boolean; height: number }>`
   position: absolute;
   bottom: 0;
   left: 0;
+  z-index: 102;
 `;
 
 const ScrollWrapper = styled.div`
