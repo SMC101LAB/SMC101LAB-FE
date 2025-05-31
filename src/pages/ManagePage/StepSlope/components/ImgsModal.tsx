@@ -3,6 +3,7 @@ import { Slope } from '../../../../apis/slopeMap';
 import { useEffect, useState, useRef } from 'react';
 import { slopeManageAPI } from '../../../../apis/slopeManage';
 import { useNotificationStore } from '../../../../hooks/notificationStore';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface ImgsModalProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ type ImageAction = 'none' | 'add' | 'delete' | 'update';
 interface ImageState {
   data: ImageData | null;
   action: ImageAction; // 이 이미지에 대한 액션
+  existingUrl?: string;
 }
 
 const imageCategories: ImageCategory[] = [
@@ -39,6 +41,7 @@ const imageCategories: ImageCategory[] = [
 ];
 
 const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
+  const queryClient = useQueryClient();
   const [selectedData, setSelectedData] = useState<Slope | null>(null);
   const [categoryImages, setCategoryImages] = useState<
     Record<string, ImageState>
@@ -64,19 +67,34 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
     if (selectedRow) {
       setSelectedData(selectedRow);
 
-      // 기존 이미지 데이터가 있다면 로드 (예시 - 실제 데이터 구조에 맞게 수정)
-      // 실제로는 서버에서 기존 이미지를 조회해야 할 수도 있음
       const initialImages: Record<string, ImageState> = {
-        position: { data: null, action: 'none' },
-        start: { data: null, action: 'none' },
-        end: { data: null, action: 'none' },
-        overview: { data: null, action: 'none' },
+        position: {
+          data: null, // File 객체가 아니므로 null
+          action: 'none',
+          existingUrl:
+            selectedData?.priority?.images?.position?.url || undefined,
+        },
+        start: {
+          data: null,
+          action: 'none',
+          existingUrl: selectedData?.priority?.images?.start?.url || undefined,
+        },
+        end: {
+          data: null,
+          action: 'none',
+          existingUrl: selectedData?.priority?.images?.end?.url || undefined,
+        },
+        overview: {
+          data: null,
+          action: 'none',
+          existingUrl:
+            selectedData?.priority?.images?.overview?.url || undefined,
+        },
       };
 
       setCategoryImages(initialImages);
     }
   }, [selectedRow]);
-
   // hidden input들을 생성하여 각 카테고리별 파일 업로드 처리
   const createFileInputs = () => {
     return imageCategories.map((category) => (
@@ -176,6 +194,9 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
       await slopeManageAPI.updateAllImg({
         formData,
         historyNumber: selectedData.slopeInspectionHistory.historyNumber,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['slopes'],
       });
 
       showNotification('이미지가 성공적으로 저장되었습니다.', {
@@ -353,9 +374,13 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
                           </PlaceholderText>
                         </UploadPlaceholder>
                         <ImagePreviewArea>
-                          {image && imageState.action !== 'delete' ? (
+                          {(image || imageState.existingUrl) &&
+                          imageState.action !== 'delete' ? (
                             <>
-                              <CategoryImage src={image.url} alt={image.name} />
+                              <CategoryImage
+                                src={image ? image.url : imageState.existingUrl}
+                                alt={image ? image.name : category.name}
+                              />
                               <DeleteImageButton
                                 onClick={() => openDeleteModal(category.key)}
                               >
