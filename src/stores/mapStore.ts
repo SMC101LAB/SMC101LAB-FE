@@ -15,22 +15,31 @@ export interface MapState {
   allTextShow: boolean;
   userLocation: naver.maps.LatLng | null;
   slopeData: Slope[];
+  originalSlopeData: Slope[]; // 필터링 전 원본 데이터
   searchMod: boolean;
   bottomSheetHeight: number;
   mapInstance: naver.maps.Map | null;
   mapTypeId: MapTypeId;
-  isMapReady: boolean; // 추가: 맵이 완전히 로드되었는지 확인하는 플래그
+  isMapReady: boolean;
+
+  grades: string[];
+  selectedGrade: string | null;
+  isGradeDrawerOpen: boolean;
 
   // 액션
   setSelectedMarkerId: (id: number | null) => void;
   setAllTextShow: (show: boolean) => void;
   setUserLocation: (location: naver.maps.LatLng | null) => void;
   setSlopeData: (data: Slope[]) => void;
+  setOriginalSlopeData: (data: Slope[]) => void; // 원본 데이터 설정
   setSearchMod: (mod: boolean) => void;
   setBottomSheetHeight: (height: number) => void;
   setMapInstance: (map: naver.maps.Map | null) => void;
   setMapTypeId: (typeId: MapTypeId) => void;
-  setIsMapReady: (isReady: boolean) => void; // 추가: 맵 준비 상태 설정
+  setIsMapReady: (isReady: boolean) => void;
+
+  setSelectedGrade: (value: string | null) => void;
+  setIsGradeDrawerOpen: (value: boolean) => void;
 
   // 비즈니스 로직
   fetchSlopes: () => Promise<void>;
@@ -38,6 +47,10 @@ export interface MapState {
   chooseSelectItem: (item: Slope, index: number) => void;
   moveToMyLocation: () => void;
   closeInfo: () => void;
+
+  handleGradeSelect: (grade: string) => void;
+  handleGradeButtonClick: () => void;
+  applyGradeFilter: () => void; // 등급 필터 적용 함수
 }
 
 export const useMapStore = create<MapState>((set, get) => ({
@@ -46,27 +59,49 @@ export const useMapStore = create<MapState>((set, get) => ({
   allTextShow: false,
   userLocation: null,
   slopeData: [],
+  originalSlopeData: [], // 원본 데이터 초기화
   searchMod: false,
   bottomSheetHeight: 200,
   mapInstance: null,
   mapTypeId: MapTypeId.NORMAL,
-  isMapReady: false, // 초기값: 맵 미준비 상태
+  isMapReady: false,
+  isGradeDrawerOpen: false,
+  selectedGrade: null,
+  grades: ['A', 'B', 'C', 'D', 'E'],
 
   // 액션
   setSelectedMarkerId: (id) => set({ selectedMarkerId: id }),
   setAllTextShow: (show) => set({ allTextShow: show }),
   setUserLocation: (location) => set({ userLocation: location }),
   setSlopeData: (data) => set({ slopeData: data }),
+  setOriginalSlopeData: (data) => set({ originalSlopeData: data }), // 추가
   setSearchMod: (mod) => set({ searchMod: mod }),
   setBottomSheetHeight: (height) => set({ bottomSheetHeight: height }),
   setMapInstance: (map) => set({ mapInstance: map }),
   setMapTypeId: (typeId) => set({ mapTypeId: typeId }),
   setIsMapReady: (isReady) => set({ isMapReady: isReady }),
+  setIsGradeDrawerOpen: (value) => set({ isGradeDrawerOpen: value }),
+  setSelectedGrade: (value) => set({ selectedGrade: value }),
+
+  // 등급 필터 적용 함수 추가
+  applyGradeFilter: () => {
+    const { originalSlopeData, selectedGrade } = get();
+
+    if (!selectedGrade || selectedGrade === '전체') {
+      // 등급이 선택되지 않았거나 '전체'인 경우 원본 데이터 표시
+      set({ slopeData: originalSlopeData });
+    } else {
+      // 선택된 등급에 맞는 데이터만 필터링
+      const filteredData = originalSlopeData.filter(
+        (slope) => slope.priority?.grade === selectedGrade
+      );
+      set({ slopeData: filteredData });
+    }
+  },
 
   // 비즈니스 로직
   fetchSlopes: async () => {
-    const { userLocation, isMapReady } = get();
-    // 맵이 준비되지 않았거나 위치 정보가 없으면 중단
+    const { userLocation, isMapReady, applyGradeFilter } = get();
     if (!isMapReady || !userLocation?.lat() || !userLocation?.lng()) return;
 
     try {
@@ -74,16 +109,32 @@ export const useMapStore = create<MapState>((set, get) => ({
         userLocation.lat(),
         userLocation.lng()
       );
-      set({ slopeData: data || [] });
+
+      // 수정: 원본 데이터와 표시 데이터 모두 설정
+      set({
+        originalSlopeData: data || [],
+        slopeData: data || [],
+      });
+
+      // 등급 필터 적용
+      applyGradeFilter();
     } catch (error) {
       console.error('Error fetching slopes:', error);
-      set({ slopeData: [] });
+      set({
+        slopeData: [],
+        originalSlopeData: [],
+      });
     }
   },
 
   handleSearch: async (searchValue) => {
-    const { fetchSlopes, userLocation, mapInstance, isMapReady } = get();
-    // 맵이 준비되지 않았으면 중단
+    const {
+      fetchSlopes,
+      userLocation,
+      mapInstance,
+      isMapReady,
+      applyGradeFilter,
+    } = get();
     if (!isMapReady) return;
 
     if (searchValue === '') {
@@ -102,41 +153,52 @@ export const useMapStore = create<MapState>((set, get) => ({
         userLocation.lat(),
         userLocation.lng()
       );
-      set({ slopeData: data || [] });
+
+      // 수정: 검색 결과도 원본 데이터로 저장하고 필터 적용
+      set({
+        originalSlopeData: data || [],
+        slopeData: data || [],
+      });
+
+      // 등급 필터 적용
+      applyGradeFilter();
 
       if (mapInstance && data && data.length > 0) {
         const coordinates = data[0].location.coordinates.start.coordinates;
         mapInstance.panTo(
           new naver.maps.LatLng(coordinates[1], coordinates[0])
         );
-        mapInstance.panTo(
-          new naver.maps.LatLng(coordinates[1], coordinates[0])
-        );
       }
     } catch (error) {
       console.error('Error search slopes:', error);
-      set({ slopeData: [] });
+      set({
+        slopeData: [],
+        originalSlopeData: [],
+      });
     }
   },
 
   chooseSelectItem: (item, index) => {
     const { mapInstance, selectedMarkerId, isMapReady } = get();
 
-    // 맵이 준비되지 않았으면 중단
     if (!isMapReady || !mapInstance) return;
 
     if (item) {
       const coordinates = item.location.coordinates.start.coordinates;
       mapInstance.panTo(new naver.maps.LatLng(coordinates[1], coordinates[0]));
 
-      set({ selectedMarkerId: selectedMarkerId === index ? null : index });
+      const targetHeight = window.innerHeight * 0.75;
+
+      set({
+        selectedMarkerId: selectedMarkerId === index ? null : index,
+        bottomSheetHeight: selectedMarkerId === index ? 200 : targetHeight,
+      });
     }
   },
 
   moveToMyLocation: () => {
     const { mapInstance, userLocation, fetchSlopes, isMapReady } = get();
 
-    // 맵이 준비되지 않았으면 중단
     if (!isMapReady || !mapInstance || !userLocation) return;
 
     mapInstance.setZoom(15);
@@ -150,5 +212,24 @@ export const useMapStore = create<MapState>((set, get) => ({
 
   closeInfo: () => {
     set({ selectedMarkerId: null });
+  },
+
+  handleGradeSelect: (grade: string) => {
+    const { setSelectedGrade, setIsGradeDrawerOpen, applyGradeFilter } = get();
+
+    const selectedGradeValue = grade === '전체' ? null : grade;
+
+    setSelectedGrade(selectedGradeValue);
+    setIsGradeDrawerOpen(false);
+
+    // 등급 필터 적용
+    applyGradeFilter();
+
+    console.log('Selected grade:', grade);
+  },
+
+  handleGradeButtonClick: () => {
+    const { isGradeDrawerOpen, setIsGradeDrawerOpen } = get();
+    setIsGradeDrawerOpen(!isGradeDrawerOpen);
   },
 }));

@@ -87,4 +87,20 @@ export const slopeManageAPI = {
     console.log(' 경사지 이상값 조회', response.data);
     return response.data;
   },
+  updateAllImg: async ({ formData, historyNumber }: UpdateAllImg) => {
+    const response = await api.put(
+      `/slopes/${historyNumber}/images`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    return response.data;
+  },
 };
+export interface UpdateAllImg {
+  formData: FormData;
+  historyNumber: string;
+}

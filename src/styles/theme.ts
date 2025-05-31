@@ -12,6 +12,7 @@ export const theme = {
       500: '#9e9e9e',
       600: '#666666',
       700: '#333333',
+      800: '#252525',
     },
     error: '#CD1A1A',
     grade: {
@@ -49,7 +50,7 @@ export const theme = {
     lg: '0 8px 16px rgba(0, 0, 0, 0.1)',
   },
   device: {
-    mobile: `screen and (min-width: 355px) and (max-width:767px)`,
+    mobile: `screen and (max-width:767px)`,
     tablet: `screen and (min-width:768px) and (max-width:1023px)`,
     laptop: `screen and (min-width: 1024px)`,
   },

@@ -145,6 +145,7 @@ const MapComponent = () => {
   if (!userLocation) {
     return <div>지도를 로드 중입니다...</div>;
   }
+
   return (
     <MapContainer>
       <MapDiv
@@ -212,7 +213,67 @@ const MapComponent = () => {
                     : grade === 'D'
                     ? DmarkerIcon
                     : EmarkerIcon;
+                const selectedIcon = {
+                  content: `
+                <div style="cursor: pointer; position:relative;">
+                  ${
+                    allTextShow || selectedMarkerId === index
+                      ? `<div style="position:absolute; top:-25px; left:50%; transform:translateX(-50%); z-index:1;">
+                          <div style="
+                            color:#0b5275;
+                            font-weight:700;
+                            font-size:16px;
+                            background-color:white;
+                            padding:2px 6px;
+                            border-radius:6px;
+                            white-space:nowrap;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                            border: 1px solid #e0e0e0;
+                          ">
+                            ${item.name}
+                          </div>
+                        </div>`
+                      : ''
+                  }
+                  <img src="${markerIcon}"
+                      alt="marker"
+                      style="width: 48px; height: 48px;"
+                  />
+                </div>
+              `,
+                  anchor: new navermaps.Point(24, 24), // 48px의 중심점
+                };
 
+                // 일반 마커 아이콘 설정
+                const normalIcon = {
+                  content: `
+                  <div style="cursor: pointer; position:relative;">
+                    ${
+                      allTextShow
+                        ? `<div style="position:absolute; top:-25px; left:50%; transform:translateX(-50%); z-index:1;">
+                            <div style="
+                              color:#333;
+                              font-size:16px;
+                              background-color:white;
+                              padding:2px 6px;
+                              border-radius:6px;
+                              white-space:nowrap;
+                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                              border: 1px solid #e0e0e0;
+                            ">
+                              ${item.name}
+                            </div>
+                          </div>`
+                        : ''
+                    }
+                    <img src="${markerIcon}"
+                        alt="marker"
+                        style="width: 36px; height: 36px;"
+                    />
+                  </div>
+                `,
+                  anchor: new navermaps.Point(18, 18), // 36px의 중심점
+                };
                 return (
                   <Marker
                     key={index}
@@ -222,39 +283,9 @@ const MapComponent = () => {
                         item.location.coordinates.start.coordinates[0]
                       )
                     }
-                    icon={{
-                      content: `
-                              <div style="cursor: pointer; position:relative;">
-                              ${
-                                selectedMarkerId === index || allTextShow
-                                  ? `<div style="position:absolute; top:-25px; left:50%; transform:translateX(-50%); z-index:1;">
-                                      <div style="
-                                        ${
-                                          selectedMarkerId === index
-                                            ? 'color:#0b5275;font-weight:700;'
-                                            : 'color:#333;'
-                                        }
-                                        font-size:16px;
-                                        background-color:white;
-                                        padding:2px 6px;
-                                        border-radius:6px;
-                                        white-space:nowrap;
-                                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                                        border: 1px solid #e0e0e0;
-                                      ">
-                                        ${item.name}
-                                      </div>
-                                    </div>`
-                                  : ''
-                              }
-                              <img src="${markerIcon}"
-                                  alt="marker"
-                                  style="width: 36px; height: 36px;"
-                              />
-                              </div>
-                            `,
-                      anchor: new navermaps.Point(18, 18),
-                    }}
+                    icon={
+                      selectedMarkerId === index ? selectedIcon : normalIcon
+                    }
                     onClick={() => {
                       chooseSelectItem(item, index);
                     }}

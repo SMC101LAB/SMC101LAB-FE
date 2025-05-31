@@ -107,12 +107,12 @@ const createDefaultSlope = (): Slope => {
       maxVerticalHeight: '',
       longitudinalLength: '',
       averageSlope: '',
-      images: [
-        {
-          url: '',
-          createdAt: today,
-        },
-      ],
+      images: {
+        position: { url: '', createdAt: today },
+        start: { url: '', createdAt: today },
+        overview: { url: '', createdAt: today },
+        end: { url: '', createdAt: today },
+      },
       Score: '',
       grade: '',
     },

@@ -1,4 +1,4 @@
-import { useRef, TouchEvent } from 'react';
+import { useRef, TouchEvent, useMemo } from 'react';
 import styled from 'styled-components';
 import InfoTable from './components/InfoTable';
 import ListContainer from './components/ListContainer';
@@ -24,9 +24,23 @@ const BottomSheet = () => {
     selectedMarkerId !== null ? slopeData[selectedMarkerId] : null;
 
   const startY = useRef<number>(0);
-  const currentHeight = useRef<number>(200); //현재 높이
-  const isDragging = useRef<boolean>(false); //드래그 상태
-  const scrollWrapperRef = useRef<HTMLDivElement>(null); //스크롤 Wrapper 위치
+  const currentHeight = useRef<number>(200);
+  const isDragging = useRef<boolean>(false);
+  const scrollWrapperRef = useRef<HTMLDivElement>(null);
+  const rafId = useRef<number | null>(null); // RAF ID 저장용
+
+  // throttled setHeight를 useMemo로 생성
+  const throttledSetHeight = useMemo(() => {
+    return (newHeight: number) => {
+      // 이미 예약된 업데이트가 있으면 스킵
+      if (rafId.current) return;
+
+      rafId.current = requestAnimationFrame(() => {
+        setHeight(newHeight);
+        rafId.current = null; // RAF 완료 후 초기화
+      });
+    };
+  }, [setHeight]);
 
   //데스크 용 bottomsheet 높이 변동 관련 함수
   const handleMouseMove = useRef((e: globalThis.MouseEvent) => {
@@ -35,7 +49,7 @@ const BottomSheet = () => {
     const diff = startY.current - e.clientY;
     let newHeight = currentHeight.current + diff;
     newHeight = Math.max(100, Math.min(window.innerHeight * 0.8, newHeight));
-    setHeight(newHeight);
+    throttledSetHeight(newHeight);
   }).current;
 
   const handleMouseUp = useRef(() => {
@@ -65,7 +79,7 @@ const BottomSheet = () => {
     const diff = startY.current - e.touches[0].clientY;
     let newHeight = currentHeight.current + diff;
     newHeight = Math.max(100, Math.min(window.innerHeight * 0.8, newHeight));
-    setHeight(newHeight);
+    throttledSetHeight(newHeight);
   };
 
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
@@ -200,6 +214,7 @@ const BaseContainer = styled.div<{ $isDragging?: boolean; height: number }>`
   position: absolute;
   bottom: 0;
   left: 0;
+  z-index: 102;
 `;
 
 const ScrollWrapper = styled.div`
