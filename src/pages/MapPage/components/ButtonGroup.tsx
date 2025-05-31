@@ -49,7 +49,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  z-index: 1000;
+  z-index: 100;
 `;
 
 // 버튼 기본 스타일을 공통으로 분리
