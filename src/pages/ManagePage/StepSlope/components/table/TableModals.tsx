@@ -45,11 +45,13 @@ const TableModals: React.FC<TableModalProps> = ({
         onSubmit={handleEdit}
         selectedRow={selectedRow}
       />
-      <ImgsModal
-        isOpen={isImgsModalOpen}
-        onClose={closeImgsModal}
-        selectedRow={selectedRow}
-      />
+      {isImgsModalOpen !== undefined && closeImgsModal && (
+        <ImgsModal
+          isOpen={isImgsModalOpen}
+          onClose={closeImgsModal}
+          selectedRow={selectedRow}
+        />
+      )}
     </>
   );
 };

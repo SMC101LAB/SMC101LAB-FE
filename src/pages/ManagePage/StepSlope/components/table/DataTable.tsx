@@ -90,7 +90,9 @@ const DataTable: React.FC<DataTableProps> = ({
                     // 더블클릭한 행을 선택 상태로 설정
                     setSelectedRow(row.original);
                     // ImgsModal 열기
-                    openImgsModal();
+                    if (openImgsModal) {
+                      openImgsModal();
+                    }
                   }
                 }}
                 $selected={
