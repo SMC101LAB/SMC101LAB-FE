@@ -1,5 +1,9 @@
 import { api } from './api';
-
+interface SlopeImg {
+  // 이미지
+  url: string; // url
+  createdAt: Date; // 이미지 생성날짜
+}
 export interface Slope {
   managementNo: string;
   name: string;
@@ -74,13 +78,12 @@ export interface Slope {
     maxVerticalHeight: string; // 최고수직고 (단위: m)
     longitudinalLength: string; // 종단길이 (단위: m)
     averageSlope: string; // 평균경사 (단위: 도)
-    images: [
-      {
-        // 이미지
-        url: string; // url
-        createdAt: Date; // 이미지 생성날짜
-      }
-    ];
+    images: {
+      position?: SlopeImg;
+      start?: SlopeImg;
+      overview?: SlopeImg;
+      end?: SlopeImg;
+    };
     Score: string; //점수
     grade: string; // 등급
   };
