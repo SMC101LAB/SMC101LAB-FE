@@ -3,9 +3,10 @@ import { InfotableProps } from '../interface';
 import { useMapStore } from '../../../stores/mapStore';
 
 const InfoTable = ({ selectItem }: InfotableProps) => {
-  const { setSelectedMarkerId } = useMapStore();
+  const { setSelectedMarkerId, setBottomSheetHeight } = useMapStore();
   const onCloseInfo = () => {
     setSelectedMarkerId(null);
+    setBottomSheetHeight(200);
   };
   if (!selectItem) return null;
   const grade = selectItem.priority?.grade?.includes('A')
@@ -34,6 +35,40 @@ const InfoTable = ({ selectItem }: InfotableProps) => {
 
         <CloseButton onClick={onCloseInfo}>&times;</CloseButton>
       </HeaderWrapper>
+      <ViewImgSection>
+        <ImgContainer>
+          {selectItem.priority?.images?.position?.url ? (
+            <Img src={selectItem.priority.images.position.url} alt="위치도" />
+          ) : (
+            <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
+          )}
+          <ImgTag>위치도</ImgTag>
+        </ImgContainer>
+        <ImgContainer>
+          {selectItem.priority?.images?.start?.url ? (
+            <Img src={selectItem.priority.images.start.url} alt="시점" />
+          ) : (
+            <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
+          )}
+          <ImgTag>시점</ImgTag>
+        </ImgContainer>
+        <ImgContainer>
+          {selectItem.priority?.images?.end?.url ? (
+            <Img src={selectItem.priority.images.end.url} alt="종점" />
+          ) : (
+            <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
+          )}
+          <ImgTag>종점</ImgTag>
+        </ImgContainer>
+        <ImgContainer>
+          {selectItem.priority?.images?.overview?.url ? (
+            <Img src={selectItem.priority.images.overview.url} alt="전경" />
+          ) : (
+            <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
+          )}
+          <ImgTag>전경</ImgTag>
+        </ImgContainer>
+      </ViewImgSection>
       <ContentSection>
         <InfoRow>
           <Label>관리주체명</Label>
@@ -128,6 +163,8 @@ const Title = styled.div`
   font-size: 22px;
   color: ${({ theme }) => theme.colors.primary};
   font-weight: 600;
+  flex-shrink: 0;
+  white-space: nowrap;
 `;
 
 const UpperAddressValue = styled.div`
@@ -207,4 +244,98 @@ const CloseButton = styled.button`
 
 const Line = styled.div`
   border-bottom: 1px dashed ${({ theme }) => theme.colors.grey[200]};
+`;
+
+// const ViewImgSection = styled.div`
+//   display: grid;
+//   grid-template-columns: repeat(4, 1fr);
+//   gap: 10px;
+//   @media ${({ theme }) => theme.device.mobile} {
+//     grid-template-columns: repeat(3, 1fr);
+//     grid-template-areas:
+//       'position position position'
+//       'start end overview';
+
+//     & > div:nth-child(1) {
+//       grid-area: position;
+//     }
+//     & > div:nth-child(2) {
+//       grid-area: start;
+//     }
+//     & > div:nth-child(3) {
+//       grid-area: end;
+//     }
+//     & > div:nth-child(4) {
+//       grid-area: overview;
+//     }
+//   }
+// `;
+// const ImgContainer = styled.div`
+//   display: flex;
+//   flex-direction: column;
+// `;
+// const Img = styled.img`
+//   width: 100%;
+//   height: 100%;
+// `;
+// const ImgTag = styled.div`
+//   font-size: ${({ theme }) => theme.fonts.sizes.ms};
+//   font-weight: ${({ theme }) => theme.fonts.weights.bold};
+// `;
+const ViewImgSection = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 12px 12px;
+  @media ${({ theme }) => theme.device.mobile} {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      'position position position'
+      'start end overview';
+
+    & > div:nth-child(1) {
+      grid-area: position;
+    }
+    & > div:nth-child(2) {
+      grid-area: start;
+    }
+    & > div:nth-child(3) {
+      grid-area: end;
+    }
+    & > div:nth-child(4) {
+      grid-area: overview;
+    }
+  }
+`;
+
+const ImgContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`;
+
+const Img = styled.img`
+  width: 100%;
+  aspect-ratio: 1; /* 정사각형 비율 유지 */
+  object-fit: cover;
+  border-radius: 8px;
+`;
+
+const ImgTag = styled.div`
+  font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  font-weight: ${({ theme }) => theme.fonts.weights.bold};
+  text-align: center;
+  color: ${({ theme }) => theme.colors.grey[600]};
+`;
+const NoImagePlaceholder = styled.div`
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  border: 1px solid ${({ theme }) => theme.colors.grey[200]};
+  background-color: ${({ theme }) => theme.colors.grey[100]};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme }) => theme.colors.grey[500]};
+  font-size: ${({ theme }) => theme.fonts.sizes.sm};
 `;

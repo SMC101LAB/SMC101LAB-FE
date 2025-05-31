@@ -129,7 +129,13 @@ export const useMapStore = create<MapState>((set, get) => ({
       const coordinates = item.location.coordinates.start.coordinates;
       mapInstance.panTo(new naver.maps.LatLng(coordinates[1], coordinates[0]));
 
-      set({ selectedMarkerId: selectedMarkerId === index ? null : index });
+      // 화면 높이의 75%로 계산
+      const targetHeight = window.innerHeight * 0.75;
+
+      set({
+        selectedMarkerId: selectedMarkerId === index ? null : index,
+        bottomSheetHeight: selectedMarkerId === index ? 200 : targetHeight,
+      });
     }
   },
 
