@@ -197,6 +197,9 @@ const Value = styled.div`
   font-size: ${({ theme }) => theme.fonts.sizes.ms};
   color: ${({ theme }) => theme.colors.grey[700]};
   font-weight: ${({ theme }) => theme.fonts.weights.medium};
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
 `;
 
 const AddressWrapper = styled(InfoRow)`
