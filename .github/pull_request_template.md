@@ -11,3 +11,7 @@ ex) feat(17): pull request template 작성(확인 후 지워주세요)
 - 구현되었는지 설명해주세요
 
   <br/>
+
+## 관련 이슈
+
+Closes #
