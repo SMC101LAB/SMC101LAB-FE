@@ -143,12 +143,7 @@ const ModalHeader = styled.div`
   left: 0;
   right: 0;
   z-index: 20;
-  pointer-events: none;
-
-  /* 헤더 요소들만 클릭 가능하게 */
-  > * {
-    pointer-events: auto;
-  }
+  padding-top: 45px;
 `;
 
 const HeaderTitle = styled.h1`
@@ -174,7 +169,6 @@ const CloseButton = styled.button`
   height: 44px;
   backdrop-filter: blur(10px);
   transition: all 0.2s ease;
-
   &:hover {
     background: rgba(0, 0, 0, 0.8);
     transform: scale(1.1);
@@ -195,8 +189,6 @@ const MainImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: contain;
-  user-select: none;
-  pointer-events: none;
 `;
 
 const ArrowButton = styled.button<{
