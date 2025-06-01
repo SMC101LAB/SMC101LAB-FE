@@ -4,6 +4,11 @@ import { useEffect, useState, useRef } from 'react';
 import { slopeManageAPI } from '../../../../apis/slopeManage';
 import { useNotificationStore } from '../../../../hooks/notificationStore';
 import { useQueryClient } from '@tanstack/react-query';
+import {
+  ImageType,
+  useImgViewerStore,
+} from '../../../../stores/imgViewerStore';
+import ImgViewerModal from '../../../../components/ImgViewerModal';
 
 interface ImgsModalProps {
   isOpen: boolean;
@@ -16,7 +21,7 @@ interface ImageData {
   file: File;
   url: string;
   name: string;
-  isNew: boolean; // 새로 추가된 이미지인지 여부
+  isNew: boolean;
 }
 
 interface ImageCategory {
@@ -24,12 +29,11 @@ interface ImageCategory {
   name: string;
 }
 
-// 이미지 상태 타입
 type ImageAction = 'none' | 'add' | 'delete' | 'update';
 
 interface ImageState {
   data: ImageData | null;
-  action: ImageAction; // 이 이미지에 대한 액션
+  action: ImageAction;
   existingUrl?: string;
 }
 
@@ -55,46 +59,47 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [focusedCategory, setFocusedCategory] = useState<string | null>(null); // 포커스된 카테고리 추적
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
-  // 알림 함수
   const showNotification = useNotificationStore(
     (state) => state.showNotification
   );
 
-  // 초기 이미지 로드 (기존 서버의 이미지가 있다면)
+  // 초기 이미지 로드
   useEffect(() => {
     if (selectedRow) {
       setSelectedData(selectedRow);
 
       const initialImages: Record<string, ImageState> = {
         position: {
-          data: null, // File 객체가 아니므로 null
+          data: null,
           action: 'none',
           existingUrl:
-            selectedData?.priority?.images?.position?.url || undefined,
+            selectedRow?.priority?.images?.position?.url || undefined,
         },
         start: {
           data: null,
           action: 'none',
-          existingUrl: selectedData?.priority?.images?.start?.url || undefined,
+          existingUrl: selectedRow?.priority?.images?.start?.url || undefined,
         },
         end: {
           data: null,
           action: 'none',
-          existingUrl: selectedData?.priority?.images?.end?.url || undefined,
+          existingUrl: selectedRow?.priority?.images?.end?.url || undefined,
         },
         overview: {
           data: null,
           action: 'none',
           existingUrl:
-            selectedData?.priority?.images?.overview?.url || undefined,
+            selectedRow?.priority?.images?.overview?.url || undefined,
         },
       };
 
       setCategoryImages(initialImages);
     }
   }, [selectedRow]);
+
   // hidden input들을 생성하여 각 카테고리별 파일 업로드 처리
   const createFileInputs = () => {
     return imageCategories.map((category) => (
@@ -119,7 +124,6 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
       isNew: true,
     };
 
-    // 기존 이미지가 있다면 URL 해제
     const existingImageState = categoryImages[category];
     if (existingImageState.data) {
       URL.revokeObjectURL(existingImageState.data.url);
@@ -129,25 +133,78 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
       ...prev,
       [category]: {
         data: newImage,
-        action: existingImageState.data ? 'update' : 'add',
+        action: existingImageState.existingUrl ? 'update' : 'add',
       },
     }));
   };
 
-  // 파일 업로드 핸들러
   const handleFileUpload =
     (category: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
       if (files && files[0]) {
         addImageToCategory(category, files[0]);
       }
-      // input 값 초기화
       if (fileInputRefs.current[category]) {
         fileInputRefs.current[category]!.value = '';
       }
     };
 
-  // 저장 함수 - FormData 생성 및 API 호출
+  // 수정된 붙여넣기 이벤트 핸들러
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items;
+    if (items) {
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item.type.indexOf('image') !== -1) {
+          const file = item.getAsFile();
+          if (file) {
+            let targetCategory = focusedCategory;
+
+            // 포커스된 카테고리가 없거나 이미 이미지가 있는 경우, 첫 번째 빈 카테고리 찾기
+            if (!targetCategory || categoryImages[targetCategory]?.data) {
+              const emptyCategory = imageCategories.find(
+                (cat) =>
+                  !categoryImages[cat.key].data &&
+                  categoryImages[cat.key].action !== 'delete'
+              );
+              targetCategory = emptyCategory?.key || null;
+            }
+
+            if (targetCategory) {
+              addImageToCategory(targetCategory, file);
+              // 붙여넣기 후 포커스 해제
+              setFocusedCategory(null);
+              break;
+            } else {
+              showNotification('모든 카테고리에 이미지가 있습니다.', {
+                severity: 'warning',
+              });
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // 카테고리 클릭 핸들러 추가
+  const handleCategoryClick = (category: string) => {
+    setFocusedCategory(category);
+  };
+
+  // 드래그 앤 드롭 핸들러
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (category: string) => (e: React.DragEvent) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    if (files && files[0]) {
+      addImageToCategory(category, files[0]);
+    }
+  };
+
+  // 저장 함수
   const handleSave = async () => {
     if (!selectedData?.slopeInspectionHistory?.historyNumber) {
       showNotification('관리번호가 없습니다.', { severity: 'error' });
@@ -160,37 +217,29 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
       const formData = new FormData();
       const deletePositions: string[] = [];
 
-      // 각 카테고리별로 처리
       Object.entries(categoryImages).forEach(([category, imageState]) => {
         const { data, action } = imageState;
 
         switch (action) {
           case 'add':
           case 'update':
-            // 새 이미지 추가 또는 기존 이미지 수정
             if (data && data.file) {
               formData.append(category, data.file);
             }
             break;
-
           case 'delete':
-            // 삭제할 카테고리 추가
             deletePositions.push(category);
             break;
-
           case 'none':
           default:
-            // 변경사항 없음
             break;
         }
       });
 
-      // 삭제할 포지션들 추가
       deletePositions.forEach((position) => {
         formData.append('deletePositions', position);
       });
 
-      // API 호출
       await slopeManageAPI.updateAllImg({
         formData,
         historyNumber: selectedData.slopeInspectionHistory.historyNumber,
@@ -213,42 +262,6 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
     }
   };
 
-  // 붙여넣기 이벤트 핸들러
-  const handlePaste = (e: React.ClipboardEvent) => {
-    const items = e.clipboardData?.items;
-    if (items) {
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        if (item.type.indexOf('image') !== -1) {
-          const file = item.getAsFile();
-          if (file) {
-            // 첫 번째 빈 카테고리에 추가
-            const emptyCategory = imageCategories.find(
-              (cat) => !categoryImages[cat.key].data
-            );
-            if (emptyCategory) {
-              addImageToCategory(emptyCategory.key, file);
-              break;
-            }
-          }
-        }
-      }
-    }
-  };
-
-  // 드래그 앤 드롭 핸들러
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (category: string) => (e: React.DragEvent) => {
-    e.preventDefault();
-    const files = e.dataTransfer.files;
-    if (files && files[0]) {
-      addImageToCategory(category, files[0]);
-    }
-  };
-
   // 이미지 삭제 확인 모달 열기
   const openDeleteModal = (category: string) => {
     setCategoryToDelete(category);
@@ -261,7 +274,6 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
     if (categoryToDelete && deleteConfirmText === '삭제') {
       const existingImageState = categoryImages[categoryToDelete];
 
-      // URL 해제
       if (existingImageState.data) {
         URL.revokeObjectURL(existingImageState.data.url);
       }
@@ -270,7 +282,7 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
         ...prev,
         [categoryToDelete]: {
           data: null,
-          action: existingImageState.data?.isNew ? 'none' : 'delete',
+          action: existingImageState.existingUrl ? 'delete' : 'none',
         },
       }));
 
@@ -280,7 +292,6 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
     }
   };
 
-  // 삭제 모달 닫기
   const closeDeleteModal = () => {
     setDeleteModalOpen(false);
     setCategoryToDelete(null);
@@ -298,13 +309,54 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
     };
   }, []);
 
-  // 변경사항이 있는지 확인
   const hasChanges = Object.values(categoryImages).some(
     (imageState) => imageState.action !== 'none'
   );
 
+  const { setImageData, openImage } = useImgViewerStore();
+
+  const convertSlopeImagesToStoreFormat = (slopeImages: any) => {
+    return {
+      position: {
+        url: slopeImages?.position?.url,
+        createdAt: slopeImages?.position?.createdAt,
+      },
+      start: {
+        url: slopeImages?.start?.url,
+        createdAt: slopeImages?.start?.createdAt,
+      },
+      end: {
+        url: slopeImages?.end?.url,
+        createdAt: slopeImages?.end?.createdAt,
+      },
+      overview: {
+        url: slopeImages?.overview?.url,
+        createdAt: slopeImages?.overview?.createdAt,
+      },
+    };
+  };
+
+  useEffect(() => {
+    if (selectedData?.priority?.images) {
+      const convertedImages = convertSlopeImagesToStoreFormat(
+        selectedData.priority.images
+      );
+      setImageData(convertedImages);
+    }
+  }, [selectedData, setImageData]);
+
+  const handleImageClick = (category: string) => {
+    const imageState = categoryImages[category];
+    const imageUrl = imageState.existingUrl || imageState.data?.url;
+
+    if (imageUrl) {
+      openImage(imageUrl, category as ImageType);
+    }
+  };
+
   return (
     <>
+      <ImgViewerModal />
       <ModalOverlay $isOpen={isOpen}>
         <ModalContent onPaste={handlePaste} tabIndex={0}>
           <FixedHeader>
@@ -347,12 +399,20 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
                 {imageCategories.map((category) => {
                   const imageState = categoryImages[category.key];
                   const image = imageState.data;
+                  const isFocused = focusedCategory === category.key;
 
                   return (
-                    <ImageCategory key={category.key}>
+                    <ImageCategory
+                      key={category.key}
+                      $isFocused={isFocused}
+                      onClick={() => handleCategoryClick(category.key)}
+                    >
                       <CategoryHeader>
                         <CategoryTitle>
                           {category.name}
+                          {isFocused && (
+                            <FocusIndicator> (선택됨)</FocusIndicator>
+                          )}
                           {imageState.action !== 'none' && (
                             <ActionIndicator $action={imageState.action}>
                               {imageState.action === 'add' && ' (추가)'}
@@ -366,11 +426,16 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
                         <UploadPlaceholder
                           onDragOver={handleDragOver}
                           onDrop={handleDrop(category.key)}
+                          onClick={() =>
+                            fileInputRefs.current[category.key]?.click()
+                          }
                         >
                           <PlaceholderText>
                             파일을 마우스로 끌어 오세요
                             <br />
-                            CTRL+C/CTRL+V
+                            {isFocused
+                              ? 'CTRL+V로 붙여넣기 가능'
+                              : '클릭하여 선택 후 CTRL+V'}
                           </PlaceholderText>
                         </UploadPlaceholder>
                         <ImagePreviewArea>
@@ -380,9 +445,16 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
                               <CategoryImage
                                 src={image ? image.url : imageState.existingUrl}
                                 alt={image ? image.name : category.name}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleImageClick(category.key);
+                                }}
                               />
                               <DeleteImageButton
-                                onClick={() => openDeleteModal(category.key)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openDeleteModal(category.key);
+                                }}
                               >
                                 ×
                               </DeleteImageButton>
@@ -415,12 +487,10 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
             </FooterButtonGroup>
           </FixedFooter>
 
-          {/* Hidden file inputs */}
           {createFileInputs()}
         </ModalContent>
       </ModalOverlay>
 
-      {/* 삭제 확인 모달 */}
       <DeleteModalOverlay $isOpen={deleteModalOpen}>
         <DeleteModalContent>
           <DeleteModalHeader>
@@ -455,7 +525,8 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
 };
 
 export default ImgsModal;
-// 기본 모달 스타일
+
+// 스타일 컴포넌트들
 const ModalOverlay = styled.div<{ $isOpen: boolean }>`
   display: ${(props) => (props.$isOpen ? 'flex' : 'none')};
   position: fixed;
@@ -507,7 +578,6 @@ const CloseButton = styled.button`
   }
 `;
 
-// 정보 섹션 스타일
 const InfoSection = styled.div`
   margin-bottom: 24px;
   padding: 16px;
@@ -543,10 +613,10 @@ const AddressValue = styled(InfoValue)`
   line-height: 1.4;
 `;
 
-// 우측 이미지 섹션
 const ImagesSection = styled.div`
   flex: 1;
 `;
+
 const ActionIndicator = styled.span<{ $action: ImageAction }>`
   font-size: 12px;
   font-weight: 500;
@@ -563,6 +633,14 @@ const ActionIndicator = styled.span<{ $action: ImageAction }>`
     }
   }};
 `;
+
+// 포커스 인디케이터 추가
+const FocusIndicator = styled.span`
+  font-size: 12px;
+  font-weight: 500;
+  color: #2563eb;
+`;
+
 const ImageCategoriesContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -585,10 +663,17 @@ const ImageCategoriesContainer = styled.div`
   }
 `;
 
-const ImageCategory = styled.div`
-  border: 1px solid #e5e7eb;
+// 포커스 스타일 추가
+const ImageCategory = styled.div<{ $isFocused?: boolean }>`
+  border: 1px solid ${(props) => (props.$isFocused ? '#2563eb' : '#e5e7eb')};
   border-radius: 8px;
-  background: white;
+  background: ${(props) => (props.$isFocused ? '#eff6ff' : 'white')};
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #9ca3af;
+  }
 `;
 
 const CategoryHeader = styled.div`
@@ -684,7 +769,6 @@ const DeleteImageButton = styled.button`
   }
 `;
 
-// 삭제 확인 모달 스타일
 const DeleteModalOverlay = styled.div<{ $isOpen: boolean }>`
   display: ${(props) => (props.$isOpen ? 'flex' : 'none')};
   position: fixed;
