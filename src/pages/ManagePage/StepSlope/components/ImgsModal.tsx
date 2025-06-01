@@ -356,7 +356,7 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
 
   return (
     <>
-      <ImgViewerModal />
+      <ImgViewerModal /> {/* 이미지 확대 모달*/}
       <ModalOverlay $isOpen={isOpen}>
         <ModalContent onPaste={handlePaste} tabIndex={0}>
           <FixedHeader>
@@ -490,7 +490,6 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
           {createFileInputs()}
         </ModalContent>
       </ModalOverlay>
-
       <DeleteModalOverlay $isOpen={deleteModalOpen}>
         <DeleteModalContent>
           <DeleteModalHeader>

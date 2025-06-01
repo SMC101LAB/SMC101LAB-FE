@@ -1,14 +1,59 @@
 import styled from 'styled-components';
 import { InfotableProps } from '../interface';
 import { useMapStore } from '../../../stores/mapStore';
+import { useImgViewerStore } from '../../../stores/imgViewerStore';
+import { useEffect } from 'react';
+import ImgViewerModal from '../../../components/ImgViewerModal';
 
 const InfoTable = ({ selectItem }: InfotableProps) => {
   const { setSelectedMarkerId, setBottomSheetHeight } = useMapStore();
+  const { setImageData, openImage } = useImgViewerStore();
+
   const onCloseInfo = () => {
     setSelectedMarkerId(null);
     setBottomSheetHeight(200);
   };
+
+  // 컴포넌트 진입 시 이미지 데이터 설정
+  const convertSlopeImagesToStoreFormat = (slopeImages: any) => {
+    return {
+      position: {
+        url: slopeImages?.position?.url,
+        createdAt: slopeImages?.position?.createdAt,
+      },
+      start: {
+        url: slopeImages?.start?.url,
+        createdAt: slopeImages?.start?.createdAt,
+      },
+      end: {
+        url: slopeImages?.end?.url,
+        createdAt: slopeImages?.end?.createdAt,
+      },
+      overview: {
+        url: slopeImages?.overview?.url,
+        createdAt: slopeImages?.overview?.createdAt,
+      },
+    };
+  };
+
+  useEffect(() => {
+    if (selectItem?.priority?.images) {
+      const convertedImages = convertSlopeImagesToStoreFormat(
+        selectItem.priority.images
+      );
+      setImageData(convertedImages);
+    }
+  }, [selectItem, setImageData]);
+
+  // 이미지 클릭 핸들러
+  const handleImageClick = (imageType: string, imageUrl?: string) => {
+    if (imageUrl) {
+      openImage(imageUrl, imageType as any);
+    }
+  };
+
   if (!selectItem) return null;
+
   const grade = selectItem.priority?.grade?.includes('A')
     ? 'A'
     : selectItem.priority?.grade?.includes('B')
@@ -20,123 +65,159 @@ const InfoTable = ({ selectItem }: InfotableProps) => {
     : 'E';
 
   return (
-    <InnerContainer>
-      <HeaderWrapper>
-        <TitleWrapper>
-          <Title>{selectItem?.name || ''}</Title>
-          <UpperAddressValue>
-            {selectItem?.location?.province || ''}
-            {selectItem?.location?.city || ''}
-            {selectItem?.location?.district || ''}
-            {selectItem?.location?.address || ''}
-            {selectItem?.location?.mountainAddress === 'Y' ? '(산)' : ''}
-          </UpperAddressValue>
-        </TitleWrapper>
-
-        <CloseButton onClick={onCloseInfo}>&times;</CloseButton>
-      </HeaderWrapper>
-      <ViewImgSection>
-        <ImgContainer>
-          {selectItem.priority?.images?.position?.url ? (
-            <Img src={selectItem.priority.images.position.url} alt="위치도" />
-          ) : (
-            <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
-          )}
-          <ImgTag>위치도</ImgTag>
-        </ImgContainer>
-        <ImgContainer>
-          {selectItem.priority?.images?.start?.url ? (
-            <Img src={selectItem.priority.images.start.url} alt="시점" />
-          ) : (
-            <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
-          )}
-          <ImgTag>시점</ImgTag>
-        </ImgContainer>
-        <ImgContainer>
-          {selectItem.priority?.images?.end?.url ? (
-            <Img src={selectItem.priority.images.end.url} alt="종점" />
-          ) : (
-            <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
-          )}
-          <ImgTag>종점</ImgTag>
-        </ImgContainer>
-        <ImgContainer>
-          {selectItem.priority?.images?.overview?.url ? (
-            <Img src={selectItem.priority.images.overview.url} alt="전경" />
-          ) : (
-            <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
-          )}
-          <ImgTag>전경</ImgTag>
-        </ImgContainer>
-      </ViewImgSection>
-      <ContentSection>
-        <InfoRow>
-          <Label>관리주체명</Label>
-          <Value>{selectItem?.inspections?.serialNumber || ''}</Value>
-        </InfoRow>
-
-        <AddressWrapper>
-          <Label>주소</Label>
-          <ValueColumn>
-            <AddressValue>
+    <>
+      <ImgViewerModal /> {/* 이미지 확대 모달*/}
+      <InnerContainer>
+        <HeaderWrapper>
+          <TitleWrapper>
+            <Title>{selectItem?.name || ''}</Title>
+            <UpperAddressValue>
               {selectItem?.location?.province || ''}
               {selectItem?.location?.city || ''}
               {selectItem?.location?.district || ''}
               {selectItem?.location?.address || ''}
+              {selectItem?.location?.mountainAddress === 'Y' ? '(산)' : ''}
+            </UpperAddressValue>
+          </TitleWrapper>
 
-              {selectItem?.location?.mainLotNumber
-                ? selectItem?.location?.subLotNumber
-                  ? `   ${selectItem?.location?.mainLotNumber}-${selectItem?.location?.subLotNumber}`
-                  : `   ${selectItem?.location?.mainLotNumber}`
-                : ''}
-            </AddressValue>
-            <AddressValue>
-              {selectItem?.location?.roadAddress
-                ? `(${selectItem?.location?.roadAddress})`
-                : ''}
-            </AddressValue>
-          </ValueColumn>
-        </AddressWrapper>
-        <Line />
-        <InfoRow>
-          <Label>최고수직고</Label>
-          <Value>{selectItem.priority.maxVerticalHeight}</Value>
-        </InfoRow>
-        <InfoRow>
-          <Label>종단길이</Label>
-          <Value>{selectItem.priority.longitudinalLength}</Value>
-        </InfoRow>
-        <InfoRow>
-          <Label>평균경사</Label>
-          <Value>{selectItem.priority.averageSlope}</Value>
-        </InfoRow>
-
-        <InfoRow>
-          <Label>점수</Label>
-          <Value>{selectItem.priority.Score}</Value>
-        </InfoRow>
-        <InfoRow>
-          <Label>등급</Label>
-          <GradeValue $grade={grade}>{grade}</GradeValue>
-        </InfoRow>
-
-        <Line />
-        {selectItem?.priority?.usage && (
+          <CloseButton onClick={onCloseInfo}>&times;</CloseButton>
+        </HeaderWrapper>
+        <ViewImgSection>
+          <ImgContainer>
+            {selectItem.priority?.images?.position?.url ? (
+              <Img
+                src={selectItem.priority.images.position.url}
+                alt="위치도"
+                onClick={() =>
+                  handleImageClick(
+                    'position',
+                    selectItem.priority.images.position?.url
+                  )
+                }
+              />
+            ) : (
+              <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
+            )}
+            <ImgTag>위치도</ImgTag>
+          </ImgContainer>
+          <ImgContainer>
+            {selectItem.priority?.images?.start?.url ? (
+              <Img
+                src={selectItem.priority.images.start.url}
+                alt="시점"
+                onClick={() =>
+                  handleImageClick(
+                    'start',
+                    selectItem.priority.images.start?.url
+                  )
+                }
+              />
+            ) : (
+              <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
+            )}
+            <ImgTag>시점</ImgTag>
+          </ImgContainer>
+          <ImgContainer>
+            {selectItem.priority?.images?.end?.url ? (
+              <Img
+                src={selectItem.priority.images.end.url}
+                alt="종점"
+                onClick={() =>
+                  handleImageClick('end', selectItem.priority.images.end?.url)
+                }
+              />
+            ) : (
+              <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
+            )}
+            <ImgTag>종점</ImgTag>
+          </ImgContainer>
+          <ImgContainer>
+            {selectItem.priority?.images?.overview?.url ? (
+              <Img
+                src={selectItem.priority.images.overview.url}
+                alt="전경"
+                onClick={() =>
+                  handleImageClick(
+                    'overview',
+                    selectItem.priority.images.overview?.url
+                  )
+                }
+              />
+            ) : (
+              <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
+            )}
+            <ImgTag>전경</ImgTag>
+          </ImgContainer>
+        </ViewImgSection>
+        <ContentSection>
           <InfoRow>
-            <Label>비탈면용도</Label>
-            <Value>{selectItem.priority.usage}</Value>
+            <Label>관리주체명</Label>
+            <Value>{selectItem?.inspections?.serialNumber || ''}</Value>
           </InfoRow>
-        )}
-        <InfoRow>
-          <Label>자연/인공 구분</Label>
-          <Value>{selectItem.priority.slopeNature}</Value>
-        </InfoRow>
-        <InfoRow>
-          <Label>비탈면유형</Label>
-          <Value>{selectItem.priority.slopeType}</Value>
-        </InfoRow>
-      </ContentSection>
-    </InnerContainer>
+
+          <AddressWrapper>
+            <Label>주소</Label>
+            <ValueColumn>
+              <AddressValue>
+                {selectItem?.location?.province || ''}
+                {selectItem?.location?.city || ''}
+                {selectItem?.location?.district || ''}
+                {selectItem?.location?.address || ''}
+
+                {selectItem?.location?.mainLotNumber
+                  ? selectItem?.location?.subLotNumber
+                    ? `   ${selectItem?.location?.mainLotNumber}-${selectItem?.location?.subLotNumber}`
+                    : `   ${selectItem?.location?.mainLotNumber}`
+                  : ''}
+              </AddressValue>
+              <AddressValue>
+                {selectItem?.location?.roadAddress
+                  ? `(${selectItem?.location?.roadAddress})`
+                  : ''}
+              </AddressValue>
+            </ValueColumn>
+          </AddressWrapper>
+          <Line />
+          <InfoRow>
+            <Label>최고수직고</Label>
+            <Value>{selectItem.priority.maxVerticalHeight}</Value>
+          </InfoRow>
+          <InfoRow>
+            <Label>종단길이</Label>
+            <Value>{selectItem.priority.longitudinalLength}</Value>
+          </InfoRow>
+          <InfoRow>
+            <Label>평균경사</Label>
+            <Value>{selectItem.priority.averageSlope}</Value>
+          </InfoRow>
+
+          <InfoRow>
+            <Label>점수</Label>
+            <Value>{selectItem.priority.Score}</Value>
+          </InfoRow>
+          <InfoRow>
+            <Label>등급</Label>
+            <GradeValue $grade={grade}>{grade}</GradeValue>
+          </InfoRow>
+
+          <Line />
+          {selectItem?.priority?.usage && (
+            <InfoRow>
+              <Label>비탈면용도</Label>
+              <Value>{selectItem.priority.usage}</Value>
+            </InfoRow>
+          )}
+          <InfoRow>
+            <Label>자연/인공 구분</Label>
+            <Value>{selectItem.priority.slopeNature}</Value>
+          </InfoRow>
+          <InfoRow>
+            <Label>비탈면유형</Label>
+            <Value>{selectItem.priority.slopeType}</Value>
+          </InfoRow>
+        </ContentSection>
+      </InnerContainer>
+    </>
   );
 };
 
@@ -283,11 +364,16 @@ const ImgContainer = styled.div`
 
 const Img = styled.img`
   width: 100%;
-  aspect-ratio: 1; /* 정사각형 비율 유지 */
+  aspect-ratio: 1;
   object-fit: cover;
   border-radius: 8px;
-`;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 
+  &:hover {
+    transform: scale(1.02); /* 추가: 호버 시 살짝 확대 */
+  }
+`;
 const ImgTag = styled.div`
   font-size: ${({ theme }) => theme.fonts.sizes.ms};
   font-weight: ${({ theme }) => theme.fonts.weights.bold};
