@@ -55,9 +55,7 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
     end: { data: null, action: 'none' },
     overview: { data: null, action: 'none' },
   });
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
-  const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [focusedCategory, setFocusedCategory] = useState<string | null>(null); // 포커스된 카테고리 추적
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
@@ -262,16 +260,10 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
     }
   };
 
-  // 이미지 삭제 확인 모달 열기
-  const openDeleteModal = (category: string) => {
-    setCategoryToDelete(category);
-    setDeleteModalOpen(true);
-    setDeleteConfirmText('');
-  };
-
   // 이미지 삭제 실행
-  const handleDeleteConfirm = () => {
-    if (categoryToDelete && deleteConfirmText === '삭제') {
+  const handleDeleteConfirm = (category: string) => {
+    setCategoryToDelete(category);
+    if (categoryToDelete) {
       const existingImageState = categoryImages[categoryToDelete];
 
       if (existingImageState.data) {
@@ -286,16 +278,8 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
         },
       }));
 
-      setDeleteModalOpen(false);
       setCategoryToDelete(null);
-      setDeleteConfirmText('');
     }
-  };
-
-  const closeDeleteModal = () => {
-    setDeleteModalOpen(false);
-    setCategoryToDelete(null);
-    setDeleteConfirmText('');
   };
 
   // 컴포넌트 언마운트 시 URL 해제
@@ -453,7 +437,7 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
                               <DeleteImageButton
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  openDeleteModal(category.key);
+                                  handleDeleteConfirm(category.key);
                                 }}
                               >
                                 ×
@@ -490,35 +474,6 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
           {createFileInputs()}
         </ModalContent>
       </ModalOverlay>
-      <DeleteModalOverlay $isOpen={deleteModalOpen}>
-        <DeleteModalContent>
-          <DeleteModalHeader>
-            <h3>이미지 삭제</h3>
-            <CloseButton onClick={closeDeleteModal}>&times;</CloseButton>
-          </DeleteModalHeader>
-          <DeleteMessage>
-            이미지를 삭제하시려면 입력창에 <BoldText>삭제</BoldText>라고 입력해
-            주세요.
-          </DeleteMessage>
-          <DeleteInput>
-            <input
-              type="text"
-              placeholder="삭제"
-              value={deleteConfirmText}
-              onChange={(e) => setDeleteConfirmText(e.target.value)}
-            />
-          </DeleteInput>
-          <DeleteButtonGroup>
-            <ConfirmButton
-              onClick={handleDeleteConfirm}
-              disabled={deleteConfirmText !== '삭제'}
-            >
-              확인
-            </ConfirmButton>
-            <CancelButton onClick={closeDeleteModal}>취소</CancelButton>
-          </DeleteButtonGroup>
-        </DeleteModalContent>
-      </DeleteModalOverlay>
     </>
   );
 };
@@ -768,73 +723,6 @@ const DeleteImageButton = styled.button`
   }
 `;
 
-const DeleteModalOverlay = styled.div<{ $isOpen: boolean }>`
-  display: ${(props) => (props.$isOpen ? 'flex' : 'none')};
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  justify-content: center;
-  align-items: center;
-  z-index: 1100;
-`;
-
-const DeleteModalContent = styled.div`
-  background: white;
-  padding: 24px;
-  border-radius: 8px;
-  width: 100%;
-  max-width: 400px;
-`;
-
-const DeleteModalHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-
-  h3 {
-    margin: 0;
-    font-size: 18px;
-    color: #111827;
-  }
-`;
-
-const DeleteMessage = styled.p`
-  margin-bottom: 20px;
-  line-height: 1.5;
-  color: #374151;
-`;
-
-const BoldText = styled.span`
-  font-weight: 600;
-  color: #dc2626;
-`;
-
-const DeleteInput = styled.div`
-  margin-bottom: 16px;
-
-  input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-
-    &::placeholder {
-      color: #9ca3af;
-    }
-  }
-`;
-
-const DeleteButtonGroup = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 24px;
-`;
-
 const Button = styled.button`
   padding: 8px 16px;
   border-radius: 4px;
@@ -845,11 +733,6 @@ const Button = styled.button`
     background-color: #9ca3af;
     cursor: not-allowed;
   }
-`;
-
-const ConfirmButton = styled(Button)`
-  background: #24478f;
-  color: white;
 `;
 
 const CancelButton = styled(Button)`
