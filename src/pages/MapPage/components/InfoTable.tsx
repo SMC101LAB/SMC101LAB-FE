@@ -88,6 +88,7 @@ const InfoTable = ({ selectItem }: InfotableProps) => {
               <Img
                 src={selectItem.priority.images.position.url}
                 alt="위치도"
+                $isPosition={true}
                 onClick={() =>
                   handleImageClick(
                     'position',
@@ -96,7 +97,9 @@ const InfoTable = ({ selectItem }: InfotableProps) => {
                 }
               />
             ) : (
-              <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
+              <NoImagePlaceholder $isPosition={true}>
+                이미지 없음
+              </NoImagePlaceholder>
             )}
             <ImgTag>위치도</ImgTag>
           </ImgContainer>
@@ -363,8 +366,11 @@ const ImgContainer = styled.div`
   gap: 5px;
 `;
 
-const Img = styled.img`
+const Img = styled.img<{ $isPosition?: boolean }>`
   width: 100%;
+  @media ${({ theme }) => theme.device.mobile} {
+    aspect-ratio: ${({ $isPosition = false }) => ($isPosition ? '4/3' : '1')};
+  }
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: 8px;
@@ -372,7 +378,7 @@ const Img = styled.img`
   transition: transform 0.2s ease;
 
   &:hover {
-    transform: scale(1.02); /* 추가: 호버 시 살짝 확대 */
+    transform: scale(1.02);
   }
 `;
 const ImgTag = styled.div`
@@ -381,9 +387,13 @@ const ImgTag = styled.div`
   text-align: center;
   color: ${({ theme }) => theme.colors.grey[800]};
 `;
-const NoImagePlaceholder = styled.div`
+const NoImagePlaceholder = styled.div<{ $isPosition?: boolean }>`
   width: 100%;
+  @media ${({ theme }) => theme.device.mobile} {
+    aspect-ratio: ${({ $isPosition = false }) => ($isPosition ? '4/3' : '1')};
+  }
   aspect-ratio: 1;
+
   border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.colors.grey[200]};
   background-color: ${({ theme }) => theme.colors.grey[100]};
