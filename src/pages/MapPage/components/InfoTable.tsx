@@ -72,11 +72,11 @@ const InfoTable = ({ selectItem }: InfotableProps) => {
           <TitleWrapper>
             <Title>{selectItem?.name || ''}</Title>
             <UpperAddressValue>
-              {selectItem?.location?.province || ''}
-              {selectItem?.location?.city || ''}
-              {selectItem?.location?.district || ''}
-              {selectItem?.location?.address || ''}
-              {selectItem?.location?.mountainAddress === 'Y' ? '(산)' : ''}
+              {selectItem?.location?.province || ''}{' '}
+              {selectItem?.location?.city || ''}{' '}
+              {selectItem?.location?.district || ''}{' '}
+              {selectItem?.location?.address || ''}{' '}
+              {selectItem?.location?.mountainAddress === 'Y' ? '산' : ''}
             </UpperAddressValue>
           </TitleWrapper>
 
@@ -159,18 +159,15 @@ const InfoTable = ({ selectItem }: InfotableProps) => {
             <Label>주소</Label>
             <ValueColumn>
               <AddressValue>
-                {selectItem?.location?.province || ''}
-                {selectItem?.location?.city || ''}
-                {selectItem?.location?.district || ''}
-                {selectItem?.location?.address || ''}
-
-                {selectItem?.location?.mainLotNumber
-                  ? selectItem?.location?.subLotNumber
-                    ? `   ${selectItem?.location?.mainLotNumber}-${selectItem?.location?.subLotNumber}`
-                    : `   ${selectItem?.location?.mainLotNumber}`
-                  : ''}
-              </AddressValue>
-              <AddressValue>
+                {selectItem?.location?.province || ''}{' '}
+                {selectItem?.location?.city || ''}{' '}
+                {selectItem?.location?.district || ''}{' '}
+                {selectItem?.location?.address || ''}{' '}
+                {selectItem?.location?.mountainAddress === 'Y' ? '산' : ''}{' '}
+                {selectItem?.location?.mainLotNumber || ''}
+                {selectItem?.location?.subLotNumber
+                  ? `-${selectItem.location.subLotNumber}`
+                  : ''}{' '}
                 {selectItem?.location?.roadAddress
                   ? `(${selectItem?.location?.roadAddress})`
                   : ''}
@@ -234,7 +231,8 @@ const HeaderWrapper = styled.div`
 
 const TitleWrapper = styled.div`
   display: flex;
-  align-items: flex-end;
+  justify-content: flex-end;
+  flex-direction: column;
   gap: 10px;
   padding-bottom: 15px;
   flex-grow: 1;
@@ -251,6 +249,9 @@ const Title = styled.div`
 const UpperAddressValue = styled.div`
   font-size: 14px;
   color: #7e7e7e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const ContentSection = styled.div`
