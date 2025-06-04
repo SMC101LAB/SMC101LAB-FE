@@ -99,6 +99,11 @@ export const slopeManageAPI = {
     );
     return response.data;
   },
+  restoreImg: async () => {
+    const response = await api.post('/slopes/restore');
+    console.log(response);
+    return response.data;
+  },
 };
 export interface UpdateAllImg {
   formData: FormData;
