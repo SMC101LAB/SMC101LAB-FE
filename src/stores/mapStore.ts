@@ -187,7 +187,7 @@ export const useMapStore = create<MapState>((set, get) => ({
       const coordinates = item.location.coordinates.start.coordinates;
       mapInstance.panTo(new naver.maps.LatLng(coordinates[1], coordinates[0]));
 
-      const targetHeight = window.innerHeight * 0.75;
+      const targetHeight = window.innerHeight * 0.68;
 
       set({
         selectedMarkerId: selectedMarkerId === index ? null : index,
