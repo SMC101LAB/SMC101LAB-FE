@@ -38,6 +38,7 @@ jobs:
         run: |
           echo "VITE_NAVER_MAP_ID=${{ secrets.VITE_NAVER_MAP_ID }}" >> .env
           echo "VITE_SERVER_ADDRESS=${{ secrets.VITE_SERVER_ADDRESS }}" >> .env
+          echo "VITE_GA_TRACKING_ID=${{ secrets.VITE_GA_TRACKING_ID }}" >> .env
 
       - name: react build
         run: npm run build
