@@ -1,5 +1,4 @@
-import { NavermapsProvider } from 'react-naver-maps';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import ReactGA from 'react-ga4';
 import LoginPage from './pages/LoginPage/LoginPage';
@@ -31,32 +30,28 @@ const Router = () => {
     });
   }, [location]);
   return (
-    <NavermapsProvider ncpClientId={`${import.meta.env.VITE_NAVER_MAP_ID}`}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/map" element={<MapPage />} />
-          <Route path="/manage" element={<ManagePage />}>
-            <Route index element={<Home />} />
-            <Route path="home" element={<Home />} />
-            <Route path="slope">
-              <Route path="list" element={<SteepSlopeLookUp />} />
-              <Route path="add" element={<SteepSlopeAdd />} />
-            </Route>
-            <Route path="outlier">
-              <Route path="empty" element={<SteepSlopeEmpty />} />
-              <Route path="dup" element={<SteepSlopeDup />} />
-              <Route path="location" element={<SteepSlopeDup />} />
-            </Route>
-            <Route path="member">
-              <Route path="list" element={<UserLookUp />} />
-              <Route path="edit" element={<UserModi />} />
-            </Route>
-            <Route path="map" element={<MapPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </NavermapsProvider>
+    <Routes>
+      <Route path="/" element={<LoginPage />} />
+      <Route path="/map" element={<MapPage />} />
+      <Route path="/manage" element={<ManagePage />}>
+        <Route index element={<Home />} />
+        <Route path="home" element={<Home />} />
+        <Route path="slope">
+          <Route path="list" element={<SteepSlopeLookUp />} />
+          <Route path="add" element={<SteepSlopeAdd />} />
+        </Route>
+        <Route path="outlier">
+          <Route path="empty" element={<SteepSlopeEmpty />} />
+          <Route path="dup" element={<SteepSlopeDup />} />
+          <Route path="location" element={<SteepSlopeDup />} />
+        </Route>
+        <Route path="member">
+          <Route path="list" element={<UserLookUp />} />
+          <Route path="edit" element={<UserModi />} />
+        </Route>
+        <Route path="map" element={<MapPage />} />
+      </Route>
+    </Routes>
   );
 };
 export default Router;
