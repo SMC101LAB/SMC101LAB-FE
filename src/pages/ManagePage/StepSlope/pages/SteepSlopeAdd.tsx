@@ -811,7 +811,6 @@ const CancelButton = styled.button`
 const Button = styled.button`
   padding: 8px 16px;
   border-radius: 6px;
-  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 `;
@@ -820,7 +819,8 @@ const SubmitButton = styled(Button)`
   background: #24478f;
   color: white;
   border: none;
-
+  font-size: ${({ theme }) => theme.fonts.sizes.mm};
+  font-weight: ${({ theme }) => theme.fonts.weights.bold};
   &:hover {
     opacity: 0.9;
   }
