@@ -41,7 +41,9 @@ const SideComponents: FC<SideComponentsProps> = ({
               $isSelect={selectPage[2]}
               onClick={() => ChooseIndex(2)}
             >
-              <IndexText $isSelect={selectPage[2]}>급경사지 추가</IndexText>
+              <IndexText $isSelect={selectPage[2]}>
+                급경사지 추가/복구
+              </IndexText>
             </SubIndexContainer>
           </>
         )}
