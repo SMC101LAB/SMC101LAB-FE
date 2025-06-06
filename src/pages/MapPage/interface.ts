@@ -47,15 +47,21 @@ export interface SearchResultProps {
   };
 }
 export interface CommentAddModalProps {
+  isAddOpen: boolean;
+  setIsAddOpen: (value: boolean) => void;
   onSubmit: (comment: string, images: File[]) => void;
 }
 export interface DeleteModalProps {
+  isDeleteOpen: boolean;
+  setIsDeleteOpen: (value: boolean) => void;
   onSubmit: () => void;
 }
 export interface CommentListProps {
   slopeId: string;
 }
 export interface CommentUpdateModalProps {
+  isModiOpen: boolean;
+  setIsModiOpen: (value: boolean) => void;
   onSubmit: (formData: FormData) => void;
   defaultComment: string;
   defaultImages: string[];

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNotificationStore } from '../../../../hooks/notificationStore';
-import { useCommentStore } from '../../../../stores/commentStore';
 import { CommentUpdateModalProps } from '../../interface';
 
 interface ImageFile {
@@ -21,14 +20,15 @@ interface MobileImageAsset {
   dataUrl?: string;
 }
 const CommentUpdateModal = ({
+  isModiOpen,
+  setIsModiOpen,
   onSubmit,
   defaultComment,
   defaultImages,
   commentId,
 }: CommentUpdateModalProps) => {
-  const { isModiOpen, setIsModi } = useCommentStore();
   const onClose = () => {
-    setIsModi(false);
+    setIsModiOpen(false);
   };
   const [comment, setComment] = useState(defaultComment);
   const [images, setImages] = useState<ImageFile[]>(() =>
