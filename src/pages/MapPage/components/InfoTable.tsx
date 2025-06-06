@@ -239,6 +239,7 @@ const TitleWrapper = styled.div`
   gap: 10px;
   padding-bottom: 15px;
   flex-grow: 1;
+  overflow: hidden;
 `;
 
 const Title = styled.div`
@@ -253,8 +254,7 @@ const UpperAddressValue = styled.div`
   font-size: 14px;
   color: #7e7e7e;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-x: scroll;
 `;
 
 const ContentSection = styled.div`
