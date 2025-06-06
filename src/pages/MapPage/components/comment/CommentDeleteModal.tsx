@@ -1,11 +1,13 @@
 import styled from 'styled-components';
 import { DeleteModalProps } from '../../interface';
-import { useCommentStore } from '../../../../stores/commentStore';
 
-const CommentDeleteModal = ({ onSubmit }: DeleteModalProps) => {
-  const { isDeleteOpen, setIsDelete } = useCommentStore();
+const CommentDeleteModal = ({
+  isDeleteOpen,
+  setIsDeleteOpen,
+  onSubmit,
+}: DeleteModalProps) => {
   const onClose = () => {
-    setIsDelete(false);
+    setIsDeleteOpen(false);
   };
   return (
     <ModalOverlay $isOpen={isDeleteOpen}>

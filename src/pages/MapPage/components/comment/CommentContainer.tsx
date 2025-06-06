@@ -4,11 +4,12 @@ import { CommentContainerProps } from '../../interface';
 import { slopeCommentAPI } from '../../../../apis/slopeMap';
 import CommentDeleteModal from './CommentDeleteModal';
 import CommentUpdateModal from './CommentUpdateModal';
-import { useCommentStore } from '../../../../stores/commentStore';
+import { useState } from 'react';
 
 const CommentContainer = ({ comment, fetchComment }: CommentContainerProps) => {
-  const { isMoreOpen, setIsMore, setIsDelete, setIsModi } = useCommentStore();
-
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isModiOpen, setIsModiOpen] = useState(false);
   //수정 삭제에 접근 가능한지
   const accessible = (): boolean => {
     const userId = localStorage.getItem('_id') || '';
@@ -30,7 +31,7 @@ const CommentContainer = ({ comment, fetchComment }: CommentContainerProps) => {
     try {
       await slopeCommentAPI.updateComment(formData);
       await fetchComment();
-      setIsModi(false);
+      setIsModiOpen(false);
     } catch (error) {
       console.log('코멘트 수정 오류', error);
     }
@@ -40,14 +41,18 @@ const CommentContainer = ({ comment, fetchComment }: CommentContainerProps) => {
     <>
       {/* 삭제모달 */}
       <CommentDeleteModal
+        isDeleteOpen={isDeleteOpen}
+        setIsDeleteOpen={setIsDeleteOpen}
         onSubmit={() => {
           handleDelete();
-          setIsMore(false);
-          setIsDelete(false);
+          setIsMoreOpen(false);
+          setIsDeleteOpen(false);
         }}
       />
       {/*수정모달 */}
       <CommentUpdateModal
+        isModiOpen={isModiOpen}
+        setIsModiOpen={setIsModiOpen}
         onSubmit={handleUpdate}
         defaultComment={comment.content}
         defaultImages={comment.imageUrls.map(
@@ -66,13 +71,13 @@ const CommentContainer = ({ comment, fetchComment }: CommentContainerProps) => {
               </TagWrapper>
             </UserInfoWrapper>
             <DateText>
-              {new Date(comment.createdAt).toLocaleDateString()}
+              {new Date(comment.createdAt).toLocaleString('ko-KR')}
             </DateText>
           </HeaderWrapper>
           <MoreButtonContainer $isDisplay={accessible()}>
             <MoreButton
               onClick={() => {
-                setIsMore(true);
+                setIsMoreOpen(true);
               }}
             >
               <MoreIcon
@@ -83,22 +88,22 @@ const CommentContainer = ({ comment, fetchComment }: CommentContainerProps) => {
               <>
                 <MoreMenuCancel
                   onClick={() => {
-                    setIsMore(false);
+                    setIsMoreOpen(false);
                   }}
                 ></MoreMenuCancel>
                 <MoreMenu>
                   <MenuItem
                     onClick={() => {
-                      setIsModi(true);
-                      setIsMore(false);
+                      setIsModiOpen(true);
+                      setIsMoreOpen(false);
                     }}
                   >
                     수정하기
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      setIsDelete(true);
-                      setIsMore(false);
+                      setIsDeleteOpen(true);
+                      setIsMoreOpen(false);
                     }}
                   >
                     삭제하기

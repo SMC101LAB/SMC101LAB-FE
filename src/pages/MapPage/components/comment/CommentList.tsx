@@ -5,11 +5,10 @@ import CommentAddModal from './CommentCreateModal';
 import { slopeCommentAPI } from '../../../../apis/slopeMap';
 import { CommentData, CommentListProps } from '../../interface';
 import NoInfo from '../NoInfo';
-import { useCommentStore } from '../../../../stores/commentStore';
 
 const CommentList = ({ slopeId }: CommentListProps) => {
   const [commentData, setCommentData] = useState<CommentData[]>([]);
-  const { setIsMore } = useCommentStore();
+  const [isAddOpen, setIsAddOpen] = useState(false);
   const handleCreate = async (content: string, images: File[]) => {
     try {
       const formData = new FormData();
@@ -26,7 +25,7 @@ const CommentList = ({ slopeId }: CommentListProps) => {
       // 생성 후 코멘트 목록 다시 조회
       const newData = await slopeCommentAPI.getComment(slopeId);
       setCommentData(newData);
-      setIsMore(false);
+      setIsAddOpen(false);
     } catch (error) {
       console.log('코멘트 생성 실패', error);
     }
@@ -43,15 +42,17 @@ const CommentList = ({ slopeId }: CommentListProps) => {
   useEffect(() => {
     fetchComment();
   }, [slopeId]);
-
+  console.log(commentData);
   return (
     <BaseContainer>
       <CommentAddModal
+        isAddOpen={isAddOpen}
+        setIsAddOpen={setIsAddOpen}
         onSubmit={(content, images) => handleCreate(content, images)}
       />
       <CreateButton
         onClick={() => {
-          setIsMore(true);
+          setIsAddOpen(true);
         }}
       >
         결함사진 등록

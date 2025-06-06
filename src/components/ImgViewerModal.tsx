@@ -1,7 +1,9 @@
-import { useImgViewerStore } from '../stores/imgViewerStore';
 import styled from 'styled-components';
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import { useState, useEffect } from 'react';
+import { useImgViewerStore } from '../stores/imgViewerStore';
 
 const ImgViewerModal = () => {
   const {
@@ -18,6 +20,32 @@ const ImgViewerModal = () => {
     images,
   } = useImgViewerStore();
 
+  // 핀치줌 상태 관리
+  const [isZooming, setIsZooming] = useState<boolean>(false);
+
+  // 디버깅을 위한 WebView 메시지 전송
+  useEffect(() => {
+    const sendDebugMessage = (message: any) => {
+      if (typeof window !== 'undefined' && (window as any).ReactNativeWebView) {
+        (window as any).ReactNativeWebView.postMessage(JSON.stringify(message));
+      }
+    };
+
+    // 컴포넌트 마운트 시 디버그 메시지
+    sendDebugMessage({
+      type: 'modal_opened',
+      imageType: currentImageType,
+      timestamp: Date.now(),
+    });
+
+    return () => {
+      sendDebugMessage({
+        type: 'modal_closed',
+        timestamp: Date.now(),
+      });
+    };
+  }, [currentImageType]);
+
   if (!isOpen || !currentImageType || !images) return null;
 
   const { current, total } = getImagePosition();
@@ -25,7 +53,7 @@ const ImgViewerModal = () => {
   const nextEnabled = canGoNext();
 
   // 이미지 타입별 한국어 이름
-  const getImageTypeName = (type: string) => {
+  const getImageTypeName = (type: string): string => {
     switch (type) {
       case 'position':
         return '위치도';
@@ -40,14 +68,14 @@ const ImgViewerModal = () => {
     }
   };
 
-  const handlePrev = () => {
+  const handlePrev = (): void => {
     const prevType = getPrevImageType();
     if (prevType && images[prevType]?.url) {
       openImage(images[prevType].url, prevType);
     }
   };
 
-  const handleNext = () => {
+  const handleNext = (): void => {
     const nextType = getNextImageType();
     if (nextType && images[nextType]?.url) {
       openImage(images[nextType].url, nextType);
@@ -55,18 +83,38 @@ const ImgViewerModal = () => {
   };
 
   // 키보드 이벤트 처리
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowLeft' && prevEnabled) {
+  const handleKeyDown = (e: React.KeyboardEvent): void => {
+    if (e.key === 'ArrowLeft' && prevEnabled && !isZooming) {
       handlePrev();
-    } else if (e.key === 'ArrowRight' && nextEnabled) {
+    } else if (e.key === 'ArrowRight' && nextEnabled && !isZooming) {
       handleNext();
     } else if (e.key === 'Escape') {
       onClose();
     }
   };
 
+  // 배경 클릭 시 모달 닫기 (핀치줌 중이 아닐 때만)
+  const handleOverlayClick = (e: React.MouseEvent): void => {
+    if (e.target === e.currentTarget && !isZooming) {
+      onClose();
+    }
+  };
+
+  // 디버깅 메시지 전송 함수
+  const sendDebugMessage = (message: any): void => {
+    if (typeof window !== 'undefined' && (window as any).ReactNativeWebView) {
+      (window as any).ReactNativeWebView.postMessage(JSON.stringify(message));
+    }
+  };
+
   return (
-    <ModalOverlay onClick={onClose} onKeyDown={handleKeyDown} tabIndex={0}>
+    <ModalOverlay
+      onClick={handleOverlayClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      onTouchStart={(e) => e.stopPropagation()}
+      onTouchMove={(e) => e.stopPropagation()}
+    >
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <ModalHeader>
           <HeaderTitle>
@@ -76,34 +124,116 @@ const ImgViewerModal = () => {
         </ModalHeader>
 
         <ImageContainer>
-          {/* 이미지 */}
-          <MainImage
-            src={currentImageUrl || ''}
-            alt={getImageTypeName(currentImageType)}
-            onError={() => {
-              console.error('이미지 로드 실패:', currentImageUrl);
+          <TransformWrapper
+            initialScale={1}
+            minScale={0.5}
+            maxScale={4}
+            smooth={true}
+            wheel={{
+              disabled: true, // 마우스 휠 비활성화 (모바일 전용)
             }}
-          />
-
-          {/* 왼쪽 화살표 - MUI 아이콘 사용 */}
-          <ArrowButton
-            $position="left"
-            $enabled={prevEnabled}
-            onClick={handlePrev}
-            disabled={!prevEnabled}
+            pinch={{
+              disabled: false,
+            }}
+            panning={{
+              disabled: false,
+            }}
+            doubleClick={{
+              disabled: false,
+              mode: 'toggle',
+            }}
+            onPinchingStart={() => {
+              setIsZooming(true);
+              sendDebugMessage({
+                type: 'pinch_start',
+                timestamp: Date.now(),
+              });
+            }}
+            onPinchingStop={() => {
+              setTimeout(() => {
+                setIsZooming(false);
+                sendDebugMessage({
+                  type: 'pinch_stop',
+                  timestamp: Date.now(),
+                });
+              }, 100);
+            }}
+            onZoomStart={() => {
+              setIsZooming(true);
+              sendDebugMessage({
+                type: 'zoom_start',
+                timestamp: Date.now(),
+              });
+            }}
+            onZoomStop={() => {
+              setTimeout(() => {
+                setIsZooming(false);
+                sendDebugMessage({
+                  type: 'zoom_stop',
+                  timestamp: Date.now(),
+                });
+              }, 100);
+            }}
+            onPanningStart={() => {
+              sendDebugMessage({
+                type: 'pan_start',
+                timestamp: Date.now(),
+              });
+            }}
+            onPanningStop={() => {
+              sendDebugMessage({
+                type: 'pan_stop',
+                timestamp: Date.now(),
+              });
+            }}
           >
-            <ArrowBackIosRoundedIcon sx={{ fontSize: '48px' }} />
-          </ArrowButton>
+            <TransformComponent
+              wrapperStyle={{
+                width: '100%',
+                height: '100%',
+              }}
+              contentStyle={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <MainImage
+                src={currentImageUrl || ''}
+                alt={getImageTypeName(currentImageType)}
+                onError={() => {
+                  console.error('이미지 로드 실패:', currentImageUrl);
+                }}
+                draggable={false}
+              />
+            </TransformComponent>
+          </TransformWrapper>
 
-          {/* 오른쪽 화살표 - MUI 아이콘 사용 */}
-          <ArrowButton
-            $position="right"
-            $enabled={nextEnabled}
-            onClick={handleNext}
-            disabled={!nextEnabled}
-          >
-            <ArrowForwardIosRoundedIcon sx={{ fontSize: '48px' }} />
-          </ArrowButton>
+          {/* 왼쪽 화살표 - 핀치줌 중이 아닐 때만 표시 */}
+          {!isZooming && (
+            <ArrowButton
+              $position="left"
+              $enabled={prevEnabled}
+              onClick={handlePrev}
+              disabled={!prevEnabled}
+            >
+              <ArrowBackIosRoundedIcon sx={{ fontSize: '48px' }} />
+            </ArrowButton>
+          )}
+
+          {/* 오른쪽 화살표 - 핀치줌 중이 아닐 때만 표시 */}
+          {!isZooming && (
+            <ArrowButton
+              $position="right"
+              $enabled={nextEnabled}
+              onClick={handleNext}
+              disabled={!nextEnabled}
+            >
+              <ArrowForwardIosRoundedIcon sx={{ fontSize: '48px' }} />
+            </ArrowButton>
+          )}
         </ImageContainer>
       </ModalContainer>
     </ModalOverlay>
@@ -123,6 +253,9 @@ const ModalOverlay = styled.div`
   display: flex;
   flex-direction: column;
   outline: none;
+
+  /* 터치 이벤트 처리 강화 */
+  touch-action: none;
 `;
 
 const ModalContainer = styled.div`
@@ -182,13 +315,19 @@ const ImageContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  /* overflow 제거 - 핀치줌을 위해 필요 */
 `;
 
 const MainImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: contain;
+  user-select: none;
+  /* 드래그 방지 */
+  -webkit-user-drag: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 `;
 
 const ArrowButton = styled.button<{
