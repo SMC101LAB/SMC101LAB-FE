@@ -76,7 +76,14 @@ const InfoTable = ({ selectItem }: InfotableProps) => {
               {selectItem?.location?.city || ''}{' '}
               {selectItem?.location?.district || ''}{' '}
               {selectItem?.location?.address || ''}{' '}
-              {selectItem?.location?.mountainAddress === 'Y' ? '산' : ''}
+              {selectItem?.location?.mountainAddress === 'Y' ? '산' : ''}{' '}
+              {selectItem?.location?.mainLotNumber || ''}
+              {selectItem?.location?.subLotNumber
+                ? `-${selectItem.location.subLotNumber}`
+                : ''}{' '}
+              {selectItem?.location?.roadAddress
+                ? `(${selectItem?.location?.roadAddress})`
+                : ''}{' '}
             </UpperAddressValue>
           </TitleWrapper>
 
