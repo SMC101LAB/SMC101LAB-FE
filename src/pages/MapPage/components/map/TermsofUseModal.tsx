@@ -275,7 +275,7 @@ const TermsofUseModal = ({ isOpen, onClose }: TermsofUseModalProps) => {
               없습니다.
             </NumberedItem>
             <NumberedItem>
-              저작권 표시 "Copyright © 2025 SMC101"은 웹 사이트 하단에 상시
+              저작권 표시 "Copyright © 2025 SMC101LAB"은 웹 사이트 하단에 상시
               노출됩니다.
             </NumberedItem>
           </NumberedList>
