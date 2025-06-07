@@ -25,8 +25,16 @@ const ListContainer = ({ item, onClick }: ListProps) => {
           </TitleWrapper>
           <AddressWrapper>
             <AddressText>
-              {item.location.province} {item.location.city}
-              {item.location.district}
+              {item?.location?.province || ''} {item?.location?.city || ''}{' '}
+              {item?.location?.district || ''} {item?.location?.address || ''}{' '}
+              {item?.location?.mountainAddress === 'Y' ? '산' : ''}{' '}
+              {item?.location?.mainLotNumber || ''}
+              {item?.location?.subLotNumber
+                ? `-${item.location.subLotNumber}`
+                : ''}{' '}
+              {item?.location?.roadAddress
+                ? `(${item?.location?.roadAddress})`
+                : ''}{' '}
             </AddressText>
             <SmallAddressText>{item.location.address}</SmallAddressText>
           </AddressWrapper>
@@ -111,6 +119,10 @@ const AddressText = styled.div`
   font-size: ${({ theme }) => theme.fonts.sizes.ms};
   color: ${({ theme }) => theme.colors.grey[700]};
   font-weight: ${({ theme }) => theme.fonts.weights.medium};
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 const AddressWrapper = styled.div`
   width: 100%;
