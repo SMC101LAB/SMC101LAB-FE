@@ -75,7 +75,7 @@ api.interceptors.response.use(
         }
 
         // 로그인 페이지로 리다이렉트
-        window.location.href = '/login';
+        window.location.href = '/';
 
         return Promise.reject(refreshError);
       }

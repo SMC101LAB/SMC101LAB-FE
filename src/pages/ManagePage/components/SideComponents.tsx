@@ -1,12 +1,84 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { SideComponentsProps } from '../interface';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { userAPI, User } from '../../../apis/User';
+import { authAPI } from '../../../apis/Auth';
+import { useNotificationStore } from '../../../hooks/notificationStore';
 
 const SideComponents: FC<SideComponentsProps> = ({
   selectPage,
   ChooseIndex,
 }) => {
   const [toggle, setToggle] = useState<boolean[]>([false, false, false]);
+  const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
+  const [isModalClicked, setIsModalClicked] = useState<boolean>(false);
+  const [userInfo, setUserInfo] = useState<User>({
+    _id: 0,
+    name: '',
+    organization: '',
+    phone: '',
+    isAdmin: false,
+    isApproved: false,
+  });
+
+  // 로딩 상태 추가
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // 컴포넌트 마운트 시 사용자 정보 가져오기
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        setIsLoading(true);
+        // localStorage나 context에서 사용자 ID를 가져와야 함
+        const userId = localStorage.getItem('_id'); // 또는 다른 방법으로 ID 획득
+
+        if (userId) {
+          const userData = await userAPI.getUser(userId);
+          setUserInfo(userData);
+        }
+      } catch (error) {
+        console.error('사용자 정보 조회 실패:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
+  //프로필 영역 hover와 active기능 구현
+  const handleProfileClick = () => {
+    setIsModalClicked(true);
+    setShowProfileModal(true);
+  };
+
+  const handleProfileMouseEnter = () => {
+    if (!isModalClicked) {
+      setShowProfileModal(true);
+    }
+  };
+
+  const handleProfileMouseLeave = () => {
+    if (!isModalClicked) {
+      setShowProfileModal(false);
+    }
+  };
+
+  const handleOutsideClick = () => {
+    setIsModalClicked(false);
+    setShowProfileModal(false);
+  };
+
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  );
+  const handleLogout = async () => {
+    await authAPI.logout();
+
+    showNotification('로그아웃 되었습니다.', { severity: 'success' });
+    window.location.href = '/';
+  };
   return (
     <SideContainer>
       <LogoWrapper>
@@ -108,9 +180,64 @@ const SideComponents: FC<SideComponentsProps> = ({
           <TitleIndexText $isSelect={selectPage[8]}>지도</TitleIndexText>
         </IndexContainer>
       </IndexWrapper>
-      <CopyrightWrapper>
-        <CopyrightText>© 2025. SMC101LAB</CopyrightText>
-      </CopyrightWrapper>
+      <BottomWrapper>
+        <CopyrightWrapper>
+          <CopyrightText>© 2025. SMC101LAB</CopyrightText>
+        </CopyrightWrapper>
+
+        {/* 프로필 영역 */}
+        <ProfileWrapper
+          onClick={handleProfileClick}
+          onMouseEnter={handleProfileMouseEnter}
+          onMouseLeave={handleProfileMouseLeave}
+        >
+          {isLoading ? (
+            <LoadingWrapper>
+              <LoadingText>사용자 정보 로딩 중...</LoadingText>
+            </LoadingWrapper>
+          ) : (
+            <ProfileContainer>
+              <AccountCircleIcon
+                style={{
+                  fontSize: '2rem',
+                  color: '#666',
+                  cursor: 'pointer',
+                }}
+              />
+              <ProfileName>{userInfo.name}</ProfileName>
+              {/* 프로필 모달 */}
+              {showProfileModal && (
+                <ProfileModal>
+                  <ProfileInfo>
+                    <InfoItem>
+                      <InfoLabel>이름 :</InfoLabel>
+                      <InfoValue>{userInfo.name}</InfoValue>
+                    </InfoItem>
+                    <InfoItem>
+                      <InfoLabel>권한 :</InfoLabel>
+                      <InfoValue>
+                        {userInfo.isAdmin ? (
+                          <AdminBadge>관리자</AdminBadge>
+                        ) : (
+                          <UserBadge>일반 사용자</UserBadge>
+                        )}
+                      </InfoValue>
+                    </InfoItem>
+                    <InfoItem>
+                      <InfoLabel>소속 :</InfoLabel>
+                      <InfoValue>{userInfo.organization}</InfoValue>
+                    </InfoItem>
+                  </ProfileInfo>
+                  <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
+                </ProfileModal>
+              )}
+            </ProfileContainer>
+          )}
+        </ProfileWrapper>
+      </BottomWrapper>
+
+      {/* 모달이 클릭으로 열린 상태일 때 외부 클릭으로 닫기 */}
+      {isModalClicked && <ModalOverlay onClick={handleOutsideClick} />}
     </SideContainer>
   );
 };
@@ -144,10 +271,6 @@ const LogoWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-const IndexWrapper = styled.div`
-  width: 100%;
-  height: 50%;
 `;
 
 const ToggleIndexContainer = styled.div`
@@ -248,16 +371,6 @@ const IndexText = styled.div<{ $isSelect: boolean }>`
   padding-left: 30px;
 `;
 
-const CopyrightWrapper = styled.div`
-  width: 100%;
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  bottom: 0;
-`;
-
 const CopyrightText = styled.div`
   @media ${({ theme }) => theme.device.tablet} {
     font-size: ${({ theme }) => theme.fonts.sizes.ms};
@@ -265,4 +378,150 @@ const CopyrightText = styled.div`
   color: ${({ theme }) => theme.colors.grey[500]};
   font-size: ${({ theme }) => theme.fonts.sizes.ms};
   text-align: center;
+`;
+
+const ProfileContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.grey[100]};
+  }
+`;
+
+const ProfileName = styled.div`
+  color: ${({ theme }) => theme.colors.grey[700]};
+  font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
+`;
+
+const ProfileModal = styled.div`
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid ${({ theme }) => theme.colors.grey[300]};
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 16px;
+  margin-bottom: 8px;
+  z-index: 1000;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    border: 6px solid transparent;
+    border-top-color: white;
+  }
+`;
+
+const ProfileInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+`;
+
+const InfoItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const InfoLabel = styled.span`
+  color: ${({ theme }) => theme.colors.grey[600]};
+  font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
+`;
+
+const InfoValue = styled.span`
+  color: ${({ theme }) => theme.colors.grey[800]};
+  font-size: ${({ theme }) => theme.fonts.sizes.ms};
+`;
+
+const AdminBadge = styled.span`
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: ${({ theme }) => theme.fonts.sizes.xs};
+  font-weight: ${({ theme }) => theme.fonts.weights.bold};
+`;
+
+const UserBadge = styled.span`
+  background-color: ${({ theme }) => theme.colors.grey[400]};
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: ${({ theme }) => theme.fonts.sizes.xs};
+  font-weight: ${({ theme }) => theme.fonts.weights.bold};
+`;
+
+const LogoutButton = styled.button`
+  width: 100%;
+  padding: 8px 12px;
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primaryDark};
+  }
+`;
+const IndexWrapper = styled.div`
+  width: 100%;
+  flex: 1;
+`;
+
+const BottomWrapper = styled.div`
+  width: 100%;
+  margin-top: auto;
+`;
+
+const CopyrightWrapper = styled.div`
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ProfileWrapper = styled.div`
+  width: 100%;
+  padding: 8px;
+  border-top: 1px solid ${({ theme }) => theme.colors.grey[300]};
+`;
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background: transparent;
+`;
+const LoadingWrapper = styled.div`
+  width: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const LoadingText = styled.div`
+  color: ${({ theme }) => theme.colors.grey[600]};
+  font-size: ${({ theme }) => theme.fonts.sizes.ms};
 `;
