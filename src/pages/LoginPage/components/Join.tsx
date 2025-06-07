@@ -1,4 +1,4 @@
-import { ErrorText, Input, InputWrapper, LoginButton } from './Style';
+import { ErrorText, Input, InputWrapper, LoginButton } from './commonStyle';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { authAPI, JoinFormType } from '../../../apis/Auth';
