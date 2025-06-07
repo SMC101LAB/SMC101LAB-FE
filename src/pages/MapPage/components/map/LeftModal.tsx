@@ -7,6 +7,7 @@ import TermsofUseModal from './TermsofUseModal';
 import ArrowBackIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import { useNotificationStore } from '../../../../hooks/notificationStore';
 import { LeftModalProps } from '../../interface';
+import { authAPI } from '../../../../apis/Auth';
 
 const LeftModal = ({ isOpen, onClose }: LeftModalProps) => {
   const [animationOpen, setAnimationOpen] = useState(false);
@@ -40,10 +41,9 @@ const LeftModal = ({ isOpen, onClose }: LeftModalProps) => {
     setSelectedMenu(menu);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('_id');
-    localStorage.removeItem('isAdmin');
+  const handleLogout = async () => {
+    await authAPI.logout(); // finally 블록에서 항상 토큰 삭제됨
+
     onClose();
     showNotification('로그아웃 되었습니다.', { severity: 'success' });
     window.location.href = '/';
