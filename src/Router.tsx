@@ -11,6 +11,7 @@ import UserModi from './pages/ManagePage/User/pages/UserModi';
 import Home from './pages/ManagePage/Home';
 import SteepSlopeDup from './pages/ManagePage/StepSlope/StepSlopeOutlier/SteepSlopeDup';
 import SteepSlopeEmpty from './pages/ManagePage/StepSlope/StepSlopeOutlier/SteepSlopeEmpty';
+import ProtectedRoute from './components/ProtectedRoute';
 const Router = () => {
   const location = useLocation();
 
@@ -32,8 +33,15 @@ const Router = () => {
   return (
     <Routes>
       <Route path="/" element={<LoginPage />} />
-      <Route path="/map" element={<MapPage />} />
-      <Route path="/manage" element={<ManagePage />}>
+
+      <Route
+        path="/manage"
+        element={
+          <ProtectedRoute>
+            <ManagePage />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<Home />} />
         <Route path="home" element={<Home />} />
         <Route path="slope">
