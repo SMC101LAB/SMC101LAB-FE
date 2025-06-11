@@ -110,23 +110,7 @@ const InfoTable = ({ selectItem }: InfotableProps) => {
             )}
             <ImgTag>위치도</ImgTag>
           </ImgContainer>
-          <ImgContainer>
-            {selectItem.priority?.images?.start?.url ? (
-              <Img
-                src={selectItem.priority.images.start.url}
-                alt="시점"
-                onClick={() =>
-                  handleImageClick(
-                    'start',
-                    selectItem.priority.images.start?.url
-                  )
-                }
-              />
-            ) : (
-              <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
-            )}
-            <ImgTag>시점</ImgTag>
-          </ImgContainer>
+
           <ImgContainer>
             {selectItem.priority?.images?.end?.url ? (
               <Img
@@ -157,6 +141,23 @@ const InfoTable = ({ selectItem }: InfotableProps) => {
               <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
             )}
             <ImgTag>전경</ImgTag>
+          </ImgContainer>
+          <ImgContainer>
+            {selectItem.priority?.images?.start?.url ? (
+              <Img
+                src={selectItem.priority.images.start.url}
+                alt="시점"
+                onClick={() =>
+                  handleImageClick(
+                    'start',
+                    selectItem.priority.images.start?.url
+                  )
+                }
+              />
+            ) : (
+              <NoImagePlaceholder>이미지 없음</NoImagePlaceholder>
+            )}
+            <ImgTag>시점</ImgTag>
           </ImgContainer>
         </ViewImgSection>
         <ContentSection>
