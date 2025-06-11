@@ -5,7 +5,7 @@ import {
   useNavermaps,
   Marker,
 } from 'react-naver-maps';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import AmarkerIcon from '../../../../assets/a.webp';
 import BmarkerIcon from '../../../../assets/b.webp';
 import CmarkerIcon from '../../../../assets/c.webp';
@@ -35,7 +35,6 @@ const MapComponent = () => {
 
   const { mapTypeId, setIsMapReady } = useMapStore();
   const navermaps = useNavermaps();
-  const [_errorMessage, setErrorMessage] = useState<string | null>(null);
 
   //지도가 준비된 경우
   useEffect(() => {
@@ -117,13 +116,11 @@ const MapComponent = () => {
               }
             } catch (error) {
               console.error('Error:', error);
-              setErrorMessage('위치 정보를 가져올 수 없습니다.');
               setUserLocation(new navermaps.LatLng(37.5665, 126.978));
             }
           },
           (error) => {
             console.error('Error:', error);
-            setErrorMessage('브라우저가 위치 정보를 지원하지 않습니다.');
             setUserLocation(new navermaps.LatLng(37.5665, 126.978));
           },
           {

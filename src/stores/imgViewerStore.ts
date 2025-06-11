@@ -72,7 +72,7 @@ export const useImgViewerStore = create<ImgViewerStore>((set, get) => ({
     const { images } = get();
     if (!images) return [];
 
-    const imageOrder: ImageType[] = ['position', 'start', 'end', 'overview'];
+    const imageOrder: ImageType[] = ['position', 'end', 'overview', 'start'];
     return imageOrder.filter((type) => images[type]?.url);
   },
 
