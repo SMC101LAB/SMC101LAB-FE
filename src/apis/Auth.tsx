@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { api } from './api';
 
 export interface JoinFormType {
@@ -14,12 +15,18 @@ export interface LoginFormType {
 
 export const authAPI = {
   login: async (data: LoginFormType) => {
-    const response = await api.post('auth/login', data);
-    // console.log(response.data);
+    const response = await axios.post(
+      `${import.meta.env.VITE_SERVER_ADDRESS}/auth/login`,
+      data,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      }
+    );
+
     localStorage.setItem('accessToken', response.data.accessToken);
     localStorage.setItem('refreshToken', response.data.refreshToken);
 
-    localStorage.setItem('token', response.data.token);
     localStorage.setItem('_id', response.data.user.id);
     localStorage.setItem('isAdmin', response.data.user.isAdmin);
     if (data.rememberPhone) {
