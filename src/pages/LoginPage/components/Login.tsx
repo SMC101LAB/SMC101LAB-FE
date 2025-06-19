@@ -28,7 +28,8 @@ const Login = () => {
     if (authAPI.checkAuth()) {
       nav('/manage/map');
     }
-  }, []);
+  }, [nav]);
+
   //아이디 저장이 되어있는 경우
   useEffect(() => {
     const remembered = authAPI.getRememberedPhone();
@@ -66,7 +67,6 @@ const Login = () => {
         severity: 'error',
         autoHideDuration: 6000,
       });
-      console.error('login Error:', error);
     },
   });
 
@@ -96,6 +96,7 @@ const Login = () => {
   };
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
       onSubmit();
     }
   };
@@ -143,7 +144,9 @@ const Login = () => {
           <Checkbox />
           <CheckboxLabel>아이디 저장</CheckboxLabel>
         </CheckboxWrapper>
-        <LoginButton onClick={onSubmit}>로그인</LoginButton>
+        <LoginButton type="button" onClick={onSubmit}>
+          로그인
+        </LoginButton>
       </InputWrapper>
     </>
   );
