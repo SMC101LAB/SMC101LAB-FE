@@ -32,14 +32,9 @@ export const NotificationProvider = () => {
       autoHideDuration={autoHideDuration}
       onClose={handleClose}
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      sx={{}}
+      sx={{ marginTop: '40px' }}
     >
-      <Alert
-        onClose={handleClose}
-        severity={severity}
-        variant="filled"
-        sx={{ marginTop: '40px' }}
-      >
+      <Alert onClose={handleClose} severity={severity} variant="filled">
         {message}
       </Alert>
     </Snackbar>
