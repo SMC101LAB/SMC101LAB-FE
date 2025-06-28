@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { FC } from 'react';
-import { PaginationProps } from '../interface';
+import { PaginationProps } from '../../interface';
 
 const Pagination: FC<PaginationProps> = ({
   currentPage,
@@ -13,7 +13,36 @@ const Pagination: FC<PaginationProps> = ({
   onNextPage,
   onLastPage,
   onPageSizeChange,
+  onPageChange, // 새로 추가된 prop
 }) => {
+  // 페이지 번호 범위를 계산하는 함수
+  const getPageNumbers = () => {
+    const maxVisiblePages = 5; // 표시할 최대 페이지 수
+    const pages: number[] = [];
+
+    if (pageCount <= maxVisiblePages) {
+      // 전체 페이지가 5개 이하면 모든 페이지 표시
+      for (let i = 0; i < pageCount; i++) {
+        pages.push(i);
+      }
+    } else {
+      // 현재 페이지를 중심으로 5개 페이지 표시
+      const start = Math.max(
+        0,
+        Math.min(currentPage - 2, pageCount - maxVisiblePages)
+      );
+      const end = Math.min(pageCount, start + maxVisiblePages);
+
+      for (let i = start; i < end; i++) {
+        pages.push(i);
+      }
+    }
+
+    return pages;
+  };
+
+  const pageNumbers = getPageNumbers();
+
   return (
     <PaginationContainer>
       <ButtonGroup>
@@ -23,7 +52,18 @@ const Pagination: FC<PaginationProps> = ({
         <PaginationButton onClick={onPreviousPage} disabled={!canPreviousPage}>
           {'<'}
         </PaginationButton>
-        <PageButton $active>{currentPage + 1}</PageButton>
+
+        {/* 페이지 번호들을 나열 */}
+        {pageNumbers.map((pageIndex) => (
+          <PageButton
+            key={pageIndex}
+            $active={pageIndex === currentPage}
+            onClick={() => onPageChange && onPageChange(pageIndex)}
+          >
+            {pageIndex + 1}
+          </PageButton>
+        ))}
+
         <PaginationButton onClick={onNextPage} disabled={!canNextPage}>
           {'>'}
         </PaginationButton>
@@ -63,6 +103,7 @@ const PageButton = styled.button<{ $active?: boolean }>`
   padding: 6px 12px;
   border-radius: 6px;
   font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  cursor: pointer;
 
   background: ${(props) => (props.$active ? '#3b82f6' : 'transparent')};
   color: ${(props) => (props.$active ? 'white' : 'inherit')};
@@ -70,6 +111,11 @@ const PageButton = styled.button<{ $active?: boolean }>`
 
   &:hover:not(:disabled) {
     background: ${(props) => (props.$active ? '#2563eb' : '#f9fafb')};
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;
 
@@ -88,6 +134,7 @@ const PaginationButton = styled.button<{ disabled?: boolean }>`
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   font-size: ${({ theme }) => theme.fonts.sizes.ms};
+  cursor: pointer;
 
   &:hover:not(:disabled) {
     background-color: #f9fafb;
