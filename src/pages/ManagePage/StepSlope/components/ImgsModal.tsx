@@ -710,13 +710,14 @@ const DeleteImageButton = styled.button`
   color: white;
   border: none;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-bottom: 3px;
 
   &:hover {
     background: rgba(0, 0, 0, 0.9);
