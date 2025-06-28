@@ -16,7 +16,7 @@ import { FilterFn, getFilteredRowModel } from '@tanstack/react-table';
 import { rankItem } from '@tanstack/match-sorter-utils';
 import Title from '../../components/Title';
 import { DebouncedInputProps } from '../../interface';
-import Pagination from '../../components/Pagination';
+import Pagination from '../components/Pagination';
 import EditModal from '../components/UserEditModal';
 
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
@@ -278,6 +278,7 @@ const UserModi = () => {
             onNextPage={() => table.nextPage()}
             onLastPage={() => table.lastPage()}
             onPageSizeChange={(size) => table.setPageSize(size)}
+            onPageChange={(page) => table.setPageIndex(page)}
           />
           {isLoading && <LoadingText>Loading...</LoadingText>}
         </TableWrapper>

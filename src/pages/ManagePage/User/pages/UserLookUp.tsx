@@ -16,7 +16,7 @@ import { rankItem } from '@tanstack/match-sorter-utils';
 
 import Title from '../../components/Title';
 import { DebouncedInputProps } from '../../interface';
-import Pagination from '../../components/Pagination';
+import Pagination from '../components/Pagination';
 
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
@@ -266,6 +266,7 @@ const UserLookUp = () => {
             onNextPage={() => table.nextPage()}
             onLastPage={() => table.lastPage()}
             onPageSizeChange={(size) => table.setPageSize(size)}
+            onPageChange={(page) => table.setPageIndex(page)}
           />
           {isLoading && <LoadingText>Loading...</LoadingText>}
         </TableWrapper>

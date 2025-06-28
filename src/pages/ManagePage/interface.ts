@@ -36,6 +36,7 @@ export interface PaginationProps {
   onNextPage: () => void;
   onLastPage: () => void;
   onPageSizeChange: (size: number) => void;
+  onPageChange: (page: number) => void;
 }
 
 //급경사지 테이블 관련 props타입
