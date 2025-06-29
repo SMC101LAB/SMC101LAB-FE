@@ -68,7 +68,7 @@ export interface Slope {
   };
   slopeInspectionHistory: {
     historyNumber: string;
-    inspectionDate: string;
+    inspectionDate: Date;
   };
   priority: {
     usage: string; // 비탈면용도
