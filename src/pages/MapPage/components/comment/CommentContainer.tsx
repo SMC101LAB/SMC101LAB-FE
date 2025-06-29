@@ -55,9 +55,7 @@ const CommentContainer = ({ comment, fetchComment }: CommentContainerProps) => {
         setIsModiOpen={setIsModiOpen}
         onSubmit={handleUpdate}
         defaultComment={comment.content}
-        defaultImages={comment.imageUrls.map(
-          (url) => `${import.meta.env.VITE_SERVER_ADDRESS}${url}`
-        )}
+        defaultImages={comment.imageUrls}
         commentId={comment._id}
       />
       <BaseContainer>
@@ -115,8 +113,7 @@ const CommentContainer = ({ comment, fetchComment }: CommentContainerProps) => {
         </Header>
         <ContentContainer>{comment.content}</ContentContainer>
         <ImgContainer>
-          {comment.imageUrls.map((tmpurl, index) => {
-            const url = `${import.meta.env.VITE_SERVER_ADDRESS}${tmpurl}`;
+          {comment.imageUrls.map((url, index) => {
             return (
               <Img key={index} src={url} alt={`Comment image ${index + 1}`} />
             );
