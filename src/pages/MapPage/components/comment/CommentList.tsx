@@ -42,7 +42,6 @@ const CommentList = ({ historyNumber }: CommentListProps) => {
   useEffect(() => {
     fetchComment();
   }, [historyNumber]);
-  console.log(commentData);
   return (
     <BaseContainer>
       <CommentAddModal
