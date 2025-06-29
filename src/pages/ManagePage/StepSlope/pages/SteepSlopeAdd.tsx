@@ -109,23 +109,66 @@ const SteepSlopeAdd: React.FC = () => {
     }
   };
 
-  // 이미지 백업 복구 실행
+  // 이미지복구 및 코멘트 복구 병렬 실행
   const handleImageRestore = async (): Promise<void> => {
     setIsRestoring(true);
 
     try {
-      const response = await slopeManageAPI.restoreImg();
-      showNotification(
-        `이미지 복구 완료\n(복구된 이미지: ${response.summary.restoredImages}개 / 이미지와 연결된 급경사지: ${response.summary.restoredSlopes}개)`,
-        {
+      console.log('백업 복구 시작 (병렬 처리)...');
+
+      // 두 API를 병렬로 실행
+      const results = await Promise.allSettled([
+        slopeManageAPI.restoreImg(),
+        slopeManageAPI.restoreComment(),
+      ]);
+
+      // 결과 처리
+      const [imageResult, commentResult] = results;
+
+      // 이미지 복구 결과 처리
+      if (imageResult.status === 'fulfilled') {
+        showNotification(
+          `이미지 복구 완료\n(복구된 이미지: ${imageResult.value.summary.restoredImages}개 / 이미지와 연결된 급경사지: ${imageResult.value.summary.restoredSlopes}개)`,
+          { severity: 'success' }
+        );
+      } else {
+        console.error('이미지 복구 실패:', imageResult.reason);
+        showNotification('이미지 복구 실패', { severity: 'error' });
+      }
+
+      // 코멘트 복구 결과 처리
+      if (commentResult.status === 'fulfilled') {
+        showNotification('코멘트 복구 완료', { severity: 'success' });
+      } else {
+        console.error('코멘트 복구 실패:', commentResult.reason);
+        showNotification('코멘트 복구 실패', { severity: 'error' });
+      }
+
+      // 전체 결과 요약
+      const successCount = results.filter(
+        (r) => r.status === 'fulfilled'
+      ).length;
+      const totalCount = results.length;
+
+      if (successCount === totalCount) {
+        showNotification('모든 백업 복구가 완료되었습니다!', {
           severity: 'success',
-        }
-      );
+        });
+      } else if (successCount > 0) {
+        showNotification(`일부 복구 완료 (${successCount}/${totalCount})`, {
+          severity: 'warning',
+        });
+      } else {
+        showNotification('모든 복구 작업이 실패했습니다.', {
+          severity: 'error',
+        });
+      }
     } catch (error) {
-      showNotification('이미지 복구 실패', {
+      // allSettled는 절대 reject되지 않음
+      console.error('예상치 못한 오류:', error);
+      showNotification('예상치 못한 오류가 발생했습니다.', {
         severity: 'error',
       });
-      console.error('이미지 복구 오류:', error);
     } finally {
       setIsRestoring(false);
     }
@@ -196,7 +239,7 @@ const SteepSlopeAdd: React.FC = () => {
 
           {/* 이미지 백업 복구 섹션 */}
           <BackupSection>
-            <SectionTitle>이미지 백업 연결</SectionTitle>
+            <SectionTitle>백업 연결</SectionTitle>
             <BackupRestoreCard $isRestoring={isRestoring}>
               <BackupIconLarge $isRestoring={isRestoring}>
                 <RestoreIcon
@@ -204,11 +247,11 @@ const SteepSlopeAdd: React.FC = () => {
                 />
               </BackupIconLarge>
 
-              <BackupTitle>이미지 복구</BackupTitle>
+              <BackupTitle>이미지 & 결함사진(댓글) 복구</BackupTitle>
               <BackupDescription>
                 급경사지 데이터가 초기화 된 경우
                 <br />
-                기존에 등록했던 이미지를 복원합니다
+                기존에 등록했던 이미지와 결함사진(댓글)을 복원합니다
               </BackupDescription>
 
               <RestoreButton
