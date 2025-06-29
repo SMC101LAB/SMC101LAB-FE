@@ -149,7 +149,11 @@ const BottomSheet = () => {
             return (
               <div>
                 <InfoTable selectItem={selectItem} />
-                <CommentList slopeId={selectItem._id} />
+                <CommentList
+                  historyNumber={
+                    selectItem.slopeInspectionHistory?.historyNumber
+                  }
+                />
               </div>
             );
           } else if (slopeData.length === 0) {
