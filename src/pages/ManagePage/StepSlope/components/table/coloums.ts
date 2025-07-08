@@ -33,16 +33,18 @@ export const getSlopeColumns = () => [
     },
     size: 40,
   }),
-  columnHelper.accessor('managementNo', {
+  columnHelper.accessor((row) => row.managementNo || '', {
+    id: 'managementNo',
     header: '관리번호',
     size: 120,
   }),
-  columnHelper.accessor('name', {
+  columnHelper.accessor((row) => row.name || '', {
+    id: 'name',
     header: '급경사지명',
     size: 150,
   }),
   columnHelper.accessor(
-    (row) => row.slopeInspectionHistory.historyNumber || '',
+    (row) => row.slopeInspectionHistory?.historyNumber || '',
     {
       id: 'historyNumber',
       header: 'SMC번호',
@@ -78,17 +80,17 @@ export const getSlopeColumns = () => [
       size: 40,
     }
   ),
-  columnHelper.accessor((row) => row.management.organization || '', {
+  columnHelper.accessor((row) => row.management?.organization || '', {
     id: 'organization',
     header: '시행청명',
     size: 120,
   }),
-  columnHelper.accessor((row) => row.management.authority || '', {
+  columnHelper.accessor((row) => row.management?.authority || '', {
     id: 'authority',
     header: '관리주체구분코드',
     size: 150,
   }),
-  columnHelper.accessor((row) => row.management.department || '', {
+  columnHelper.accessor((row) => row.management?.department || '', {
     id: 'department',
     header: '소관부서명',
     size: 150,
