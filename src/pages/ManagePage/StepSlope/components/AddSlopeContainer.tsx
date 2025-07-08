@@ -97,7 +97,7 @@ const createDefaultSlope = (): Slope => {
     },
     slopeInspectionHistory: {
       historyNumber: '',
-      inspectionDate: '',
+      inspectionDate: today,
     },
     priority: {
       usage: '',

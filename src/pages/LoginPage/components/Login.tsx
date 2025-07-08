@@ -5,15 +5,17 @@ import {
   CheckboxLabel,
   CheckboxWrapper,
   ErrorText,
-  HiddenCheckbox,
   Input,
+  HiddenCheckbox,
   InputWrapper,
   LoginButton,
 } from './commonStyle';
 import { useMutation } from '@tanstack/react-query';
 import { authAPI, LoginFormType } from '../../../apis/Auth';
 import { useNotificationStore } from '../../../hooks/notificationStore';
-
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import styled from 'styled-components';
 const Login = () => {
   const nav = useNavigate();
   const [loginForm, setLoginForm] = useState<LoginFormType>({
@@ -21,6 +23,7 @@ const Login = () => {
     password: '',
     rememberPhone: false,
   });
+  const [showPw, setShowPw] = useState(false);
   const [isPhoneValid, setIsPhoneValid] = useState<boolean>(true);
 
   //로그인이 되어있으면 이동
@@ -100,6 +103,10 @@ const Login = () => {
       onSubmit();
     }
   };
+
+  const changePasswdMode = () => {
+    setShowPw(!showPw);
+  };
   return (
     <>
       <InputWrapper>
@@ -121,15 +128,32 @@ const Login = () => {
         {!isPhoneValid && (
           <ErrorText>"-"를 제외한 숫자만 입력해 주세요</ErrorText>
         )}
-        <Input
-          name="password"
-          value={loginForm.password}
-          placeholder="비밀번호"
-          type="password"
-          autoComplete="current-password"
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-        />
+        {!showPw ? (
+          <PWrapper>
+            <Input
+              name="password"
+              value={loginForm.password}
+              placeholder="비밀번호"
+              type="password"
+              autoComplete="current-password"
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+            />
+            <ShowOnIcon onClick={changePasswdMode} />
+          </PWrapper>
+        ) : (
+          <PWrapper>
+            <Input
+              name="password"
+              value={loginForm.password}
+              placeholder="비밀번호"
+              autoComplete="current-password"
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+            />
+            <ShowOffIcon onClick={changePasswdMode} />
+          </PWrapper>
+        )}
 
         <CheckboxWrapper>
           <HiddenCheckbox
@@ -140,7 +164,8 @@ const Login = () => {
                 rememberPhone: e.target.checked,
               }))
             }
-          />
+          ></HiddenCheckbox>
+
           <Checkbox />
           <CheckboxLabel>아이디 저장</CheckboxLabel>
         </CheckboxWrapper>
@@ -153,3 +178,25 @@ const Login = () => {
 };
 
 export default Login;
+
+const PWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  position: relative;
+`;
+const ShowOnIcon = styled(VisibilityOutlinedIcon)`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+`;
+const ShowOffIcon = styled(VisibilityOffOutlinedIcon)`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+`;

@@ -185,6 +185,10 @@ const InfoTable = ({ selectItem }: InfotableProps) => {
               </AddressValue>
             </ValueColumn>
           </AddressWrapper>
+          <InfoRow>
+            <Label>붕괴위험지구</Label>
+            <Value>{selectItem?.collapseRisk?.designated ? 'Y' : 'N'}</Value>
+          </InfoRow>
           <Line />
           <InfoRow>
             <Label>최고수직고</Label>

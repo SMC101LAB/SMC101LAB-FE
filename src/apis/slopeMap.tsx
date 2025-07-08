@@ -68,7 +68,7 @@ export interface Slope {
   };
   slopeInspectionHistory: {
     historyNumber: string;
-    inspectionDate: string;
+    inspectionDate: Date;
   };
   priority: {
     usage: string; // 비탈면용도
@@ -119,18 +119,23 @@ export const slopeMapAPI = {
 };
 
 export const slopeCommentAPI = {
-  getComment: async (slopeId: string) => {
-    const response = await api.get(`slopes/${slopeId}/comments`);
+  getComment: async (historyNumber: string) => {
+    const response = await api.get(`slopes/${historyNumber}/comments`);
     // console.log('급경사지 코멘트 조회 완료', response.data);
     return response.data.data;
   },
   createComment: async (formData: FormData) => {
-    const slopeId = formData.get('slopeId');
-    const response = await api.post(`slopes/${slopeId}/comments`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const historyNumber = formData.get('historyNumber');
+    console.log(historyNumber, formData);
+    const response = await api.post(
+      `slopes/${historyNumber}/comments`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
     // console.log('급경사지 코멘트 생성 완료', response.data);
     return response.data;
   },

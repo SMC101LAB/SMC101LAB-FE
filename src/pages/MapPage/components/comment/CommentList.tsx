@@ -6,13 +6,13 @@ import { slopeCommentAPI } from '../../../../apis/slopeMap';
 import { CommentData, CommentListProps } from '../../interface';
 import NoInfo from '../NoInfo';
 
-const CommentList = ({ slopeId }: CommentListProps) => {
+const CommentList = ({ historyNumber }: CommentListProps) => {
   const [commentData, setCommentData] = useState<CommentData[]>([]);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const handleCreate = async (content: string, images: File[]) => {
     try {
       const formData = new FormData();
-      formData.append('slopeId', slopeId);
+      formData.append('historyNumber', historyNumber);
       formData.append('content', content);
 
       // 이미지 파일들 추가
@@ -23,7 +23,7 @@ const CommentList = ({ slopeId }: CommentListProps) => {
       await slopeCommentAPI.createComment(formData);
 
       // 생성 후 코멘트 목록 다시 조회
-      const newData = await slopeCommentAPI.getComment(slopeId);
+      const newData = await slopeCommentAPI.getComment(historyNumber);
       setCommentData(newData);
       setIsAddOpen(false);
     } catch (error) {
@@ -33,7 +33,7 @@ const CommentList = ({ slopeId }: CommentListProps) => {
   //코멘트 조회
   const fetchComment = async () => {
     try {
-      const data = await slopeCommentAPI.getComment(slopeId);
+      const data = await slopeCommentAPI.getComment(historyNumber);
       setCommentData(data);
     } catch (error) {
       console.log('코멘트 조회 실패', error);
@@ -41,8 +41,7 @@ const CommentList = ({ slopeId }: CommentListProps) => {
   };
   useEffect(() => {
     fetchComment();
-  }, [slopeId]);
-  console.log(commentData);
+  }, [historyNumber]);
   return (
     <BaseContainer>
       <CommentAddModal

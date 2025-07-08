@@ -57,7 +57,7 @@ export interface DeleteModalProps {
   onSubmit: () => void;
 }
 export interface CommentListProps {
-  slopeId: string;
+  historyNumber: string;
 }
 export interface CommentUpdateModalProps {
   isModiOpen: boolean;

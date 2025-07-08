@@ -364,15 +364,20 @@ const ImgsModal = ({ isOpen, onClose, selectedRow }: ImgsModalProps) => {
                 <AddressWrapper>
                   <InfoLabel>주소:</InfoLabel>
                   <AddressValue>
-                    {selectedData?.location?.province || ''}
-                    {selectedData?.location?.city || ''}
-                    {selectedData?.location?.district || ''}
-                    {selectedData?.location?.address || ''}
-                    {selectedData?.location?.mainLotNumber
-                      ? selectedData?.location?.subLotNumber
-                        ? `   ${selectedData?.location?.mainLotNumber}-${selectedData?.location?.subLotNumber}`
-                        : `   ${selectedData?.location?.mainLotNumber}`
-                      : ''}
+                    {selectedData?.location?.province || ''}{' '}
+                    {selectedData?.location?.city || ''}{' '}
+                    {selectedData?.location?.district || ''}{' '}
+                    {selectedData?.location?.address || ''}{' '}
+                    {selectedData?.location?.mountainAddress === 'Y'
+                      ? '산'
+                      : ''}{' '}
+                    {selectedData?.location?.mainLotNumber || ''}
+                    {selectedData?.location?.subLotNumber
+                      ? `-${selectedData.location.subLotNumber}`
+                      : ''}{' '}
+                    {selectedData?.location?.roadAddress
+                      ? `(${selectedData?.location?.roadAddress})`
+                      : ''}{' '}
                   </AddressValue>
                 </AddressWrapper>
               </InfoSection>

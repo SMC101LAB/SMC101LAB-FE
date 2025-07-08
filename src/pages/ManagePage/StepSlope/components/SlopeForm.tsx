@@ -21,7 +21,7 @@ const SlopeForm = ({
     e.preventDefault();
     onSubmit(formData);
   };
-
+  console.log(formData);
   return (
     <ModalOverlay $isOpen={isOpen}>
       <ModalContent>
@@ -769,6 +769,47 @@ const SlopeForm = ({
                       maintenanceProject: {
                         ...formData.maintenanceProject,
                         year: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </FormGroup>
+            </Section>
+            <Section>
+              <SectionTitle>급경사지 일제조사</SectionTitle>
+              <FormGroup>
+                <Label>SMC번호(급경사지일제조사이력번호)</Label>
+                <Input
+                  type="text"
+                  value={formData.slopeInspectionHistory.historyNumber || ''}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      slopeInspectionHistory: {
+                        ...formData.slopeInspectionHistory,
+                        historyNumber: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label>일제조사일자</Label>
+                <Input
+                  type="date"
+                  value={
+                    formData.slopeInspectionHistory.inspectionDate
+                      ? new Date(formData.slopeInspectionHistory.inspectionDate)
+                          .toISOString()
+                          .split('T')[0]
+                      : ''
+                  }
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      slopeInspectionHistory: {
+                        ...formData.slopeInspectionHistory,
+                        inspectionDate: new Date(e.target.value),
                       },
                     })
                   }
