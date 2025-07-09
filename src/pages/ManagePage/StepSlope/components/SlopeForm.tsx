@@ -64,12 +64,12 @@ const SlopeForm = ({
                 <Label>시행청명</Label>
                 <Input
                   type="text"
-                  value={formData.management.organization}
+                  value={formData.management?.organization}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
                       management: {
-                        ...formData.management,
+                        ...(formData.management || {}),
                         organization: e.target.value,
                       },
                     })
@@ -80,12 +80,12 @@ const SlopeForm = ({
                 <Label>관리주체구분코드</Label>
                 <Input
                   type="text"
-                  value={formData.management.authority}
+                  value={formData.management?.authority}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
                       management: {
-                        ...formData.management,
+                        ...(formData.management || {}),
                         authority: e.target.value,
                       },
                     })
@@ -96,12 +96,12 @@ const SlopeForm = ({
                 <Label>소관부서명</Label>
                 <Input
                   type="text"
-                  value={formData.management.department}
+                  value={formData.management?.department}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
                       management: {
-                        ...formData.management,
+                        ...(formData.management || {}),
                         department: e.target.value,
                       },
                     })
