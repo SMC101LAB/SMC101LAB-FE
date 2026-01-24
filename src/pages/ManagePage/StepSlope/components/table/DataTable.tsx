@@ -76,7 +76,7 @@ const DataTable: React.FC<DataTableProps> = ({
                     !(e.target as HTMLElement).closest('input[type="checkbox"]')
                   ) {
                     setSelectedRow(
-                      selectedRow?.managementNo === row.original.managementNo
+                      selectedRow?._id === row.original._id
                         ? null
                         : row.original
                     );
@@ -96,7 +96,7 @@ const DataTable: React.FC<DataTableProps> = ({
                   }
                 }}
                 $selected={
-                  selectedRow?.managementNo === row.original.managementNo ||
+                  selectedRow?._id === row.original._id ||
                   row.getIsSelected?.() ||
                   false
                 }
