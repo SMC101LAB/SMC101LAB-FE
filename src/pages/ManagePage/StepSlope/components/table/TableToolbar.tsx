@@ -6,6 +6,7 @@ import CachedRoundedIcon from '@mui/icons-material/CachedRounded';
 import TravelExploreRoundedIcon from '@mui/icons-material/TravelExploreRounded';
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import GradeRoundedIcon from '@mui/icons-material/GradeRounded';
 import { useSteepSlopeStore } from '../../../../../stores/steepSlopeStore';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -47,11 +48,13 @@ const TableToolbar: React.FC<TableToolbarProps> = ({
                 color: '#24478f',
               }}
             />
-            {selectedRegion
-              ? `${selectedRegion.city} ${
-                  selectedRegion.county === '모두' ? '' : selectedRegion.county
-                }`
-              : '지역선택'}
+            <ButtonText>
+              {selectedRegion
+                ? `${selectedRegion.city} ${
+                    selectedRegion.county === '모두' ? '' : selectedRegion.county
+                  }`
+                : '지역선택'}
+            </ButtonText>
           </FilterButton>
           <FilterButton onClick={resetFilters}>
             <CachedRoundedIcon
@@ -141,6 +144,18 @@ const FilterButton = styled.button`
     background-color: #f3f4f6;
     transform: scale(1.06);
   }
+
+  @media (max-width: 1450px) {
+    p, span {
+      display: none;
+    }
+  }
+`;
+
+const ButtonText = styled.span`
+  @media (max-width: 1450px) {
+    display: none;
+  }
 `;
 
 //검색바
@@ -203,7 +218,16 @@ const GradeButton = () => {
 
   return (
     <>
-      <FilterButton onClick={handleClick}>등급: {selectedGrade}</FilterButton>
+      <FilterButton onClick={handleClick}>
+        <GradeRoundedIcon
+          sx={{
+            width: '18px',
+            height: '18px',
+            color: '#24478f',
+          }}
+        />
+        <ButtonText>등급: {selectedGrade}</ButtonText>
+      </FilterButton>
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
